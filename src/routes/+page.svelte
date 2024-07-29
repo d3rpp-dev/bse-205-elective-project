@@ -1,5 +1,5 @@
 <script>
-    import { Button } from "$lib/components/ui/button";
+  import { Button } from "$lib/components/ui/button";
 </script>
 
 <h1 class="text-3xl font-bold">Welcome to SvelteKit</h1>
@@ -9,4 +9,4 @@
   to read the documentation
 </p>
 
-<Button variant="default" >Button</Button>
+<Button variant="default">Button</Button>
