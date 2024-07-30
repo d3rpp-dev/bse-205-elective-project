@@ -3,7 +3,12 @@ export default {
   /**
     Global Config
   */
-  plugins: ["prettier-plugin-svelte"],
+  plugins: [
+    "prettier-plugin-svelte",
+
+    // must come last
+    "prettier-plugin-tailwindcss",
+  ],
   overrides: [
     {
       files: "*.svelte",

@@ -10,3 +10,4 @@
 </p>
 
 <Button variant="default">Button</Button>
+<Button variant="destructive">AAAAAAAA</Button>
