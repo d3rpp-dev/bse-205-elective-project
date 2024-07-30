@@ -1,9 +1,5 @@
 import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 
-import { drizzle } from "drizzle-orm/bun-sqlite";
-import { Database } from "bun:sqlite";
+import { DB } from "./lib/server/db";
 
-const sqlite = new Database(Bun.env.DATABASE_FILE ?? "./database.db");
-const db = drizzle(sqlite);
-
-await migrate(db, { migrationsFolder: "./drizzle" });
+await migrate(DB, { migrationsFolder: "./drizzle" });
