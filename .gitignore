@@ -22,3 +22,13 @@ vite.config.ts.timestamp-*
 
 # SQLite Stuff
 database.db
+
+# Devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml
