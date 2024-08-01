@@ -14,4 +14,4 @@
 //   foreignKey,
 // } from "drizzle-orm/sqlite-core";
 
-export {}
+export {};
