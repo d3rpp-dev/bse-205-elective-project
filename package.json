@@ -11,8 +11,8 @@
 		"lint": "eslint .",
 		"fmt": "prettier --write .",
 		"fmt:check": "prettier --check .",
-		"generate": "drizzle-kit generate --dialect sqlite --schema ./src/contrib/schema.ts",
-		"migrate": "bun ./src/contrib/migrate.ts"
+		"drizzle:generate": "drizzle-kit generate --dialect sqlite --schema ./src/contrib/schema.ts",
+		"drizzle:migrate": "bun ./src/contrib/migrate.ts"
 	},
 	"devDependencies": {
 		"@sveltejs/kit": "^2.0.0",
