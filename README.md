@@ -6,7 +6,7 @@
 
 # The Stack
 
-I was aiming for a "*soydev*" stack, I think I've got it.
+I was aiming for a "_soydev_" stack, I think I've got it.
 
 - [SvelteKit](https://kit.svelte.dev)
 - [DrizzleORM](https://orm.drizzle.team/)
@@ -56,7 +56,7 @@ bun ./build/index.js
 │   │   │   └── # modules for handling cryptography
 │   │   ├── drizzle.ts # database schemas
 │   │   └── server
-│   │       └── # server only modules 
+│   │       └── # server only modules
 │   ├── routes
 │   │   └── # application front-end structure
 │   └── test
@@ -66,4 +66,3 @@ bun ./build/index.js
 └── static
     └── # static assets
 ```
-
