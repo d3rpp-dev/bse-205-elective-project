@@ -2,12 +2,12 @@
 	import "../app.css";
 
 	import { ModeWatcher } from "mode-watcher";
-    import ThemeToggle from "$lib/components/theme-toggle.svelte";
+	import ThemeToggle from "$lib/components/theme-toggle.svelte";
 
 	import Icons from "$lib/icons";
 </script>
 
-<ModeWatcher  />
+<ModeWatcher />
 
 <header
 	class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
@@ -26,8 +26,8 @@
 	</div>
 </header>
 
-<main class="max-w-screen-2xl mx-auto my-4">
-    <slot />
+<main class="mx-auto my-4 max-w-screen-2xl">
+	<slot />
 </main>
 
 <style lang="postcss">
