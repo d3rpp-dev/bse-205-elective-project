@@ -14,6 +14,7 @@ I was aiming for a "_soydev_" stack, I think I've got it.
 - [@shadcn/ui (svelte port)](https://www.shadcn-svelte.com/)
 - [TailwindCSS](https://tailwindcss.com/)
 - [TypeScript](https://www.typescriptlang.org/)
+- [Bun](https://bun.sh)
 
 # Building
 
