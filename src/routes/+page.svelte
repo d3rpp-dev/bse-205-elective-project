@@ -3,8 +3,7 @@
 
 	const aaaa = () => {
 		console.error("AAAAAAAA");
-	}
-
+	};
 </script>
 
 <h1 class="text-3xl font-bold">Welcome to SvelteKit</h1>

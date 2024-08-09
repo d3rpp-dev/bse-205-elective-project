@@ -1,3 +1,5 @@
+![Banner Image](./.assets/banner.png)
+
 <h1>BSE 205 - Elective Project</h1>
 
 - [The Stack](#the-stack)
