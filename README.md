@@ -12,6 +12,8 @@ I was aiming for a "_soydev_" stack, I think I've got it.
 - [DrizzleORM](https://orm.drizzle.team/)
 - [Bun SQLite](https://bun.sh/docs/api/sqlite)
 - [@shadcn/ui (svelte port)](https://www.shadcn-svelte.com/)
+- [TailwindCSS](https://tailwindcss.com/)
+- [TypeScript](https://www.typescriptlang.org/)
 
 # Building
 
