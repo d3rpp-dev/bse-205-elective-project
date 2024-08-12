@@ -1,5 +1,5 @@
 <script lang="ts">
-	import AppHeader from "@/headers/app-header.svelte";
+	import LandingHeader from "@/headers/landing-header.svelte";
 
 	import type { Snippet } from "svelte";
 
@@ -10,8 +10,6 @@
 	const { children }: Props = $props();
 </script>
 
-<AppHeader />
+<LandingHeader />
 
-<main class="mx-auto my-4 max-w-screen-2xl">
-	{@render children()}
-</main>
+{@render children()}

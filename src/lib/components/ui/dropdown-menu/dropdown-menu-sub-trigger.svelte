@@ -3,14 +3,14 @@
 	import ChevronRight from "lucide-svelte/icons/chevron-right";
 	import { cn } from "$lib/utils.js";
 
-	type $$Props = DropdownMenuPrimitive.SubTriggerProps & {
-		inset?: boolean;
-	};
-	type $$Events = DropdownMenuPrimitive.SubTriggerEvents;
+	import type { SubTriggerProps } from ".";
 
-	let className: $$Props["class"] = undefined;
-	export let inset: $$Props["inset"] = undefined;
-	export { className as class };
+	const {
+		class: className = undefined,
+		inset = false,
+		children,
+		...rest
+	}: SubTriggerProps = $props();
 </script>
 
 <DropdownMenuPrimitive.SubTrigger
@@ -19,7 +19,7 @@
 		inset && "pl-8",
 		className,
 	)}
-	{...$$restProps}
+	{...rest}
 	on:click
 	on:keydown
 	on:focusin
@@ -27,6 +27,6 @@
 	on:pointerleave
 	on:pointermove
 >
-	<slot />
+	{@render children()}
 	<ChevronRight class="ml-auto h-4 w-4" />
 </DropdownMenuPrimitive.SubTrigger>

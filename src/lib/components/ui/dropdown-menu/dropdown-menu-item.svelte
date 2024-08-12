@@ -2,14 +2,14 @@
 	import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
 	import { cn } from "$lib/utils.js";
 
-	type $$Props = DropdownMenuPrimitive.ItemProps & {
-		inset?: boolean;
-	};
-	type $$Events = DropdownMenuPrimitive.ItemEvents;
+	import type { ItemProps } from ".";
 
-	let className: $$Props["class"] = undefined;
-	export let inset: $$Props["inset"] = undefined;
-	export { className as class };
+	const {
+		class: className = undefined,
+		inset = false,
+		children,
+		...rest
+	}: ItemProps = $props();
 </script>
 
 <DropdownMenuPrimitive.Item
@@ -18,7 +18,7 @@
 		inset && "pl-8",
 		className,
 	)}
-	{...$$restProps}
+	{...rest}
 	on:click
 	on:keydown
 	on:focusin
@@ -27,5 +27,5 @@
 	on:pointerleave
 	on:pointermove
 >
-	<slot />
+	{@render children()}
 </DropdownMenuPrimitive.Item>

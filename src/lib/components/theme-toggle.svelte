@@ -8,6 +8,13 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 </script>
 
+<!-- 
+	@component
+
+	A component that allows the user to select a theme, 
+	**the default set in the root `+layout.svelte` is "dark".**
+-->
+
 <DropdownMenu.Root>
 	<!-- 
 		Theme Button
@@ -27,10 +34,7 @@
 		Theme Options
 	-->
 	<DropdownMenu.Content align="end">
-		<DropdownMenu.Item
-			on:click={() => setMode("light")}
-			class="data-[highlighted]:bg-destructive"
-		>
+		<DropdownMenu.Item on:click={() => setMode("light")}>
 			<Sun size="0.8rem" class="mr-4" /> Light
 		</DropdownMenu.Item>
 		<DropdownMenu.Item on:click={() => setMode("dark")}>

@@ -3,12 +3,14 @@
 	import Circle from "lucide-svelte/icons/circle";
 	import { cn } from "$lib/utils.js";
 
-	type $$Props = DropdownMenuPrimitive.RadioItemProps;
-	type $$Events = DropdownMenuPrimitive.RadioItemEvents;
+	import type { RadioItemProps } from ".";
 
-	let className: $$Props["class"] = undefined;
-	export let value: $$Props["value"];
-	export { className as class };
+	let {
+		class: className = undefined,
+		value = $bindable(),
+		children,
+		...rest
+	}: RadioItemProps = $props();
 </script>
 
 <DropdownMenuPrimitive.RadioItem
@@ -17,7 +19,7 @@
 		className,
 	)}
 	{value}
-	{...$$restProps}
+	{...rest}
 	on:click
 	on:keydown
 	on:focusin
@@ -31,5 +33,5 @@
 			<Circle class="h-2 w-2 fill-current" />
 		</DropdownMenuPrimitive.RadioIndicator>
 	</span>
-	<slot />
+	{@render children()}
 </DropdownMenuPrimitive.RadioItem>

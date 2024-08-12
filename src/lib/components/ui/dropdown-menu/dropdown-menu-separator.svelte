@@ -2,13 +2,12 @@
 	import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
 	import { cn } from "$lib/utils.js";
 
-	type $$Props = DropdownMenuPrimitive.SeparatorProps;
+	import type { SeparatorProps } from ".";
 
-	let className: $$Props["class"] = undefined;
-	export { className as class };
+	const { class: className, ...rest }: SeparatorProps = $props();
 </script>
 
 <DropdownMenuPrimitive.Separator
 	class={cn("-mx-1 my-1 h-px bg-muted", className)}
-	{...$$restProps}
+	{...rest}
 />

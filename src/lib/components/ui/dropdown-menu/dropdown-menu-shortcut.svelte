@@ -1,16 +1,18 @@
 <script lang="ts">
-	import type { HTMLAttributes } from "svelte/elements";
 	import { cn } from "$lib/utils.js";
 
-	type $$Props = HTMLAttributes<HTMLSpanElement>;
+	import type { ShortcutProps } from ".";
 
-	let className: $$Props["class"] = undefined;
-	export { className as class };
+	const {
+		class: className = undefined,
+		children,
+		...rest
+	}: ShortcutProps = $props();
 </script>
 
 <span
 	class={cn("ml-auto text-xs tracking-widest opacity-60", className)}
-	{...$$restProps}
+	{...rest}
 >
-	<slot />
+	{@render children()}
 </span>
