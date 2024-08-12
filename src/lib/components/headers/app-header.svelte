@@ -2,7 +2,6 @@
 	import { APPLICATION_NAME, APPLICATION_ICON } from ".";
 
 	import ThemeToggle from "@/theme-toggle.svelte";
-	import Icons from "$lib/icons";
 </script>
 
 <header
