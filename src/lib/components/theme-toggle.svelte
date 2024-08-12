@@ -27,7 +27,10 @@
 		Theme Options
 	-->
 	<DropdownMenu.Content align="end">
-		<DropdownMenu.Item on:click={() => setMode("light")} class="data-[highlighted]:bg-destructive">
+		<DropdownMenu.Item
+			on:click={() => setMode("light")}
+			class="data-[highlighted]:bg-destructive"
+		>
 			<Sun size="0.8rem" class="mr-4" /> Light
 		</DropdownMenu.Item>
 		<DropdownMenu.Item on:click={() => setMode("dark")}>
