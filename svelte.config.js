@@ -14,7 +14,7 @@ const config = {
 		adapter: adapter(),
 		// aliases, used primarily for properly setting up ther shadcn components
 		alias: {
-			"@/": "./src/lib/*",
+			"@": "./src/lib/components/*",
 		},
 	},
 };

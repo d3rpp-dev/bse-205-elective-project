@@ -1,6 +1,7 @@
-name: lint-and-format
-run-name: ${{ github.actor }} is pushing code
+name: run-checks
+
 on: [push]
+
 jobs:
   check-formatting:
     name: "Run Prettier"
@@ -10,6 +11,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install
       - run: bun fmt:check
+
   lint:
     name: "Run ESLint"
     runs-on: ubuntu-latest
@@ -18,6 +20,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install
       - run: bun lint
+      
   test:
     name: "Run Automated Tests"
     runs-on: ubuntu-latest

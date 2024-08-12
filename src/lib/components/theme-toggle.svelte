@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Sun from "svelte-radix/Sun.svelte";
 	import Moon from "svelte-radix/Moon.svelte";
+	import Gear from "svelte-radix/Gear.svelte";
 
 	import { resetMode, setMode } from "mode-watcher";
 	import { Button } from "$lib/components/ui/button/index.js";
@@ -8,6 +9,9 @@
 </script>
 
 <DropdownMenu.Root>
+	<!-- 
+		Theme Button
+	-->
 	<DropdownMenu.Trigger asChild let:builder>
 		<Button builders={[builder]} variant="outline" size="icon">
 			<Sun
@@ -19,11 +23,18 @@
 			<span class="sr-only">Toggle theme</span>
 		</Button>
 	</DropdownMenu.Trigger>
+	<!-- 
+		Theme Options
+	-->
 	<DropdownMenu.Content align="end">
-		<DropdownMenu.Item on:click={() => setMode("light")}>
-			Light
+		<DropdownMenu.Item on:click={() => setMode("light")} class="data-[highlighted]:bg-destructive">
+			<Sun size="0.8rem" class="mr-4" /> Light
 		</DropdownMenu.Item>
-		<DropdownMenu.Item on:click={() => setMode("dark")}>Dark</DropdownMenu.Item>
-		<DropdownMenu.Item on:click={() => resetMode()}>System</DropdownMenu.Item>
+		<DropdownMenu.Item on:click={() => setMode("dark")}>
+			<Moon size="0.8rem" class="mr-4" /> Dark
+		</DropdownMenu.Item>
+		<DropdownMenu.Item on:click={() => resetMode()}>
+			<Gear size="0.8rem" class="mr-4" /> System
+		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
