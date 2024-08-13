@@ -3,11 +3,7 @@
 
 	import type { ShortcutProps } from ".";
 
-	const {
-		class: className,
-		children,
-		...rest
-	}: ShortcutProps = $props();
+	const { class: className, children, ...rest }: ShortcutProps = $props();
 </script>
 
 <span
