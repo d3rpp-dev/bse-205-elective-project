@@ -5,9 +5,16 @@
 	import type { SubContentProps } from ".";
 
 	const {
-		class: className = undefined,
+		class: className,
 		transition = flyAndScale,
 		transitionConfig = { x: -10, y: 0 },
+
+		// Events
+		onkeydown,
+		onfocusout,
+		onpointermove,
+
+		// Children
 		children,
 		...rest
 	}: SubContentProps = $props();
@@ -21,9 +28,9 @@
 		className,
 	)}
 	{...rest}
-	on:keydown
-	on:focusout
-	on:pointermove
+	{onkeydown}
+	{onfocusout}
+	{onpointermove}
 >
 	{@render children()}
 </DropdownMenuPrimitive.SubContent>

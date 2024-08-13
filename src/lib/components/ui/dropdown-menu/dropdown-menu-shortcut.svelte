@@ -4,7 +4,7 @@
 	import type { ShortcutProps } from ".";
 
 	const {
-		class: className = undefined,
+		class: className,
 		children,
 		...rest
 	}: ShortcutProps = $props();

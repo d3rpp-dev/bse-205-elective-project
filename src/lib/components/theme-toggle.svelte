@@ -34,13 +34,13 @@
 		Theme Options
 	-->
 	<DropdownMenu.Content align="end">
-		<DropdownMenu.Item on:click={() => setMode("light")}>
+		<DropdownMenu.Item onclick={() => setMode("light")}>
 			<Sun size="0.8rem" class="mr-4" /> Light
 		</DropdownMenu.Item>
-		<DropdownMenu.Item on:click={() => setMode("dark")}>
+		<DropdownMenu.Item onclick={() => setMode("dark")}>
 			<Moon size="0.8rem" class="mr-4" /> Dark
 		</DropdownMenu.Item>
-		<DropdownMenu.Item on:click={() => resetMode()}>
+		<DropdownMenu.Item onclick={() => resetMode()}>
 			<Gear size="0.8rem" class="mr-4" /> System
 		</DropdownMenu.Item>
 	</DropdownMenu.Content>

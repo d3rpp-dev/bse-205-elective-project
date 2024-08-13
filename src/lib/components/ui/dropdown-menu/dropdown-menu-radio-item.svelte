@@ -6,8 +6,19 @@
 	import type { RadioItemProps } from ".";
 
 	let {
-		class: className = undefined,
+		class: className,
 		value = $bindable(),
+
+		// Events
+		onclick,
+		onkeydown,
+		onfocusin,
+		onfocusout,
+		onpointerdown,
+		onpointerleave,
+		onpointermove,
+
+		// Children
 		children,
 		...rest
 	}: RadioItemProps = $props();
@@ -20,13 +31,13 @@
 	)}
 	{value}
 	{...rest}
-	on:click
-	on:keydown
-	on:focusin
-	on:focusout
-	on:pointerdown
-	on:pointerleave
-	on:pointermove
+	{onclick}
+	{onkeydown}
+	{onfocusin}
+	{onfocusout}
+	{onpointerdown}
+	{onpointerleave}
+	{onpointermove}
 >
 	<span class="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
 		<DropdownMenuPrimitive.RadioIndicator>

@@ -4,10 +4,16 @@
 	import { cn } from "$lib/utils.js";
 
 	let {
-		class: className = undefined,
+		class: className,
 		variant,
 		size,
 		builders,
+
+		// Events
+		onclick,
+		onkeydown,
+
+		// Children
 		children,
 	}: Props = $props();
 </script>
@@ -26,8 +32,8 @@
 	{builders}
 	class={cn(buttonVariants({ variant, size, className }))}
 	type="button"
-	on:click
-	on:keydown
+	{onclick}
+	{onkeydown}
 >
 	{@render children()}
 </ButtonPrimitive.Root>

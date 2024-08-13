@@ -15,6 +15,6 @@
 		to read the documentation
 	</p>
 
-	<Button on:click={aaaa} variant="default">Button</Button>
+	<Button onclick={aaaa} variant="default">Button</Button>
 	<Button variant="destructive">AAAAAAAA</Button>
 </Main>

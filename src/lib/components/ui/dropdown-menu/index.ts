@@ -1,4 +1,7 @@
-import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
+import {
+	DropdownMenu as DropdownMenuPrimitive,
+	type MenubarPropsWithoutHTML,
+} from "bits-ui";
 import type { HTMLAttributes } from "svelte/elements";
 import type { Snippet } from "svelte";
 
@@ -22,21 +25,31 @@ type ChildrenProp = { children: Snippet };
 
 export type CheckBoxItemProps = DropdownMenuPrimitive.CheckboxItemProps &
 	ChildrenProp;
+
 export type ContentProps = DropdownMenuPrimitive.ContentProps & ChildrenProp;
-export type ItemProps = DropdownMenuPrimitive.ItemProps & {
-	inset?: boolean;
-} & ChildrenProp;
+
+export type ItemProps = Omit<MenubarPropsWithoutHTML, "el"> &
+	HTMLAttributes<HTMLAnchorElement> & {
+		inset?: boolean;
+	} & ChildrenProp;
+
 export type LabelProps = DropdownMenuPrimitive.LabelProps & {
 	inset?: boolean;
 } & ChildrenProp;
+
 export type RadioGroupProps = DropdownMenuPrimitive.RadioGroupProps &
 	ChildrenProp;
+
 export type RadioItemProps = DropdownMenuPrimitive.RadioItemProps &
 	ChildrenProp;
+
 export type SeparatorProps = DropdownMenuPrimitive.SeparatorProps; // no children
+
 export type ShortcutProps = HTMLAttributes<HTMLSpanElement> & ChildrenProp;
+
 export type SubContentProps = DropdownMenuPrimitive.SubContentProps &
 	ChildrenProp;
+
 export type SubTriggerProps = DropdownMenuPrimitive.SubTriggerProps & {
 	inset?: boolean;
 } & ChildrenProp;

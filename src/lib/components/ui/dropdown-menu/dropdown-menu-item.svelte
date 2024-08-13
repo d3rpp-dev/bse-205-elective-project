@@ -5,8 +5,19 @@
 	import type { ItemProps } from ".";
 
 	const {
-		class: className = undefined,
+		class: className,
 		inset = false,
+
+		// Events
+		onclick,
+		onkeydown,
+		onfocusin,
+		onfocusout,
+		onpointerdown,
+		onpointerleave,
+		onpointermove,
+
+		// Children
 		children,
 		...rest
 	}: ItemProps = $props();
@@ -19,13 +30,13 @@
 		className,
 	)}
 	{...rest}
-	on:click
-	on:keydown
-	on:focusin
-	on:focusout
-	on:pointerdown
-	on:pointerleave
-	on:pointermove
+	{onclick}
+	{onkeydown}
+	{onfocusin}
+	{onfocusout}
+	{onpointerdown}
+	{onpointerleave}
+	{onpointermove}
 >
 	{@render children()}
 </DropdownMenuPrimitive.Item>

@@ -6,8 +6,18 @@
 	import type { SubTriggerProps } from ".";
 
 	const {
-		class: className = undefined,
+		class: className,
 		inset = false,
+
+		// Events
+		onclick,
+		onkeydown,
+		onfocusin,
+		onfocusout,
+		onpointerleave,
+		onpointermove,
+
+		// Children
 		children,
 		...rest
 	}: SubTriggerProps = $props();
@@ -20,12 +30,12 @@
 		className,
 	)}
 	{...rest}
-	on:click
-	on:keydown
-	on:focusin
-	on:focusout
-	on:pointerleave
-	on:pointermove
+	{onclick}
+	{onkeydown}
+	{onfocusin}
+	{onfocusout}
+	{onpointerleave}
+	{onpointermove}
 >
 	{@render children()}
 	<ChevronRight class="ml-auto h-4 w-4" />

@@ -5,7 +5,7 @@
 	import type { LabelProps } from ".";
 
 	const {
-		class: className = undefined,
+		class: className,
 		inset = false,
 		children,
 		...rest

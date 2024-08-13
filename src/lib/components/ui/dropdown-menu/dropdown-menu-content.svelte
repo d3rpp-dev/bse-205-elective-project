@@ -5,10 +5,15 @@
 	import type { ContentProps } from ".";
 
 	const {
-		class: className = undefined,
+		class: className,
 		sideOffset = 4,
 		transition = flyAndScale,
-		transitionConfig = undefined,
+		transitionConfig,
+
+		// Events
+		onkeydown,
+
+		// Children
 		children,
 		...rest
 	}: ContentProps = $props();
@@ -23,7 +28,7 @@
 		className,
 	)}
 	{...rest}
-	on:keydown
+	{onkeydown}
 >
 	{@render children()}
 </DropdownMenuPrimitive.Content>
