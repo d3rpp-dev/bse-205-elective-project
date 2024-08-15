@@ -11,7 +11,7 @@
 		<div class="flex items-center md:mr-4">
 			<!-- This is apparently svelte 5, this is cursed -->
 			<APPLICATION_ICON size="2.5rem" />
-			<span class="ml-2 h-6 font-bold sm:inline-block">{APPLICATION_NAME}</span>
+			<span class="ml-4 h-6 font-bold sm:inline-block text-lg">{APPLICATION_NAME}</span>
 		</div>
 
 		<div

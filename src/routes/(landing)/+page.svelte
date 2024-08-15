@@ -10,7 +10,7 @@
 </script>
 
 <Main>
-	<div class="flex flex-col items-center justify-start">
+	<div class="flex flex-col items-start justify-start">
 		<h1 class="text-hero">Jail Bird</h1>
 
 		{#snippet onpending()}
