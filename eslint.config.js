@@ -27,12 +27,11 @@ export default [
 	{
 		ignores: ["build/", ".svelte-kit/", "dist/"],
 	},
-	// the generated components have the `$$Events` prop that always goes unused,
-	// but we wanna keep them, so I'm putting this here to ignore them
+	// Breaks component generics
 	{
 		files: ["src/lib/components/**/*.svelte"],
 		rules: {
-			"@typescript-eslint/no-unused-vars": ["off"],
+			"no-undef": ["off"],
 		},
 	},
 ];

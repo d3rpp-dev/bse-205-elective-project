@@ -5,25 +5,26 @@
 	import Main from "@/main.svelte";
 	import Suspense from "@/suspense.svelte";
 
-	const query = trpc($page).greeting.createQuery({name: "123456789"})
+	const query = trpc($page).greeting.createQuery({ name: "12345678901" });
+	type QueryError = (typeof $query)["error"];
 </script>
 
 <Main>
 	<div class="flex flex-col items-center justify-start">
 		<h1 class="text-hero">Jail Bird</h1>
-		
+
 		{#snippet onpending()}
 			<span>Loading...</span>
 		{/snippet}
 
-		{#snippet onerror(error: (typeof $query)['error'])}
+		{#snippet onerror(error: QueryError)}
 			<span>Error</span>
 			<pre><code>{error?.message}</code></pre>
 		{/snippet}
-		
+
 		{#snippet ondone(data: string | undefined, is_placeholder: boolean)}
 			<pre>is_placeholder: {is_placeholder}</pre>
-			<span>{data}</span>			
+			<span>{data}</span>
 		{/snippet}
 
 		<Suspense {query} {ondone} {onerror} {onpending} />

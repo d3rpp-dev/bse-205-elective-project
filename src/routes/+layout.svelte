@@ -5,11 +5,12 @@
 
 	import { ModeWatcher } from "mode-watcher";
 	import { QueryClientProvider } from "@tanstack/svelte-query";
-	import { SvelteQueryDevtools } from "@tanstack/svelte-query-devtools"
+	import { SvelteQueryDevtools } from "@tanstack/svelte-query-devtools";
 
 	import type { LayoutData } from "./$types";
 
-	const { queryClient, children }: LayoutData & { children: Snippet } = $props();
+	const { queryClient, children }: LayoutData & { children: Snippet } =
+		$props();
 </script>
 
 <svelte:head>
