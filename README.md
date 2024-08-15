@@ -17,6 +17,7 @@ I was aiming for a "_soydev_" stack, I think I've got it.
 - [TailwindCSS](https://tailwindcss.com/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Bun](https://bun.sh)
+- [tRPC](https://trpc.io) (with [svelte-query](https://github.com/vishalbalaji/trpc-svelte-query-adapter))
 
 # Building
 

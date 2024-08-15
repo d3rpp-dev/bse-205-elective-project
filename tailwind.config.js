@@ -57,6 +57,14 @@ const config = {
 			fontFamily: {
 				sans: [...fontFamily.sans],
 			},
+			fontSize: {
+				hero: [
+					"10em",
+					{
+						letterSpacing: "20px",
+					},
+				],
+			},
 		},
 	},
 };

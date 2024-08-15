@@ -4,14 +4,21 @@
 	import type { Snippet } from "svelte";
 
 	import { ModeWatcher } from "mode-watcher";
+	import { QueryClientProvider } from "@tanstack/svelte-query";
+	import { SvelteQueryDevtools } from "@tanstack/svelte-query-devtools"
 
-	interface Props {
-		children: Snippet;
-	}
+	import type { LayoutData } from "./$types";
 
-	const { children }: Props = $props();
+	const { queryClient, children }: LayoutData & { children: Snippet } = $props();
 </script>
 
-<ModeWatcher defaultMode="dark" />
+<svelte:head>
+	<title>Jail Bird</title>
+</svelte:head>
 
-{@render children()}
+<ModeWatcher defaultMode="system" />
+
+<QueryClientProvider client={queryClient}>
+	{@render children()}
+	<SvelteQueryDevtools />
+</QueryClientProvider>

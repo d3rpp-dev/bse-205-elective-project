@@ -43,6 +43,10 @@
 		"svelte-preprocess"
 	],
 	"dependencies": {
+		"@tanstack/svelte-query": "^5.51.21",
+		"@tanstack/svelte-query-devtools": "^5.51.21",
+		"@trpc/client": "^10.45.2",
+		"@trpc/server": "^10.45.2",
 		"bits-ui": "^0.21.13",
 		"clsx": "^2.1.1",
 		"drizzle-orm": "^0.33.0",
@@ -50,6 +54,9 @@
 		"mode-watcher": "^0.4.1",
 		"svelte-radix": "^1.1.0",
 		"tailwind-merge": "^2.5.2",
-		"tailwind-variants": "^0.2.1"
+		"tailwind-variants": "^0.2.1",
+		"trpc-svelte-query-adapter": "^2.3.14",
+		"trpc-sveltekit": "^3.6.2",
+		"zod": "^3.23.8"
 	}
 }
