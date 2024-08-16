@@ -4,7 +4,6 @@
 	import { debounce } from "$lib/utils";
 
 	import Main from "@/main.svelte";
-	import Suspense from "@/suspense.svelte";
 	import { Input } from "@/ui/input";
 	import { writable } from "svelte/store";
 
