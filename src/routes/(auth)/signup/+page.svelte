@@ -9,7 +9,7 @@
 
 	const username = writable({ username: "" });
 
-	const query = rpc.auth.check_username_availability.createQuery($username);
+	const query = rpc.auth.check_username_availability.createQuery(username);
 </script>
 
 <input
@@ -17,7 +17,7 @@
 	oninput={debounce((ev) => {
 		ev.preventDefault();
 		if (!(ev.target instanceof HTMLInputElement)) return;
-		username.set({username: ev.target.value});
+		username.set({ username: ev.target.value });
 		utils.auth.check_username_availability.invalidate();
 	}, 500)}
 />
