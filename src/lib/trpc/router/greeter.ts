@@ -12,4 +12,18 @@ export const greeterRouter = trpcInstance.router({
 			await new Promise((res) => setTimeout(res, 1000));
 			return `Hello ${opts.input.name}`;
 		}),
+
+	odd_or_even: trpcInstance.procedure
+		.input(
+			z.object({
+				num: z.number(),
+			}),
+		)
+		.query(async (opts) => {
+			await new Promise((res) => setTimeout(res, 500));
+			return {
+				is_odd: opts.input.num % 2 == 1,
+				is_even: opts.input.num % 2 == 0,
+			};
+		}),
 });

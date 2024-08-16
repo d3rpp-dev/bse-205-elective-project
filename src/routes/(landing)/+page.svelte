@@ -1,34 +1,42 @@
 <script lang="ts">
 	import { page } from "$app/stores";
 	import { trpc } from "$lib/trpc/client";
+	import { debounce } from "$lib/utils";
 
 	import Main from "@/main.svelte";
 	import Suspense from "@/suspense.svelte";
+	import { Input } from "@/ui/input";
+	import { writable } from "svelte/store";
 
-	const query = trpc($page).greeter.greeting.createQuery({
-		name: "12345678901",
-	});
-	type QueryError = (typeof $query)["error"];
+	const rpc = trpc($page);
+	const utils = rpc.createUtils();
+
+	const query_params = writable({ num: 0 });
+
+	const query = rpc.greeter.odd_or_even.createQuery(query_params);
 </script>
 
 <Main>
 	<div class="flex flex-col items-start justify-start">
 		<h1 class="text-hero">Jail Bird</h1>
 
-		{#snippet onpending()}
-			<span>Loading...</span>
-		{/snippet}
+		<Input
+			type="number"
+			value={0}
+			onchange={debounce((ev) => {
+				ev.preventDefault();
+				if (!(ev.target instanceof HTMLInputElement)) return;
+				query_params.set({ num: +ev.target.value });
+				utils.greeter.odd_or_even.invalidate();
+			}, 500)}
+		/>
 
-		{#snippet onerror(error: QueryError)}
-			<span>Error</span>
-			<pre><code>{error?.message}</code></pre>
-		{/snippet}
-
-		{#snippet ondone(data: string | undefined, is_placeholder: boolean)}
-			<pre>is_placeholder: {is_placeholder}</pre>
-			<span>{data}</span>
-		{/snippet}
-
-		<Suspense {query} {ondone} {onerror} {onpending} />
+		{#if $query.isLoading}
+			<pre>Checking...</pre>
+		{:else if $query.isError}
+			<pre>{JSON.stringify($query.error, null, 2)}</pre>
+		{:else}
+			<pre>{JSON.stringify($query.data, null, 2)}</pre>
+		{/if}
 	</div>
 </Main>

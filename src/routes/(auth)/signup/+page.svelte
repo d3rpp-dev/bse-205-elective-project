@@ -17,7 +17,7 @@
 	oninput={debounce((ev) => {
 		ev.preventDefault();
 		if (!(ev.target instanceof HTMLInputElement)) return;
-		$username.username = ev.target.value;
+		username.set({username: ev.target.value});
 		utils.auth.check_username_availability.invalidate();
 	}, 500)}
 />
