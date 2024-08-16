@@ -6,5 +6,7 @@
 </script>
 
 <DropdownMenuPrimitive.RadioGroup {...rest} bind:value>
-	{@render children()}
+	{#if children}
+		{@render children()}
+	{/if}
 </DropdownMenuPrimitive.RadioGroup>

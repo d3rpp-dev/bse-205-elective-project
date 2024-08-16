@@ -37,6 +37,8 @@
 	{onpointerleave}
 	{onpointermove}
 >
-	{@render children()}
+	{#if children}
+		{@render children()}
+	{/if}
 	<ChevronRight class="ml-auto h-4 w-4" />
 </DropdownMenuPrimitive.SubTrigger>

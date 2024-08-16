@@ -11,7 +11,9 @@
 		<div class="flex md:mr-4">
 			<!-- This is apparently svelte 5, this is cursed -->
 			<APPLICATION_ICON />
-			<span class="ml-2 font-bold sm:inline-block">{APPLICATION_NAME}</span>
+			<span class="ml-2 font-bold sm:inline-block">
+				{APPLICATION_NAME}
+			</span>
 		</div>
 
 		<div

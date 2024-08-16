@@ -38,5 +38,7 @@
 	{onpointerleave}
 	{onpointermove}
 >
-	{@render children()}
+	{#if children}
+		{@render children()}
+	{/if}
 </DropdownMenuPrimitive.Item>

@@ -5,7 +5,9 @@
 	import Main from "@/main.svelte";
 	import Suspense from "@/suspense.svelte";
 
-	const query = trpc($page).greeting.createQuery({ name: "12345678901" });
+	const query = trpc($page).greeter.greeting.createQuery({
+		name: "12345678901",
+	});
 	type QueryError = (typeof $query)["error"];
 </script>
 

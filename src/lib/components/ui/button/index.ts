@@ -13,7 +13,8 @@ const buttonVariants = tv({
 				"bg-destructive text-destructive-foreground hover:bg-destructive/90",
 			outline:
 				"border-input bg-background hover:bg-accent hover:text-accent-foreground border",
-			secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+			secondary:
+				"bg-secondary text-secondary-foreground hover:bg-secondary/80",
 			ghost: "hover:bg-accent hover:text-accent-foreground",
 			link: "text-primary underline-offset-4 hover:underline",
 		},
@@ -37,13 +38,15 @@ type Props = HTMLAttributes<HTMLButtonElement> & {
 	builders?: ButtonPrimitive.Props["builders"];
 	variant?: Variant;
 	size?: Size;
-	children: Snippet;
+
+	type?: HTMLButtonElement["type"];
+
+	children?: Snippet;
 };
 
 type Events = ButtonPrimitive.Events;
 
 export {
-	//
 	Root as Button,
 	Root,
 	buttonVariants,

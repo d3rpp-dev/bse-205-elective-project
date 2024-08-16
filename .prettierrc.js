@@ -20,13 +20,14 @@ export default {
 	],
 
 	/**
-    Default Config
-  */
+	 * Default Config
+	 */
 	htmlWhitespaceSensitivity: "ignore",
 	bracketSameLine: false,
+	trailingComma: "all",
 
 	/**
-    Svelte Config
-  */
+	 * Svelte Config
+	 */
 	// nothing here yet
 };

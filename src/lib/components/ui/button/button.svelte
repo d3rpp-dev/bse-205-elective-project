@@ -9,31 +9,34 @@
 		size,
 		builders,
 
+		// HTML attributes
+		type = "button",
+
 		// Events
 		onclick,
 		onkeydown,
 
 		// Children
 		children,
+		...rest
 	}: Props = $props();
 </script>
 
 <!--
 	@component
 
-	> **NOTE**
-	> 
-	> For some unknown dumbass reason, typescript screams in 
-	> pain when i use `...rest` in the `props`. So for now, we'll limit 
-	> our stuff to this.
+    Button :D
 -->
 
 <ButtonPrimitive.Root
 	{builders}
 	class={cn(buttonVariants({ variant, size, className }))}
-	type="button"
+	{type}
 	{onclick}
 	{onkeydown}
+	{...rest}
 >
-	{@render children()}
+	{#if children}
+		{@render children()}
+	{/if}
 </ButtonPrimitive.Root>

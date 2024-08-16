@@ -44,5 +44,7 @@
 			<Check class="h-4 w-4" />
 		</DropdownMenuPrimitive.CheckboxIndicator>
 	</span>
-	{@render children()}
+	{#if children}
+		{@render children()}
+	{/if}
 </DropdownMenuPrimitive.CheckboxItem>

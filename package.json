@@ -11,7 +11,7 @@
 		"lint": "eslint .",
 		"fmt": "prettier --write .",
 		"fmt:check": "prettier --check .",
-		"drizzle:generate": "drizzle-kit generate --dialect sqlite --schema ./src/contrib/schema.ts",
+		"drizzle:generate": "drizzle-kit generate --dialect sqlite --schema ./src/lib/drizzle.ts",
 		"drizzle:migrate": "bun ./src/contrib/migrate.ts"
 	},
 	"devDependencies": {
@@ -50,13 +50,16 @@
 		"bits-ui": "^0.21.13",
 		"clsx": "^2.1.1",
 		"drizzle-orm": "^0.33.0",
+		"formsnap": "^1.0.1",
 		"lucide-svelte": "^0.427.0",
 		"mode-watcher": "^0.4.1",
 		"svelte-radix": "^1.1.0",
+		"sveltekit-superforms": "^2.17.0",
 		"tailwind-merge": "^2.5.2",
 		"tailwind-variants": "^0.2.1",
 		"trpc-svelte-query-adapter": "^2.3.14",
 		"trpc-sveltekit": "^3.6.2",
+		"ulid": "^2.3.0",
 		"zod": "^3.23.8"
 	}
 }

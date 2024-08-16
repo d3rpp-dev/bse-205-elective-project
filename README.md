@@ -2,28 +2,28 @@
 
 <h1>BSE 205 - Elective Project</h1>
 
-- [The Stack](#the-stack)
-- [Building](#building)
-- [Project Structure](#project-structure)
+-   [The Stack](#the-stack)
+-   [Building](#building)
+-   [Project Structure](#project-structure)
 
 # The Stack
 
 I was aiming for a "_soydev_" stack, I think I've got it.
 
-- [SvelteKit](https://kit.svelte.dev)
-- [DrizzleORM](https://orm.drizzle.team/)
-- [Bun SQLite](https://bun.sh/docs/api/sqlite)
-- [@shadcn/ui (svelte port)](https://www.shadcn-svelte.com/)
-- [TailwindCSS](https://tailwindcss.com/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Bun](https://bun.sh)
-- [tRPC](https://trpc.io) (with [svelte-query](https://github.com/vishalbalaji/trpc-svelte-query-adapter))
+-   [SvelteKit](https://kit.svelte.dev)
+-   [DrizzleORM](https://orm.drizzle.team/)
+-   [Bun SQLite](https://bun.sh/docs/api/sqlite)
+-   [@shadcn/ui (svelte port)](https://www.shadcn-svelte.com/)
+-   [TailwindCSS](https://tailwindcss.com/)
+-   [TypeScript](https://www.typescriptlang.org/)
+-   [Bun](https://bun.sh)
+-   [tRPC](https://trpc.io) (with [svelte-query](https://github.com/vishalbalaji/trpc-svelte-query-adapter))
 
 # Building
 
 To build this project you will need to install the following dependency programs on your machine:
 
-- [Bun](https://bun.sh) - https://bun.sh/
+-   [Bun](https://bun.sh) - https://bun.sh/
 
 [Bun](https://bun.sh) is a Javascript runtime that is better suited to the task at hand than NodeJS seems to be, whilst remaining mostly compatible (or at least, compatible enough to run Vite).
 

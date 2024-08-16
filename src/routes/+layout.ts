@@ -14,3 +14,6 @@ export const load = (async () => {
 
 	return { queryClient };
 }) satisfies LayoutLoad;
+
+export const ssr = false;
+export const csr = true;

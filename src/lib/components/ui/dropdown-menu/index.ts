@@ -21,7 +21,7 @@ const Root = DropdownMenuPrimitive.Root;
 const Trigger = DropdownMenuPrimitive.Trigger;
 const Group = DropdownMenuPrimitive.Group;
 
-type ChildrenProp = { children: Snippet };
+type ChildrenProp = { children?: Snippet };
 
 export type CheckBoxItemProps = DropdownMenuPrimitive.CheckboxItemProps &
 	ChildrenProp;

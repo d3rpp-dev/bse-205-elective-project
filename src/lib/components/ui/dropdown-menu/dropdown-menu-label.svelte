@@ -16,5 +16,7 @@
 	class={cn("px-2 py-1.5 text-sm font-semibold", inset && "pl-8", className)}
 	{...rest}
 >
-	{@render children()}
+	{#if children}
+		{@render children()}
+	{/if}
 </DropdownMenuPrimitive.Label>
