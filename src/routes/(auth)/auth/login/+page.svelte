@@ -3,7 +3,7 @@
 
 	import { Button } from "@/ui/button";
 	import { Label } from "@/ui/label";
-	import { Input, File } from "@/ui/input";
+	import { Input, File as FileInput } from "@/ui/input";
 	import * as Card from "@/ui/card";
 
 	import { PAGE_TRANSITION_TIME } from "$lib";
@@ -12,16 +12,21 @@
 
 	let username = $state("");
 	let password = $state("");
-	let secret_key_filelist: FileList | undefined = $state(undefined);
+	let secret_key_file: File | null = $state(null);
 
-	$effect(() => {
-		if (secret_key_filelist && secret_key_filelist.item(0)) {
-			const blob_url = URL.createObjectURL(secret_key_filelist.item(0)!);
-			fetch(blob_url)
-				.then((res) => res.json())
-				.then(console.log);
+	const secret_key_json = $derived.by(async () => {
+		if (secret_key_file) {
+			const blob_url = URL.createObjectURL(secret_key_file);
+			const blob_response = await fetch(blob_url);
+			return await blob_response.json();
+		} else {
+			return null;
 		}
 	});
+
+	$inspect(secret_key_json).with(async (type, val) =>
+		console.log(type, await val),
+	);
 
 	const onsubmit = (ev: SubmitEvent) => {
 		ev.preventDefault();
@@ -60,7 +65,7 @@
 
 						<div class="flex flex-col space-y-1.5">
 							<Label for="secret-key">Secret Key</Label>
-							<File
+							<FileInput
 								id="secret-key"
 								class="cursor-pointer"
 								accept="application/json"
@@ -70,7 +75,8 @@
 									)
 										return;
 									if (ev.target.files)
-										secret_key_filelist = ev.target.files;
+										secret_key_file =
+											ev.target.files.item(0);
 								}}
 								ondrop={(ev) => {
 									// handle drag and drop.
@@ -79,7 +85,7 @@
 
 									const dt = ev.dataTransfer;
 									if (dt && dt.files)
-										secret_key_filelist = dt.files;
+										secret_key_file = dt.files.item(0);
 								}}
 							/>
 						</div>

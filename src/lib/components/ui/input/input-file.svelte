@@ -7,7 +7,7 @@
 		/**
 		 * Ignored.
 		 */
-        // eslint-disable-next-line
+		// eslint-disable-next-line
 		type = "file",
 
 		// Events
@@ -55,7 +55,6 @@
 		ev.stopPropagation();
 		ev.preventDefault();
 	}}
-
 	{onblur}
 	{onchange}
 	{onclick}

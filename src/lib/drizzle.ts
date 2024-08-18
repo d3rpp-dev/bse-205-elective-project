@@ -121,7 +121,7 @@ export type EmailAddressesInsertModel = InferInsertModel<
 /**
  * This is a table that allows us to do a quick and dirty user public assets api
  *
- * This is to be used for things like profile pictures
+ * This is to be used for things like profile pictures, which are *public*
  */
 export const publicAssetTable = sqliteTable("public_assets", {
 	/**
