@@ -10,16 +10,18 @@
 
 	import { fade } from "svelte/transition";
 
-    let username = $state("");
-    let password = $state("");
-    let secret_key_filelist: FileList | undefined = $state(undefined);
+	let username = $state("");
+	let password = $state("");
+	let secret_key_filelist: FileList | undefined = $state(undefined);
 
-    $effect(() => {
-        if (secret_key_filelist && secret_key_filelist.item(0)) {
-            const blob_url = URL.createObjectURL(secret_key_filelist.item(0)!);
-            fetch(blob_url).then(res => res.json()).then(console.log);
-        }
-    });
+	$effect(() => {
+		if (secret_key_filelist && secret_key_filelist.item(0)) {
+			const blob_url = URL.createObjectURL(secret_key_filelist.item(0)!);
+			fetch(blob_url)
+				.then((res) => res.json())
+				.then(console.log);
+		}
+	});
 
 	const onsubmit = (ev: SubmitEvent) => {
 		ev.preventDefault();
@@ -40,34 +42,45 @@
 					<div class="grid w-full items-center gap-4">
 						<div class="flex flex-col space-y-1.5">
 							<Label for="username">Username</Label>
-							<Input id="username" type="text" bind:value={username} />
+							<Input
+								id="username"
+								type="text"
+								bind:value={username}
+							/>
 						</div>
 
 						<div class="flex flex-col space-y-1.5">
 							<Label for="password">Password</Label>
-							<Input id="password" type="password" bind:value={password} />
-						</div>  
+							<Input
+								id="password"
+								type="password"
+								bind:value={password}
+							/>
+						</div>
 
 						<div class="flex flex-col space-y-1.5">
 							<Label for="secret-key">Secret Key</Label>
 							<File
 								id="secret-key"
 								class="cursor-pointer"
-                                accept="application/json"
+								accept="application/json"
+								onchange={(ev) => {
+									if (
+										!(ev.target instanceof HTMLInputElement)
+									)
+										return;
+									if (ev.target.files)
+										secret_key_filelist = ev.target.files;
+								}}
+								ondrop={(ev) => {
+									// handle drag and drop.
+									ev.stopPropagation();
+									ev.preventDefault();
 
-                                onchange={(ev) => {
-                                    if (!(ev.target instanceof HTMLInputElement)) return;
-                                    if (ev.target.files) secret_key_filelist = ev.target.files;
-                                }}
-
-                                ondrop={(ev) => {
-                                    // handle drag and drop.
-                                    ev.stopPropagation();
-                                    ev.preventDefault();
-
-                                    const dt = ev.dataTransfer;
-                                    if (dt && dt.files) secret_key_filelist = dt.files;
-                                }}
+									const dt = ev.dataTransfer;
+									if (dt && dt.files)
+										secret_key_filelist = dt.files;
+								}}
 							/>
 						</div>
 

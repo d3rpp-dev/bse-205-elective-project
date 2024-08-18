@@ -3,7 +3,7 @@ import File from "./input-file.svelte";
 
 export {
 	Root,
-    File,
+	File,
 	//
 	Root as Input,
 };
