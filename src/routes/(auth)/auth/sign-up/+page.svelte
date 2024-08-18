@@ -4,7 +4,16 @@
 	import { debounce } from "$lib/utils";
 	import { PAGE_TRANSITION_TIME } from "$lib";
 
-	import { derived, writable, type Readable } from "svelte/store";
+	// renamed because it clashes with the $derived rune?
+	// ¯\_(ツ)_/¯
+	//
+	// Damn you Rich Harris
+	import {
+		derived as derived_store,
+		get,
+		writable,
+		type Readable,
+	} from "svelte/store";
 	import { slide, fade } from "svelte/transition";
 
 	import { Label } from "@/ui/label";
@@ -14,17 +23,24 @@
 	import { CircleCheck, CircleX, LoaderCircle } from "lucide-svelte";
 	import Main from "@/main.svelte";
 	import { Button } from "@/ui/button";
+	import { z } from "zod";
+	import { goto } from "$app/navigation";
 
 	const rpc = trpc($page);
 	// const utils = rpc.createUtils();
 
+	// #region Username Validation
 	const username = writable("");
-	const username_is_empty = derived(username, (val) => val.length == 0, true);
+	const username_is_empty = derived_store(
+		username,
+		(val) => val.length == 0,
+		true,
+	);
 
 	const username_availability_query =
 		rpc.auth.check_username_availability.createQuery(
 			username,
-			derived(username_is_empty, (val) => {
+			derived_store(username_is_empty, (val) => {
 				return {
 					retry: false,
 					enabled: !val,
@@ -37,9 +53,8 @@
 	 * Error text generated from zod error, error reasons (used in `reason`) are defined
 	 * in the server handler for the `username_availability_query`.
 	 */
-	const username_invalid_error_text: Readable<string | undefined> = derived(
-		username_availability_query,
-		(val) => {
+	const username_invalid_error_text: Readable<string | undefined> =
+		derived_store(username_availability_query, (val) => {
 			if (val.data && val.data.available === false)
 				return "Username is Taken";
 
@@ -59,14 +74,42 @@
 				default:
 					return "Unknown Error";
 			}
+		});
+
+	// #endregion
+
+	// #region Password Validation
+	const PASSWORD_SCHEMA = z
+		.string()
+		.min(8, "Password must contain at least 8 characters");
+
+	let password = $state("");
+
+	const password_validation: string | boolean = $derived.by(() => {
+		if (password.length === 0) return false;
+
+		const validity = PASSWORD_SCHEMA.safeParse(password);
+		if (validity.success) return true;
+
+		return validity.error.format()._errors[0];
+	});
+
+	// #endregion
+
+	const sign_up_mutation = rpc.auth.sign_up.createMutation({
+		onSuccess: () => {
+			goto("/auth/sign-up/onboarding");
 		},
-	);
+	});
 
 	/**
 	 * On Submit form handler
 	 */
 	const onsubmit = (ev: SubmitEvent) => {
+		ev.stopPropagation();
 		ev.preventDefault();
+
+		$sign_up_mutation.mutate({ username: get(username), password });
 	};
 </script>
 
@@ -139,8 +182,31 @@
 						</div>
 
 						<div class="flex flex-col space-y-1.5">
-							<Label for="password">Password</Label>
-							<Input type="password" id="password" />
+							<span class="inline-flex h-4 gap-1">
+								<Label for="password">Password</Label>
+								{#if typeof password_validation === "string"}
+									<CircleX
+										class="h-4 w-4 text-destructive-foreground"
+									/>
+								{:else if password_validation === true}
+									<CircleCheck
+										class="h-4 w-4 text-green-300"
+									/>
+								{/if}
+							</span>
+							<Input
+								type="password"
+								id="password"
+								bind:value={password}
+							/>
+							{#if typeof password_validation === "string"}
+								<p
+									class="h-8 text-sm text-destructive-foreground"
+									transition:slide={{ axis: "y" }}
+								>
+									{password_validation}
+								</p>
+							{/if}
 						</div>
 
 						<div class="flex flex-row items-center gap-4">
@@ -151,7 +217,9 @@
 								Login
 							</a>
 							<span class="flex-1"></span>
-							<Button variant="default">Continue</Button>
+							<Button variant="default" type="submit">
+								Continue
+							</Button>
 						</div>
 					</div>
 				</form>

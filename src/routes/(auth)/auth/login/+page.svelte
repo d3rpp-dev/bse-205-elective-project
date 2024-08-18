@@ -14,21 +14,18 @@
 	let password = $state("");
 	let secret_key_file: File | null = $state(null);
 
-	const secret_key_json = $derived.by(async () => {
+	const secret_key_json: Promise<any> | null = $derived.by(async () => {
 		if (secret_key_file) {
 			const blob_url = URL.createObjectURL(secret_key_file);
 			const blob_response = await fetch(blob_url);
 			return await blob_response.json();
 		} else {
-			return null;
+			return Promise.resolve(null);
 		}
 	});
 
-	$inspect(secret_key_json).with(async (type, val) =>
-		console.log(type, await val),
-	);
-
 	const onsubmit = (ev: SubmitEvent) => {
+		ev.stopPropagation();
 		ev.preventDefault();
 	};
 </script>
@@ -100,6 +97,18 @@
 							<span class="flex-1"></span>
 							<Button variant="default">Continue</Button>
 						</div>
+
+						{#await secret_key_json}
+							<!-- Emptys -->
+						{:then json}
+							{#if json}
+								<div
+									class="flex flex-row items-center gap-4 overflow-y-auto"
+								>
+									<pre>{JSON.stringify(json, null, 2)}</pre>
+								</div>
+							{/if}
+						{/await}
 					</div>
 				</form>
 			</Card.Content>

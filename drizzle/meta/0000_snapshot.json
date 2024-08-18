@@ -1,7 +1,7 @@
 {
 	"version": "6",
 	"dialect": "sqlite",
-	"id": "f3c55a7a-8bd7-451f-b5c2-ad2370a0829c",
+	"id": "86be13c9-c3e4-4d58-b449-58f12e9dfda3",
 	"prevId": "00000000-0000-0000-0000-000000000000",
 	"tables": {
 		"email_addresses": {
@@ -18,7 +18,7 @@
 					"name": "user_id",
 					"type": "text(26)",
 					"primaryKey": false,
-					"notNull": false,
+					"notNull": true,
 					"autoincrement": false
 				},
 				"email_address": {
@@ -55,6 +55,69 @@
 					"onUpdate": "no action"
 				}
 			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"passwords": {
+			"name": "passwords",
+			"columns": {
+				"user_id": {
+					"name": "user_id",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"password_hash": {
+					"name": "password_hash",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"passwords_user_id_users_id_fk": {
+					"name": "passwords_user_id_users_id_fk",
+					"tableFrom": "passwords",
+					"tableTo": "users",
+					"columnsFrom": ["user_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"public_assets": {
+			"name": "public_assets",
+			"columns": {
+				"file_name": {
+					"name": "file_name",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"type": {
+					"name": "type",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"blob": {
+					"name": "blob",
+					"type": "blob",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
 			"compositePrimaryKeys": {},
 			"uniqueConstraints": {}
 		},
@@ -121,6 +184,13 @@
 					"primaryKey": false,
 					"notNull": true,
 					"autoincrement": false
+				},
+				"profile_picture": {
+					"name": "profile_picture",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false,
+					"autoincrement": false
 				}
 			},
 			"indexes": {
@@ -130,7 +200,17 @@
 					"isUnique": true
 				}
 			},
-			"foreignKeys": {},
+			"foreignKeys": {
+				"users_profile_picture_public_assets_file_name_fk": {
+					"name": "users_profile_picture_public_assets_file_name_fk",
+					"tableFrom": "users",
+					"tableTo": "public_assets",
+					"columnsFrom": ["profile_picture"],
+					"columnsTo": ["file_name"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
 			"compositePrimaryKeys": {},
 			"uniqueConstraints": {}
 		}
