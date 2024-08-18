@@ -14,11 +14,11 @@
 	let password = $state("");
 	let secret_key_file: File | null = $state(null);
 
-	const secret_key_json: Promise<any> | null = $derived.by(async () => {
+	const secret_key_json: Promise<unknown> | null = $derived.by(async () => {
 		if (secret_key_file) {
 			const blob_url = URL.createObjectURL(secret_key_file);
 			const blob_response = await fetch(blob_url);
-			return await blob_response.json();
+			return (await blob_response.json()) as unknown;
 		} else {
 			return Promise.resolve(null);
 		}
