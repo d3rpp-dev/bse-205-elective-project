@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { APPLICATION_NAME, APPLICATION_ICON } from ".";
 
-	import ThemeToggle from "@/theme-toggle.svelte";
+	import { AccountHeaderComponent } from "@/account";
 </script>
 
 <header
@@ -19,7 +19,7 @@
 		<div
 			class="hidden flex-1 items-center justify-between space-x-2 md:flex md:justify-end"
 		>
-			<ThemeToggle />
+			<AccountHeaderComponent />
 		</div>
 	</div>
 </header>

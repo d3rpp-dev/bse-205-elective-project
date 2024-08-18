@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { cubicOut } from "svelte/easing";
 import type { TransitionConfig } from "svelte/transition";
 import { twMerge } from "tailwind-merge";
+import { monotonicFactory } from "ulid";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -68,3 +69,5 @@ export function debounce<T>(cb: (v: T) => void, durationMs: number) {
 		timer = setTimeout(() => cb(v), durationMs);
 	};
 }
+
+export const monotonic_ulid = monotonicFactory();

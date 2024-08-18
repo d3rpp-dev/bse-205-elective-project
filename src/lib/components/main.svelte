@@ -1,3 +1,13 @@
+<script lang="ts">
+	import { cn } from "$lib/utils";
+	import type { HTMLAttributes } from "svelte/elements";
+	const {
+		class: className,
+
+		children,
+	}: HTMLAttributes<HTMLDivElement> = $props();
+</script>
+
 <!-- 
 	@component
 	
@@ -5,6 +15,8 @@
 	usable and can be expanded later to also work on mobile.
 -->
 
-<main class="mx-auto max-w-screen-2xl py-4">
-	<slot />
+<main class={cn("mx-auto max-w-screen-2xl py-4", className)}>
+	{#if children}
+		{@render children()}
+	{/if}
 </main>

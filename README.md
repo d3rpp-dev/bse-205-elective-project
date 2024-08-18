@@ -4,7 +4,6 @@
 
 -   [The Stack](#the-stack)
 -   [Building](#building)
--   [Project Structure](#project-structure)
 
 # The Stack
 
@@ -46,29 +45,4 @@ If you'd like to create a production-ready build, run the following commands.
 bun run build
 # Run the build, should be done in a docker container
 bun ./build/index.js
-```
-
-# Project Structure
-
-```py
-(project root)
-├── src
-│   ├── contrib
-│   │   └── # code to establish a database
-│   ├── lib
-│   │   ├── components
-│   │   │   └── # shadcn components
-│   │   ├── crypto
-│   │   │   └── # modules for handling cryptography
-│   │   ├── drizzle.ts # database schemas
-│   │   └── server
-│   │       └── # server only modules
-│   ├── routes
-│   │   └── # application front-end structure
-│   └── test
-│       └── # automated tests for testing cryptography modules
-├── drizzle
-│   └── # database migration history
-└── static
-    └── # static assets
 ```

@@ -8,15 +8,15 @@ import { eq, or } from "drizzle-orm";
 export const authRouter = trpcInstance.router({
 	check_username_availability: trpcInstance.procedure
 		.input(
-			z.object({
-				username: z
-					.string()
-					.max(32)
-					.describe("Username to check usage of"),
-			}),
+			z
+				.string()
+				.max(32, "invalid_length")
+				.regex(/^[a-z0-9_]+$/, "invalid_chars"),
 		)
 		.query(async (opts) => {
-			const username = opts.input.username;
+			const username = opts.input;
+
+			if (username == "test_user") return { available: false };
 
 			console.log("checking", JSON.stringify(username));
 
@@ -32,8 +32,6 @@ export const authRouter = trpcInstance.router({
 						eq(userAliasTable.alias_name, username),
 					),
 				);
-
-			await new Promise((res) => setTimeout(res, 1000));
 
 			return {
 				available: query.length === 0,

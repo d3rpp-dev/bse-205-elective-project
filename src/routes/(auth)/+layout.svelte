@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { AppHeader } from "@/headers";
+	import { AppFooter } from "@/footers";
 
 	const { children } = $props();
 </script>
 
-<AppHeader />
+<div class="h-screen">
+	<AppHeader />
 
-<main class="mx-auto my-4 max-w-screen-2xl">
 	{@render children()}
-</main>
+
+	<AppFooter />
+</div>

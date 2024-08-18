@@ -8,6 +8,13 @@
 			"when": 1723761059597,
 			"tag": "0000_open_famine",
 			"breakpoints": true
+		},
+		{
+			"idx": 1,
+			"version": "6",
+			"when": 1723979465707,
+			"tag": "0001_spicy_thena",
+			"breakpoints": true
 		}
 	]
 }

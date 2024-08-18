@@ -12,6 +12,7 @@ import {
 	integer,
 	foreignKey,
 } from "drizzle-orm/sqlite-core";
+import { monotonic_ulid } from "./utils";
 
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
@@ -116,3 +117,26 @@ export type EmailAddressesSelectModel = InferSelectModel<
 export type EmailAddressesInsertModel = InferInsertModel<
 	typeof emailAddressesTable
 >;
+
+/**
+ * This is a table that allows us to do a quick and dirty user public assets api
+ *
+ * This is to be used for things like profile pictures
+ */
+export const publicAssetTable = sqliteTable("public_assets", {
+	/**
+	 * File ID of the public asset
+	 */
+	id: text("file_name").primaryKey().$defaultFn(monotonic_ulid),
+	/**
+	 * {@link https://mdn.io/mime-type | MIME Type } of this file, used when returning.
+	 */
+	type: text("type").notNull(),
+	/**
+	 * Blob of the file, this is the actual file to be stored
+	 */
+	blob: blob("blob", { mode: "buffer" }).notNull().$type<Uint8Array>(),
+});
+
+export type PublicAssetSelectModel = InferSelectModel<typeof publicAssetTable>;
+export type PublicAssetInsertModel = InferInsertModel<typeof publicAssetTable>;

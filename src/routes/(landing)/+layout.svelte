@@ -1,15 +1,15 @@
 <script lang="ts">
-	import LandingHeader from "@/headers/landing-header.svelte";
+	import { LandingHeader } from "@/headers";
+	import { LandingFooter } from "@/footers";
+	import Main from "@/main.svelte";
 
-	import type { Snippet } from "svelte";
-
-	interface Props {
-		children: Snippet;
-	}
-
-	const { children }: Props = $props();
+	const { children } = $props();
 </script>
 
 <LandingHeader />
 
-{@render children()}
+<Main class="h-landing-main">
+	{@render children()}
+</Main>
+
+<LandingFooter />
