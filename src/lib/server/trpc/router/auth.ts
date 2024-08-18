@@ -1,14 +1,10 @@
 import z from "zod";
 import { trpcInstance } from "./init";
+import { USERNAME_SCHEMA, PASSWORD_SCHEMA } from "$lib/trpc/schemas";
 
 import { DB } from "$lib/server/db";
 import { userTable, userAliasTable, passwordTable } from "$lib/drizzle";
 import { eq, or } from "drizzle-orm";
-
-const USERNAME_SCHEMA = z
-	.string()
-	.max(32, "invalid_length")
-	.regex(/^[a-z0-9_]+$/, "invalid_chars");
 
 export const authRouter = trpcInstance.router({
 	// #region Check Username
@@ -40,7 +36,7 @@ export const authRouter = trpcInstance.router({
 		.input(
 			z.object({
 				username: USERNAME_SCHEMA,
-				password: z.string().min(8),
+				password: PASSWORD_SCHEMA,
 			}),
 		)
 		.mutation(async (opts) => {
@@ -66,7 +62,7 @@ export const authRouter = trpcInstance.router({
 
 			console.log("Created User", user_id);
 
-			// todo: return user token
+			// todo: set user token cookie
 		}),
 	// #endregion
 });

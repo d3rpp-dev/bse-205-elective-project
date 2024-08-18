@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { page } from "$app/stores";
+	import { goto } from "$app/navigation";
+
 	import { trpc } from "$lib/trpc/client";
+	import { PASSWORD_SCHEMA } from "$lib/trpc/schemas";
 	import { debounce } from "$lib/utils";
 	import { PAGE_TRANSITION_TIME } from "$lib";
 
@@ -16,15 +19,13 @@
 	} from "svelte/store";
 	import { slide, fade } from "svelte/transition";
 
-	import { Label } from "@/ui/label";
-	import { Input } from "@/ui/input";
+	import { Button } from "@/ui/button";
 	import * as Card from "@/ui/card";
+	import { Input } from "@/ui/input";
+	import { Label } from "@/ui/label";
+	import Main from "@/main.svelte";
 
 	import { CircleCheck, CircleX, LoaderCircle } from "lucide-svelte";
-	import Main from "@/main.svelte";
-	import { Button } from "@/ui/button";
-	import { z } from "zod";
-	import { goto } from "$app/navigation";
 
 	const rpc = trpc($page);
 	// const utils = rpc.createUtils();
@@ -65,24 +66,13 @@
 			)
 				return "Unknown Error";
 
-			const reason = val.error.data.zodError.formErrors[0];
-			switch (reason) {
-				case "invalid_chars":
-					return "Usernames may only contain lowercase letters, numbers, and underscores.";
-				case "invalid_length":
-					return "Usernames may be between 1 and 32 characters long.";
-				default:
-					return "Unknown Error";
-			}
+			const first_form_error = val.error.data.zodError.formErrors[0];
+			if (first_form_error) return first_form_error;
 		});
 
 	// #endregion
 
 	// #region Password Validation
-	const PASSWORD_SCHEMA = z
-		.string()
-		.min(8, "Password must contain at least 8 characters");
-
 	let password = $state("");
 
 	const password_validation: string | boolean = $derived.by(() => {
@@ -93,7 +83,6 @@
 
 		return validity.error.format()._errors[0];
 	});
-
 	// #endregion
 
 	const sign_up_mutation = rpc.auth.sign_up.createMutation({

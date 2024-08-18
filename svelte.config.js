@@ -16,6 +16,14 @@ const config = {
 		alias: {
 			"@": "./src/lib/components/*",
 		},
+
+		csp: {
+			mode: "auto",
+		},
+
+		csrf: {
+			checkOrigin: true,
+		},
 	},
 };
 

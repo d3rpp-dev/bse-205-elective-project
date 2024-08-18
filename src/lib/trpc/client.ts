@@ -1,7 +1,7 @@
 // type imported for TSDoc, ignore this.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { page } from "$app/stores";
-import type { Router } from "$lib/trpc/router";
+import type { Router } from "$lib/server/trpc/router";
 
 import { createTRPCClient, type TRPCClientInit } from "trpc-sveltekit";
 import type { QueryClient } from "@tanstack/svelte-query";
