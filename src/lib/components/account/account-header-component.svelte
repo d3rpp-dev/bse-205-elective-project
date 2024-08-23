@@ -16,7 +16,7 @@
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		<Avatar.Root>
-			{#if user}
+			{#if user && user.profile_picture}
 				<Avatar.Image
 					src={`/api/public_assets/${user.profile_picture}`}
 					alt="Profile Photo"

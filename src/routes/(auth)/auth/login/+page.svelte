@@ -74,25 +74,28 @@
 				<form {onsubmit}>
 					<div class="grid w-full items-center gap-4">
 						<div class="flex flex-col space-y-1.5">
-							<Label for="username">Username</Label>
+							<Label for="username">Username&nbsp;<span class="text-destructive-foreground">*</span></Label>
 							<Input
 								id="username"
 								type="text"
+                                required={true}
 								bind:value={username}
 							/>
 						</div>
 
 						<div class="flex flex-col space-y-1.5">
-							<Label for="password">Password</Label>
+							<Label for="password">Password&nbsp;<span class="text-destructive-foreground">*</span></Label>
 							<Input
 								id="password"
 								type="password"
+                                required={true}
 								bind:value={password}
 							/>
 						</div>
 
 						<div class="flex flex-col space-y-1.5">
-							<Label for="secret-key">Secret Key</Label>
+							<Label for="secret-key">Secret Key&nbsp;<span class="text-destructive-foreground">*</span></Label>
+                            <!-- TODO: make this required -->
 							<FileInput
 								id="secret-key"
 								class="cursor-pointer"
