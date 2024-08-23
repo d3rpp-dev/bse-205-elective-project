@@ -8,14 +8,15 @@
 
 	interface Props {
 		user: UserType | null;
+		avatar_size: "default" | "smol";
 	}
 
-	const { user = null }: Props = $props();
+	const { user = null, avatar_size = "default" }: Props = $props();
 </script>
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
-		<Avatar.Root>
+		<Avatar.Root class={avatar_size == "smol" ? "h-8 w-8" : undefined}>
 			{#if user && user.profile_picture}
 				<Avatar.Image
 					src={`/api/public_assets/${user.profile_picture}`}
@@ -36,7 +37,7 @@
 			</DropdownMenu.Label>
 			<DropdownMenu.Separator />
 			<DropdownMenu.Item href="/app">Dashboard</DropdownMenu.Item>
-			<DropdownMenu.Item>Account</DropdownMenu.Item>
+			<DropdownMenu.Item href="/app/account">Account</DropdownMenu.Item>
 			<DropdownMenu.Separator />
 			<DropdownMenu.Item href="/auth/logout" variant="destructive">
 				Log Out

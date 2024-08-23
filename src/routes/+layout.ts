@@ -1,6 +1,8 @@
 import { browser } from "$app/environment";
 import { QueryClient } from "@tanstack/svelte-query";
 
+import { TheAmalgamation } from "$lib/client";
+
 import type { LayoutLoad } from "./$types";
 
 export const load = (async () => {
@@ -12,7 +14,10 @@ export const load = (async () => {
 		},
 	});
 
-	return { queryClient };
+    const runtimeClient = new TheAmalgamation();
+    await runtimeClient.initialise_from_localstorage();
+
+	return { queryClient, runtimeClient };
 }) satisfies LayoutLoad;
 
 export const ssr = false;

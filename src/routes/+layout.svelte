@@ -8,9 +8,12 @@
 	import { SvelteQueryDevtools } from "@tanstack/svelte-query-devtools";
 
 	import type { LayoutData } from "./$types";
+	import { setRuntimeClientContext } from "$lib/client";
 
-	const { queryClient, children }: LayoutData & { children: Snippet } =
+	const { queryClient, runtimeClient, children }: LayoutData & { children: Snippet } =
 		$props();
+
+    setRuntimeClientContext(runtimeClient);
 </script>
 
 <svelte:head>

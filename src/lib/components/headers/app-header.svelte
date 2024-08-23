@@ -29,7 +29,7 @@
 		<div
 			class="hidden flex-1 items-center justify-between space-x-2 md:flex md:justify-end"
 		>
-			<AccountHeaderComponent {user} />
+			<AccountHeaderComponent {user} avatar_size="smol" />
 		</div>
 	</div>
 </header>
