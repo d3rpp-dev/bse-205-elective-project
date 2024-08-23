@@ -6,7 +6,7 @@
 </script>
 
 <div class="h-screen">
-	<AppHeader />
+	<AppHeader user={null} />
 
 	{@render children()}
 

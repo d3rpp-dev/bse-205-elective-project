@@ -1,7 +1,4 @@
-import {
-	DropdownMenu as DropdownMenuPrimitive,
-	type MenubarPropsWithoutHTML,
-} from "bits-ui";
+import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
 import type { HTMLAttributes } from "svelte/elements";
 import type { Snippet } from "svelte";
 
@@ -23,15 +20,15 @@ const Group = DropdownMenuPrimitive.Group;
 
 type ChildrenProp = { children?: Snippet };
 
-export type CheckBoxItemProps = DropdownMenuPrimitive.CheckboxItemProps &
-	ChildrenProp;
+export type CheckBoxItemProps = DropdownMenuPrimitive.CheckboxItemProps;
 
 export type ContentProps = DropdownMenuPrimitive.ContentProps & ChildrenProp;
 
-export type ItemProps = Omit<MenubarPropsWithoutHTML, "el"> &
-	HTMLAttributes<HTMLAnchorElement> & {
-		inset?: boolean;
-	} & ChildrenProp;
+export type ItemProps = HTMLAttributes<HTMLAnchorElement> & {
+	inset?: boolean;
+	href?: string;
+	variant?: "default" | "destructive";
+} & ChildrenProp;
 
 export type LabelProps = DropdownMenuPrimitive.LabelProps & {
 	inset?: boolean;

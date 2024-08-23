@@ -7,6 +7,8 @@
 	const {
 		class: className,
 		inset = false,
+		href,
+		variant = "default",
 
 		// Events
 		onclick,
@@ -28,8 +30,12 @@
 		"relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:opacity-50",
 		inset && "pl-8",
 		className,
+		href !== undefined && "cursor-pointer",
+		variant === "destructive" &&
+			"data-[highlighted]:bg-destructive-foreground",
 	)}
 	{...rest}
+	{href}
 	{onclick}
 	{onkeydown}
 	{onfocusin}

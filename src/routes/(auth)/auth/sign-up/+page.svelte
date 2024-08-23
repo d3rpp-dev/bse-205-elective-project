@@ -19,13 +19,16 @@
 	} from "svelte/store";
 	import { slide, fade } from "svelte/transition";
 
+	import Main from "@/main.svelte";
+
 	import { Button } from "@/ui/button";
 	import * as Card from "@/ui/card";
 	import { Input } from "@/ui/input";
 	import { Label } from "@/ui/label";
-	import Main from "@/main.svelte";
+	import { Separator } from "@/ui/separator";
 
 	import { CircleCheck, CircleX, LoaderCircle } from "lucide-svelte";
+	import { GithubLogo } from "svelte-radix";
 
 	const rpc = trpc($page);
 	// const utils = rpc.createUtils();
@@ -56,6 +59,7 @@
 	 */
 	const username_invalid_error_text: Readable<string | undefined> =
 		derived_store(username_availability_query, (val) => {
+			console.log(val.data);
 			if (val.data && val.data.available === false)
 				return "Username is Taken";
 
@@ -100,6 +104,16 @@
 
 		$sign_up_mutation.mutate({ username: get(username), password });
 	};
+
+	/**
+	 * Sign Up with Github Button Handler
+	 */
+	const github_signup_onclick = (ev: MouseEvent) => {
+		ev.stopPropagation();
+		ev.preventDefault();
+
+		goto("/oauth/github");
+	};
 </script>
 
 <Main class="grid h-app-main place-items-center">
@@ -114,6 +128,8 @@
 			<Card.Content>
 				<form {onsubmit}>
 					<div class="grid w-full items-center gap-4">
+						<!-- #region Username Input 
+                        -->
 						<div class="flex flex-col space-y-1.5">
 							<span class="inline-flex h-4 gap-1">
 								<Label for="username">Username</Label>
@@ -124,15 +140,15 @@
 										<LoaderCircle
 											class="h-4 w-4 animate-spin text-muted-foreground"
 										/>
-										<!-- 
-                                    Either: 
-                                        A: network error
-                                        B: invalid username
-                                        C: username taken
-
-                                    Details are in the box below
-                                -->
 									{:else if $username_availability_query.isError || $username_availability_query.data?.available == false}
+										<!-- 
+                                            Either: 
+                                                A: network error
+                                                B: invalid username
+                                                C: username taken
+
+                                            Details are in the box below
+                                        -->
 										<CircleX
 											class="h-4 w-4 text-destructive-foreground"
 										/>
@@ -153,23 +169,24 @@
 									)
 										return;
 									username.set(ev.target.value);
-									/* note(d3rpp): still determining if this is necessary 
-                                since the store appears to do it automagically */
-
-									// utils.auth.check_username_availability.invalidate();
 								}, 500)}
 							/>
 
-							{#if $username_invalid_error_text && !$username_is_empty && !$username_availability_query.isFetching}
+							{#if ($username_invalid_error_text && !$username_is_empty && !$username_availability_query.isFetching) || $sign_up_mutation.isError}
 								<p
-									class="h-8 text-sm text-destructive-foreground"
+									class="h-auto w-full text-sm text-destructive-foreground transition-height"
 									transition:slide={{ axis: "y" }}
 								>
-									{$username_invalid_error_text}
+									{$sign_up_mutation.error?.message ||
+										$username_invalid_error_text ||
+										""}
 								</p>
 							{/if}
 						</div>
+						<!-- #endregion -->
 
+						<!-- #region Password Input 
+                        -->
 						<div class="flex flex-col space-y-1.5">
 							<span class="inline-flex h-4 gap-1">
 								<Label for="password">Password</Label>
@@ -190,13 +207,14 @@
 							/>
 							{#if typeof password_validation === "string"}
 								<p
-									class="h-8 text-sm text-destructive-foreground"
+									class="h-8 text-sm text-destructive-foreground transition-height"
 									transition:slide={{ axis: "y" }}
 								>
 									{password_validation}
 								</p>
 							{/if}
 						</div>
+						<!-- #endregion -->
 
 						<div class="flex flex-row items-center gap-4">
 							<a
@@ -212,6 +230,23 @@
 						</div>
 					</div>
 				</form>
+
+				<div
+					class="my-4 flex w-full flex-row items-center justify-center gap-4"
+				>
+					<Separator class="w-[40%]" orientation="horizontal" />
+					<span class="text-sm italic">or</span>
+					<Separator class="w-[40%]" orientation="horizontal" />
+				</div>
+
+				<Button
+					class="flex w-full flex-row justify-start gap-4 hover:bg-white hover:text-[#1f2328]"
+					variant="outline"
+					onclick={github_signup_onclick}
+				>
+					<GithubLogo />
+					<span>Sign Up with GitHub</span>
+				</Button>
 			</Card.Content>
 		</Card.Root>
 	</div>

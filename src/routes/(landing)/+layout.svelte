@@ -3,10 +3,11 @@
 	import { LandingFooter } from "@/footers";
 	import Main from "@/main.svelte";
 
-	const { children } = $props();
+	const { data, children } = $props();
+	const { user } = data;
 </script>
 
-<LandingHeader />
+<LandingHeader {user} />
 
 <Main class="h-landing-main">
 	{@render children()}

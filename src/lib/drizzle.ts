@@ -128,6 +128,25 @@ export const passwordTable = sqliteTable("passwords", {
 export type PasswordSelectModel = InferSelectModel<typeof passwordTable>;
 export type PasswordInsertModel = InferInsertModel<typeof passwordTable>;
 
+export const sessionTable = sqliteTable("sessions", {
+	id: text("id", { mode: "text" }).notNull(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => userTable.id),
+	expiresAt: integer("expires_at").notNull(),
+});
+
+export type SessionSelectModel = InferSelectModel<typeof sessionTable>;
+export type SessionInsertModel = InferInsertModel<typeof sessionTable>;
+
+export const oauthConnectionTable = sqliteTable("oauth_connections", {
+	type: text("type", { mode: "text" }).notNull().$type<"github">(),
+	oauth_identifier: text("oauth_identifier", { mode: "text" }).notNull(),
+	user_id: text("user_id", { mode: "text" })
+		.notNull()
+		.references(() => userTable.id),
+});
+
 /**
  * This is a table that allows us to do a quick and dirty user public assets api
  *

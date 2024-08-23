@@ -1,7 +1,14 @@
 <script lang="ts">
+	import type { User } from "lucia";
 	import { APPLICATION_NAME, APPLICATION_ICON } from ".";
 
 	import { AccountHeaderComponent } from "@/account";
+
+	interface Props {
+		user: User | null;
+	}
+
+	const { user }: Props = $props();
 </script>
 
 <header
@@ -19,7 +26,7 @@
 		<div
 			class="hidden flex-1 items-center justify-between space-x-2 md:flex md:justify-end"
 		>
-			<AccountHeaderComponent />
+			<AccountHeaderComponent {user} />
 		</div>
 	</div>
 </header>

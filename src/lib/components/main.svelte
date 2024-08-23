@@ -15,7 +15,7 @@
 	usable and can be expanded later to also work on mobile.
 -->
 
-<main class={cn("mx-auto max-w-screen-2xl py-4", className)}>
+<main class={cn("mx-auto max-w-screen-2xl px-4 py-4 2xl:px-0", className)}>
 	{#if children}
 		{@render children()}
 	{/if}
