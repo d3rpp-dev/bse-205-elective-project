@@ -25,7 +25,7 @@ const checkAvailability = async (username: string) => {
 
 export const authRouter = trpcInstance.router({
 	// #region Check Username
-	check_username_availability: trpcInstance.procedure
+	checkUsernameAvailability: trpcInstance.procedure
 		.input(USERNAME_SCHEMA)
 		.query(async (opts) => {
 			return {
@@ -34,7 +34,7 @@ export const authRouter = trpcInstance.router({
 		}),
 	// #endregion
 	// #region Sign Up
-	sign_up: trpcInstance.procedure
+	signUp: trpcInstance.procedure
 		.input(
 			z.object({
 				username: USERNAME_SCHEMA,
@@ -83,7 +83,7 @@ export const authRouter = trpcInstance.router({
 		}),
 	// #endregion
 	// #region Log In
-	log_in: trpcInstance.procedure
+	logIn: trpcInstance.procedure
 		.input(
 			z.object({
 				username: USERNAME_SCHEMA,

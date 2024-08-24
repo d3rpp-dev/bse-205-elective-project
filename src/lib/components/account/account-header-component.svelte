@@ -8,7 +8,7 @@
 
 	interface Props {
 		user: UserType | null;
-		avatar_size: "default" | "smol";
+		avatar_size?: "default" | "smol";
 	}
 
 	const { user = null, avatar_size = "default" }: Props = $props();

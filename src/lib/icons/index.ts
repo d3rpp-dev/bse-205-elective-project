@@ -1,8 +1,7 @@
 import Lock from "./lock.svelte";
+import AnimatedLoading from "./AnimatedLoading.svelte";
 
-export default {
-	Lock,
-};
+export { Lock, AnimatedLoading };
 
 export interface IconProps {
 	size?: string;

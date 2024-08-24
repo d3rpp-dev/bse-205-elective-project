@@ -14,8 +14,8 @@ export const load = (async () => {
 		},
 	});
 
-    const runtimeClient = new TheAmalgamation();
-    await runtimeClient.initialise_from_localstorage();
+	const runtimeClient = new TheAmalgamation();
+	await runtimeClient.initialise_from_localstorage();
 
 	return { queryClient, runtimeClient };
 }) satisfies LayoutLoad;

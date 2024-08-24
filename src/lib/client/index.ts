@@ -5,30 +5,21 @@ export * from "./errors";
 import { InvalidKeyError } from "./errors";
 import { getContext, setContext } from "svelte";
 
-const private_key_usages: KeyUsage[] = [
-	"decrypt",
-	"unwrapKey",
-];
+const private_key_usages: KeyUsage[] = ["decrypt", "unwrapKey"];
 
-const public_key_usages: KeyUsage[] = [
-	"wrapKey",
-	"encrypt",
-];
+const public_key_usages: KeyUsage[] = ["wrapKey", "encrypt"];
 
-const key_usages = [
-    ...private_key_usages,
-    ...public_key_usages
-];
+const key_usages = [...private_key_usages, ...public_key_usages];
 
 const runtime_client_context_key = "$$_theAmalgamation";
 
 export const setRuntimeClientContext = (client: TheAmalgamation) => {
-    setContext(runtime_client_context_key, client);
-}
+	setContext(runtime_client_context_key, client);
+};
 
 export const getRuntimeClientContext = () => {
-    return getContext(runtime_client_context_key) as TheAmalgamation;
-}
+	return getContext(runtime_client_context_key) as TheAmalgamation;
+};
 
 /**
  * Behold, the amalgamation, the client that does literally everything on the client.
@@ -38,32 +29,38 @@ export class TheAmalgamation {
 
 	constructor() {}
 
-    public initialise_from_localstorage = async () => {
-        this.key_pairs = [];
-        console.info("Initialising Runtime Client from Localhost");
+	public initialise_from_localstorage = async () => {
+		this.key_pairs = [];
+		console.info("Initialising Runtime Client from Localhost");
 
-        for (let i = 0; i < window.localStorage.length; i++) {
-            const item_name = window.localStorage.key(i)!;
-            if (item_name.startsWith("cached_key-")) {
-                const cached_key_string = window.localStorage.getItem(item_name)!;
-                const parsed_cached_key = JSON.parse(cached_key_string);
+		for (let i = 0; i < window.localStorage.length; i++) {
+			const item_name = window.localStorage.key(i)!;
+			if (item_name.startsWith("cached_key-")) {
+				const cached_key_string =
+					window.localStorage.getItem(item_name)!;
+				const parsed_cached_key = JSON.parse(cached_key_string);
 
-                const kid = item_name.replace("cached_key-", "");
-                
-                if (
-                    "publicKey" in parsed_cached_key && typeof parsed_cached_key.publicKey === "object" &&
-                    "privateKey" in parsed_cached_key && typeof parsed_cached_key.privateKey === "object"
-                ) {
-                    const decoded_key = await this.decode_key_pair(parsed_cached_key.publicKey, parsed_cached_key.privateKey);
+				const kid = item_name.replace("cached_key-", "");
 
-                    this.add_key_pair_to_client(kid, decoded_key);
-                    console.info(`Imported Cached key of KID ${kid}`);
-                } else {
-                    console.warn(`Cached key of KID ${kid} is invalid`);
-                }
-            }
-        }
-    }
+				if (
+					"publicKey" in parsed_cached_key &&
+					typeof parsed_cached_key.publicKey === "object" &&
+					"privateKey" in parsed_cached_key &&
+					typeof parsed_cached_key.privateKey === "object"
+				) {
+					const decoded_key = await this.decode_key_pair(
+						parsed_cached_key.publicKey,
+						parsed_cached_key.privateKey,
+					);
+
+					this.add_key_pair_to_client(kid, decoded_key);
+					console.info(`Imported Cached key of KID ${kid}`);
+				} else {
+					console.warn(`Cached key of KID ${kid} is invalid`);
+				}
+			}
+		}
+	};
 
 	private get_key = (kid: string): JailBirdKey | undefined => {
 		return this.key_pairs.find((val) => val.kid === kid);
@@ -75,12 +72,15 @@ export class TheAmalgamation {
 			key,
 		});
 
-        window.localStorage.setItem(`cached_key-${kid}`, JSON.stringify(await this.encode_key_pair(key)));
-    };
+		window.localStorage.setItem(
+			`cached_key-${kid}`,
+			JSON.stringify(await this.encode_key_pair(key)),
+		);
+	};
 
-    private encode_key_pair = async (key: CryptoKeyPair) => {
-        return {
-            publicKey: await window.crypto.subtle.exportKey(
+	private encode_key_pair = async (key: CryptoKeyPair) => {
+		return {
+			publicKey: await window.crypto.subtle.exportKey(
 				"jwk",
 				key.publicKey,
 			),
@@ -88,38 +88,40 @@ export class TheAmalgamation {
 				"jwk",
 				key.privateKey,
 			),
-        }
-    }
+		};
+	};
 
-    private decode_key_pair = async (public_key: object, private_key: object): Promise<CryptoKeyPair> => {
-        try {
-            return {
-                privateKey: await window.crypto.subtle.importKey(
-                    "jwk",
-                    private_key,
-                    { name: "ECDSA", namedCurve: "P-521" },
-                    true,
-                    private_key_usages,
-                ),
-                publicKey: await window.crypto.subtle.importKey(
-                    "jwk",
-                    public_key,
-                    { name: "ECDSA", namedCurve: "P-521" },
-                    true,
-                    public_key_usages,
-                ),
-            }
-        } catch (e) {
-            if (e instanceof TypeError || e instanceof SyntaxError) {
-                // Invalid Keys
-                throw new InvalidKeyError();
-            } else {
-                // Invalid Use of key usages
-                throw new InvalidKeyError()
-            }
-        }
-
-    }
+	private decode_key_pair = async (
+		public_key: object,
+		private_key: object,
+	): Promise<CryptoKeyPair> => {
+		try {
+			return {
+				privateKey: await window.crypto.subtle.importKey(
+					"jwk",
+					private_key,
+					{ name: "ECDSA", namedCurve: "P-521" },
+					true,
+					private_key_usages,
+				),
+				publicKey: await window.crypto.subtle.importKey(
+					"jwk",
+					public_key,
+					{ name: "ECDSA", namedCurve: "P-521" },
+					true,
+					public_key_usages,
+				),
+			};
+		} catch (e) {
+			if (e instanceof TypeError || e instanceof SyntaxError) {
+				// Invalid Keys
+				throw new InvalidKeyError();
+			} else {
+				// Invalid Use of key usages
+				throw new InvalidKeyError();
+			}
+		}
+	};
 
 	public export_key_for_download = async (
 		kid: string,
@@ -129,7 +131,7 @@ export class TheAmalgamation {
 
 		return JSON.stringify({
 			kid,
-			...this.encode_key_pair(key.key)
+			...this.encode_key_pair(key.key),
 		});
 	};
 
@@ -156,8 +158,11 @@ export class TheAmalgamation {
 				const public_key = deserialised_key.publicKey as JsonWebKey;
 				const private_key = deserialised_key.privateKey as JsonWebKey;
 
-                const decoded_key = await this.decode_key_pair(public_key, private_key);
-                if (!decoded_key) throw new InvalidKeyError();
+				const decoded_key = await this.decode_key_pair(
+					public_key,
+					private_key,
+				);
+				if (!decoded_key) throw new InvalidKeyError();
 
 				this.add_key_pair_to_client(kid, decoded_key);
 			} else {

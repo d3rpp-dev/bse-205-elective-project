@@ -10,10 +10,15 @@
 	import type { LayoutData } from "./$types";
 	import { setRuntimeClientContext } from "$lib/client";
 
-	const { queryClient, runtimeClient, children }: LayoutData & { children: Snippet } =
-		$props();
+	import { Toaster } from "@/ui/sonner";
 
-    setRuntimeClientContext(runtimeClient);
+	const {
+		queryClient,
+		runtimeClient,
+		children,
+	}: LayoutData & { children: Snippet } = $props();
+
+	setRuntimeClientContext(runtimeClient);
 </script>
 
 <svelte:head>
@@ -21,6 +26,8 @@
 </svelte:head>
 
 <ModeWatcher defaultMode="system" />
+
+<Toaster />
 
 <QueryClientProvider client={queryClient}>
 	{@render children()}

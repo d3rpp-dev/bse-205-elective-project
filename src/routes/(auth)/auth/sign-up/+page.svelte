@@ -27,7 +27,9 @@
 	import { Label } from "@/ui/label";
 	import { Separator } from "@/ui/separator";
 
-	import { CircleCheck, CircleX, LoaderCircle } from "lucide-svelte";
+	import { AnimatedLoading } from "$lib/icons";
+
+	import { CircleCheck, CircleX } from "lucide-svelte";
 	import { GithubLogo } from "svelte-radix";
 
 	const rpc = trpc($page);
@@ -42,7 +44,7 @@
 	);
 
 	const username_availability_query =
-		rpc.auth.check_username_availability.createQuery(
+		rpc.auth.checkUsernameAvailability.createQuery(
 			username,
 			derived_store(username_is_empty, (val) => {
 				return {
@@ -89,7 +91,7 @@
 	});
 	// #endregion
 
-	const sign_up_mutation = rpc.auth.sign_up.createMutation({
+	const signUpMutation = rpc.auth.signUp.createMutation({
 		onSuccess: () => {
 			goto("/auth/sign-up/onboarding");
 		},
@@ -102,13 +104,13 @@
 		ev.stopPropagation();
 		ev.preventDefault();
 
-		$sign_up_mutation.mutate({ username: get(username), password });
+		$signUpMutation.mutate({ username: get(username), password });
 	};
 
 	/**
 	 * Sign Up with Github Button Handler
 	 */
-	const github_signup_onclick = (ev: MouseEvent) => {
+	const githubSignupOnclick = (ev: MouseEvent) => {
 		ev.stopPropagation();
 		ev.preventDefault();
 
@@ -137,9 +139,7 @@
 								{#if !$username_is_empty}
 									<!-- Loading spinner while checking things -->
 									{#if $username_availability_query.isFetching}
-										<LoaderCircle
-											class="h-4 w-4 animate-spin text-muted-foreground"
-										/>
+										<AnimatedLoading />
 									{:else if $username_availability_query.isError || $username_availability_query.data?.available == false}
 										<!-- 
                                             Either: 
@@ -172,12 +172,12 @@
 								}, 500)}
 							/>
 
-							{#if ($username_invalid_error_text && !$username_is_empty && !$username_availability_query.isFetching) || $sign_up_mutation.isError}
+							{#if ($username_invalid_error_text && !$username_is_empty && !$username_availability_query.isFetching) || $signUpMutation.isError}
 								<p
 									class="h-auto w-full text-sm text-destructive-foreground transition-height"
 									transition:slide={{ axis: "y" }}
 								>
-									{$sign_up_mutation.error?.message ||
+									{$signUpMutation.error?.message ||
 										$username_invalid_error_text ||
 										""}
 								</p>
@@ -242,7 +242,7 @@
 				<Button
 					class="flex w-full flex-row justify-start gap-4 hover:bg-white hover:text-[#1f2328]"
 					variant="outline"
-					onclick={github_signup_onclick}
+					onclick={githubSignupOnclick}
 				>
 					<GithubLogo />
 					<span>Sign Up with GitHub</span>

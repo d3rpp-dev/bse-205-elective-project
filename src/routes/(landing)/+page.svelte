@@ -12,7 +12,7 @@
 
 	const query_params = writable({ num: 0 });
 
-	const query = rpc.greeter.odd_or_even.createQuery(query_params);
+	const query = rpc.greeter.oddOrEven.createQuery(query_params);
 </script>
 
 <Main>
@@ -26,7 +26,7 @@
 				ev.preventDefault();
 				if (!(ev.target instanceof HTMLInputElement)) return;
 				query_params.set({ num: +ev.target.value });
-				utils.greeter.odd_or_even.invalidate();
+				utils.greeter.oddOrEven.invalidate();
 			}, 500)}
 		/>
 

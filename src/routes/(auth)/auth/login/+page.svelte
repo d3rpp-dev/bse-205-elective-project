@@ -33,7 +33,7 @@
 		}
 	});
 
-	const log_in_mutation = rpc.auth.log_in.createMutation({
+	const log_in_mutation = rpc.auth.logIn.createMutation({
 		onSuccess: () => {
 			goto("/app");
 		},
@@ -51,9 +51,9 @@
 	};
 
 	/**
-	 * Sign Up with Github Button Handler
+	 * Log In with Github Button Handler
 	 */
-	const github_signup_onclick = (ev: MouseEvent) => {
+	const githubLoginOnclick = (ev: MouseEvent) => {
 		ev.stopPropagation();
 		ev.preventDefault();
 
@@ -174,7 +174,7 @@
 				<Button
 					class="flex w-full flex-row justify-start gap-4 hover:bg-white hover:text-[#1f2328]"
 					variant="outline"
-					onclick={github_signup_onclick}
+					onclick={githubLoginOnclick}
 				>
 					<GithubLogo />
 					<span>Log In with GitHub</span>

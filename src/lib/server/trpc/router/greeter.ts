@@ -13,7 +13,7 @@ export const greeterRouter = trpcInstance.router({
 			return `Hello ${opts.input.name}`;
 		}),
 
-	odd_or_even: trpcInstance.procedure
+	oddOrEven: trpcInstance.procedure
 		.input(
 			z.object({
 				num: z.number(),

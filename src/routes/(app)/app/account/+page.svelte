@@ -1,28 +1,22 @@
 <script lang="ts">
+	import { cn } from "$lib/utils";
+
 	import Main from "@/main.svelte";
 
 	import * as Avatar from "@/ui/avatar";
 	import * as Card from "@/ui/card";
 	import { Separator } from "@/ui/separator";
 
-	import { User } from "lucide-svelte";
+	import { AnimatedLoading } from "$lib/icons";
+
+	import { CircleX, User } from "lucide-svelte";
+	import { toast } from "svelte-sonner";
 
 	const { data } = $props();
 	const { user } = data;
-</script>
 
-{#snippet account_stats()}
-	<div class="flex flex-col">
-		<Card.Root>
-			<Card.Header class="text-center">
-				<span class="text-md">Uploaded Files</span>
-				<span class="text-muted-foreground">
-					{Math.floor(Math.random() * 100)}
-				</span>
-			</Card.Header>
-		</Card.Root>
-	</div>
-{/snippet}
+	const uploadedFileCount = data.uploadedFileCount();
+</script>
 
 <Main class="min-h-app-main max-w-screen-lg">
 	<!-- #region Account Info Header
@@ -49,7 +43,41 @@
 
 		<div class="flex-auto"></div>
 
-		{@render account_stats()}
+		<div class="flex flex-col">
+			<Card.Root>
+				<Card.Header class="text-center">
+					<span class="text-md">Uploaded Files</span>
+
+					<span
+						class={cn(
+							"flex h-4 w-full items-center justify-center text-muted-foreground",
+							$uploadedFileCount.isRefetching
+								? "text-muted-foreground/50"
+								: null,
+						)}
+					>
+						{#if $uploadedFileCount.isPending}
+							<AnimatedLoading />
+						{:else if $uploadedFileCount.isError}
+							<div class="hidden">
+								{toast.error("Error", {
+									description: `Failed to Fetch Uploaded File Count: ${$uploadedFileCount.error.data?.code || "Unknown Error"}`,
+									cancel: {
+										label: "Dismiss",
+										onClick: () => {},
+									},
+								})}
+							</div>
+							<CircleX
+								class="h-4 w-4 text-destructive-foreground"
+							/>
+						{:else}
+							{$uploadedFileCount.data.uploadedFiles}
+						{/if}
+					</span>
+				</Card.Header>
+			</Card.Root>
+		</div>
 	</div>
 	<!-- #endregion -->
 
