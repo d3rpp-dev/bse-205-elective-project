@@ -3,8 +3,17 @@
 
 	import { Button } from "$lib/components/ui/button";
 
+    import { toast } from "svelte-sonner";
+
 	const aaaa = () => {
-		console.error("AAAAAAAA");
+        toast.promise(new Promise(res => setTimeout(res, 5_000)), {
+            loading: "Loading",
+            important: true,
+            finally: () => {
+                toast.success("Done.")
+            }
+        });
+
 	};
 </script>
 

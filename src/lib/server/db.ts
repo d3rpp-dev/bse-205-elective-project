@@ -15,7 +15,9 @@ sqlite.exec("PRAGMA journal_mode = WAL;");
 sqlite.exec("PRAGMA foreign_keys = on;");
 
 export const DB = drizzle(sqlite, {
-	logger: process.env.NODE_ENV == "development" && ["1", "true"].includes(process.env.LOGGER_ENABLED ?? ""),
+	logger:
+		process.env.NODE_ENV == "development" &&
+		["1", "true"].includes(process.env.LOGGER_ENABLED ?? ""),
 });
 
 /**

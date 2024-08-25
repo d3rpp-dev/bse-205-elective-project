@@ -27,7 +27,7 @@
 
 <ModeWatcher defaultMode="system" />
 
-<Toaster />
+<Toaster position="bottom-center" />
 
 <QueryClientProvider client={queryClient}>
 	{@render children()}

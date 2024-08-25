@@ -2,6 +2,7 @@ import { lucia } from "$lib/server/auth/adapter";
 import { authHook } from "$lib/server/auth/hook";
 import { createContext } from "$lib/server/trpc/context";
 import { router } from "$lib/server/trpc/router";
+import { TRPC_PATH } from "$lib/trpc/client";
 
 import type { Handle } from "@sveltejs/kit";
 import { sequence } from "@sveltejs/kit/hooks";
@@ -17,5 +18,5 @@ setInterval(() => {
 
 export const handle: Handle = sequence(
 	authHook,
-	createTRPCHandle({ router, createContext }),
+	createTRPCHandle({ router, createContext, url: TRPC_PATH }),
 );

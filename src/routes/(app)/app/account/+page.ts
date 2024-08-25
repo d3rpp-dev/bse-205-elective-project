@@ -6,9 +6,11 @@ export const load = (async (event) => {
 	const client = trpc(event, queryClient);
 
 	return {
-		uploadedFileCount:
-			await client.user.getUploadedFiles.createServerQuery(undefined, {
-                ssr: false
-            }),
+		uploadedFileCount: await client.user.getUploadedFiles.createServerQuery(
+			undefined,
+			{
+				ssr: false,
+			},
+		),
 	};
 }) satisfies PageLoad;

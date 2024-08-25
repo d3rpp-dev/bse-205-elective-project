@@ -61,7 +61,6 @@
 	 */
 	const username_invalid_error_text: Readable<string | undefined> =
 		derived_store(username_availability_query, (val) => {
-			console.log(val.data);
 			if (val.data && val.data.available === false)
 				return "Username is Taken";
 
