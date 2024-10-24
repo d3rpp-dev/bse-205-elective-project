@@ -2,11 +2,13 @@
 	import { Avatar as AvatarPrimitive } from "bits-ui";
 	import { cn } from "$lib/utils";
 
-	type $$Props = AvatarPrimitive.Props;
+	const {
+		class: className,
+		delayMs,
 
-	let className: $$Props["class"] = undefined;
-	export let delayMs: $$Props["delayMs"] = undefined;
-	export { className as class };
+		children,
+		...rest
+	}: AvatarPrimitive.Props = $props();
 </script>
 
 <AvatarPrimitive.Root
@@ -15,7 +17,7 @@
 		"relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
 		className,
 	)}
-	{...$$restProps}
+	{...rest}
 >
-	<slot />
+	{@render children?.()}
 </AvatarPrimitive.Root>

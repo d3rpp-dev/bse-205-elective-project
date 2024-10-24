@@ -30,6 +30,8 @@ export const DB = drizzle(sqlite, {
 export const ephemeral_test_db = (): BunSQLiteDatabase => {
 	const db = new Database(":memory:", { strict: true });
 
+	// enable WAL, for performance
+	db.exec("PRAGMA journal_mode = WAL;");
 	// enable foreign key restraints
 	db.exec("PRAGMA foreign_keys = on;");
 

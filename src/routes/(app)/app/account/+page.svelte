@@ -24,17 +24,17 @@
 	<div class="flex h-[240px] flex-col items-center justify-start md:flex-row">
 		<div class="grid aspect-square size-[240px] place-items-center">
 			<Avatar.Root class="h-[75%] w-auto">
-				{#if user.profile_picture}
+				{#if user.profilePicture}
 					<Avatar.Image
-						src={`/api/public_assets/${user.profile_picture}`}
-						alt={`Profile Piture for ${user.display_name || user.username}`}
+						src={`/api/public_assets/${user.profilePicture}`}
+						alt={`Profile Piture for ${user.displayName || user.username}`}
 					/>
 				{/if}
 				<Avatar.Fallback><User /></Avatar.Fallback>
 			</Avatar.Root>
 		</div>
 		<div class="flex h-[80%] flex-col items-start justify-center gap-2">
-			<h1 class="text-4xl">{user.display_name || user.username}</h1>
+			<h1 class="text-4xl">{user.displayName || user.username}</h1>
 			<h2 class="inline-flex flex-row text-xl text-muted-foreground">
 				<span class="text-muted-foreground/60">@</span>
 				{user.username}

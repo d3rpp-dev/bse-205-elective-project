@@ -30,7 +30,5 @@
 	{...rest}
 	{onkeydown}
 >
-	{#if children}
-		{@render children()}
-	{/if}
+	{@render children?.()}
 </DropdownMenuPrimitive.Content>

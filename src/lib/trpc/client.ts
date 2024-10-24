@@ -8,7 +8,7 @@ import { createTRPCClient, type TRPCClientInit } from "trpc-sveltekit";
 import type { QueryClient } from "@tanstack/svelte-query";
 import { svelteQueryWrapper } from "trpc-svelte-query-adapter";
 
-import { httpBatchLink, loggerLink } from "@trpc/client";
+import { httpBatchLink } from "@trpc/client";
 
 import { browser } from "$app/environment";
 
@@ -27,7 +27,6 @@ export const trpc = (init?: TRPCClientInit, queryClient?: QueryClient) => {
 	const client = svelteQueryWrapper({
 		client: createTRPCClient<Router>({
 			links: [
-				loggerLink(),
 				httpBatchLink({
 					url: TRPC_PATH,
 					fetch: init?.fetch,

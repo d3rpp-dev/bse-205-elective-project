@@ -1,5 +1,9 @@
 import { ulid } from "ulid";
-import type { JailBirdKey } from "./crypto_key";
+import {
+	JailBirdExportedKeySchema,
+	type JailBirdExportedKey,
+	type JailBirdKey,
+} from "./crypto_key";
 
 export * from "./errors";
 import { InvalidKeyError } from "./errors";
@@ -25,60 +29,91 @@ export const getRuntimeClientContext = () => {
  * Behold, the amalgamation, the client that does literally everything on the client.
  */
 export class TheAmalgamation {
-	private key_pairs: JailBirdKey[] = [];
+	/**
+	 * Private Keys
+	 */
+	private __PRIVATE_KEYS: JailBirdKey[] = [];
+	/**
+	 * Public Keys
+	 */
+	private __PUBLIC_KEYS: JailBirdKey[] = [];
+
+	/**
+	 * External Imported Key Pairs
+	 */
+	private __EXT_PUBLIC_KEYS: JailBirdKey[] = [];
 
 	constructor() {}
 
 	public initialise_from_localstorage = async () => {
-		this.key_pairs = [];
 		console.info("Initialising Runtime Client from Localhost");
+
+		const stats = {
+			attempts: 0,
+			success: 0,
+		};
 
 		for (let i = 0; i < window.localStorage.length; i++) {
 			const item_name = window.localStorage.key(i)!;
-			if (item_name.startsWith("cached_key-")) {
+			if (item_name.startsWith("cached_key_pair-")) {
+				stats.attempts++;
+
 				const cached_key_string =
 					window.localStorage.getItem(item_name)!;
-				const parsed_cached_key = JSON.parse(cached_key_string);
 
-				const kid = item_name.replace("cached_key-", "");
+				try {
+					const kid = await this.import_key_string(cached_key_string);
+					console.info(`Successfully key with KID ${kid}`);
 
-				if (
-					"publicKey" in parsed_cached_key &&
-					typeof parsed_cached_key.publicKey === "object" &&
-					"privateKey" in parsed_cached_key &&
-					typeof parsed_cached_key.privateKey === "object"
-				) {
-					const decoded_key = await this.decode_key_pair(
-						parsed_cached_key.publicKey,
-						parsed_cached_key.privateKey,
-					);
-
-					this.add_key_pair_to_client(kid, decoded_key);
-					console.info(`Imported Cached key of KID ${kid}`);
-				} else {
-					console.warn(`Cached key of KID ${kid} is invalid`);
+					stats.success++;
+				} catch (e) {
+					if (e instanceof InvalidKeyError) {
+						console.warn(
+							`Cached key of KID ${item_name} is invalid`,
+						);
+					} else {
+						console.error(`Failed to import KID ${item_name}`);
+					}
 				}
 			}
 		}
-	};
 
-	private get_key = (kid: string): JailBirdKey | undefined => {
-		return this.key_pairs.find((val) => val.kid === kid);
-	};
-
-	public add_key_pair_to_client = async (kid: string, key: CryptoKeyPair) => {
-		this.key_pairs.push({
-			kid,
-			key,
-		});
-
-		window.localStorage.setItem(
-			`cached_key-${kid}`,
-			JSON.stringify(await this.encode_key_pair(key)),
+		console.info(
+			`Attempted to import ${stats.attempts} key(s) from LocalStorage. ${stats.success} succeeded (${stats.attempts - stats.success} failed).`,
 		);
 	};
 
-	private encode_key_pair = async (key: CryptoKeyPair) => {
+	private get_public_key = (kid: string): JailBirdKey | undefined => {
+		return this.__PUBLIC_KEYS.find((val) => val.kid === kid);
+	};
+
+	private get_private_key = (kid: string): JailBirdKey | undefined => {
+		return this.__PRIVATE_KEYS.find((val) => val.kid === kid);
+	};
+
+	public add_key_pair_to_client = async (
+		kid: string,
+		key_pair: CryptoKeyPair,
+	) => {
+		this.__PRIVATE_KEYS.push({
+			kid,
+			key: key_pair.privateKey,
+		});
+
+		this.__PUBLIC_KEYS.push({
+			kid,
+			key: key_pair.publicKey,
+		});
+
+		window.localStorage.setItem(
+			`cached_key_pair-${kid}`,
+			JSON.stringify(await this.encode_key_pair(key_pair)),
+		);
+	};
+
+	private encode_key_pair = async (
+		key: CryptoKeyPair,
+	): Promise<JailBirdExportedKey["key"]> => {
 		return {
 			publicKey: await window.crypto.subtle.exportKey(
 				"jwk",
@@ -123,15 +158,19 @@ export class TheAmalgamation {
 		}
 	};
 
-	public export_key_for_download = async (
+	public export_key_string = async (
 		kid: string,
 	): Promise<string | undefined> => {
-		const key = this.get_key(kid);
-		if (!key) return undefined;
+		const public_key = this.get_public_key(kid);
+		const private_key = this.get_private_key(kid);
+		if (!public_key || !private_key) return undefined;
 
 		return JSON.stringify({
 			kid,
-			...this.encode_key_pair(key.key),
+			key: this.encode_key_pair({
+				privateKey: private_key.key,
+				publicKey: public_key.key,
+			}),
 		});
 	};
 
@@ -142,35 +181,31 @@ export class TheAmalgamation {
 	 *
 	 * @throws InvalidKeyError
 	 */
-	public import_private_key = async (key_string: string): Promise<void> => {
+	public import_key_string = async (key_string: string): Promise<string> => {
 		try {
-			const deserialised_key: object = JSON.parse(key_string);
-
-			if (
-				"kid" in deserialised_key &&
-				typeof deserialised_key.kid === "string" &&
-				"publicKey" in deserialised_key &&
-				typeof deserialised_key.publicKey === "object" &&
-				"privateKey" in deserialised_key &&
-				typeof deserialised_key.privateKey === "object"
-			) {
-				const kid = deserialised_key.kid as string;
-				const public_key = deserialised_key.publicKey as JsonWebKey;
-				const private_key = deserialised_key.privateKey as JsonWebKey;
-
-				const decoded_key = await this.decode_key_pair(
-					public_key,
-					private_key,
-				);
-				if (!decoded_key) throw new InvalidKeyError();
-
-				this.add_key_pair_to_client(kid, decoded_key);
+			const parse_result = JailBirdExportedKeySchema.safeParse(
+				JSON.parse(key_string),
+			);
+			if (!parse_result.success) {
+				throw new InvalidKeyError(parse_result.error.message);
 			} else {
-				throw new InvalidKeyError();
+				const { kid, key } = parse_result.data;
+
+				const decoded_key_pair = await this.decode_key_pair(
+					key.publicKey,
+					key.privateKey,
+				);
+				this.add_key_pair_to_client(kid, decoded_key_pair);
+
+				return kid;
 			}
 		} catch (e) {
-			if (e instanceof InvalidKeyError) throw e;
-			else throw new InvalidKeyError();
+			if (e instanceof SyntaxError) {
+				// invalid JSON
+				throw new InvalidKeyError("Key is not valid JSON");
+			} else {
+				throw e;
+			}
 		}
 	};
 
@@ -187,5 +222,13 @@ export class TheAmalgamation {
 
 		this.add_key_pair_to_client(new_key_id, key);
 		return new_key_id;
+	};
+
+	public get_private_key_count = () => {
+		return this.__PRIVATE_KEYS.length;
+	};
+
+	public get_kids_of_all_private_keys = () => {
+		return this.__PRIVATE_KEYS.map((k) => k.kid);
 	};
 }

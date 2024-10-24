@@ -32,7 +32,5 @@
 	{onfocusout}
 	{onpointermove}
 >
-	{#if children}
-		{@render children()}
-	{/if}
+	{@render children?.()}
 </DropdownMenuPrimitive.SubContent>

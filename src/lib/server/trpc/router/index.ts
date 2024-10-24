@@ -2,15 +2,20 @@ import type { RequestEvent } from "@sveltejs/kit";
 
 import { trpcInstance } from "./init";
 
-import { authRouter } from "./auth";
-import { greeterRouter } from "./greeter";
-import { userRouter } from "./user";
 import { createContext } from "../context";
 
+import { authRouter } from "./auth";
+import { greeterRouter } from "./greeter";
+import { healthRouter } from "./health";
+import { userRouter } from "./user";
+import { keyManagementRouter } from "./key_management";
+
 export const router = trpcInstance.router({
-	greeter: greeterRouter,
 	auth: authRouter,
+	greeter: greeterRouter,
+	health: healthRouter,
 	user: userRouter,
+	keyManagement: keyManagementRouter,
 });
 
 export type Router = typeof router;

@@ -16,7 +16,5 @@
 -->
 
 <main class={cn("mx-auto max-w-screen-2xl px-4 py-4 2xl:px-0", className)}>
-	{#if children}
-		{@render children()}
-	{/if}
+	{@render children?.()}
 </main>

@@ -36,7 +36,5 @@
 	{onkeydown}
 	{...rest}
 >
-	{#if children}
-		{@render children()}
-	{/if}
+	{@render children?.()}
 </ButtonPrimitive.Root>

@@ -2,10 +2,12 @@
 	import { Avatar as AvatarPrimitive } from "bits-ui";
 	import { cn } from "$lib/utils";
 
-	type $$Props = AvatarPrimitive.FallbackProps;
+	const {
+		class: className,
 
-	let className: $$Props["class"] = undefined;
-	export { className as class };
+		children,
+		...rest
+	}: AvatarPrimitive.FallbackProps = $props();
 </script>
 
 <AvatarPrimitive.Fallback
@@ -13,7 +15,7 @@
 		"flex h-full w-full items-center justify-center rounded-full bg-muted",
 		className,
 	)}
-	{...$$restProps}
+	{...rest}
 >
-	<slot />
+	{@render children?.()}
 </AvatarPrimitive.Fallback>

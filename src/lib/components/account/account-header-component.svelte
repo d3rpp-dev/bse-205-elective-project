@@ -17,9 +17,9 @@
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		<Avatar.Root class={avatar_size == "smol" ? "h-8 w-8" : undefined}>
-			{#if user && user.profile_picture}
+			{#if user && user.profilePicture}
 				<Avatar.Image
-					src={`/api/public_assets/${user.profile_picture}`}
+					src={`/api/public_assets/${user.profilePicture}`}
 					alt="Profile Photo"
 				/>
 			{/if}
@@ -33,7 +33,7 @@
 			<DropdownMenu.Item href="/auth/sign-up">Sign Up</DropdownMenu.Item>
 		{:else}
 			<DropdownMenu.Label>
-				{user.display_name || user.username}
+				{user.displayName || user.username}
 			</DropdownMenu.Label>
 			<DropdownMenu.Separator />
 			<DropdownMenu.Item href="/app">Dashboard</DropdownMenu.Item>

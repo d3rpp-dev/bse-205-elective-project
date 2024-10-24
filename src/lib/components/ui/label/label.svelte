@@ -20,5 +20,5 @@
 	{...rest}
 	{onmousedown}
 >
-	{#if children}{@render children()}{/if}
+	{@render children?.()}
 </LabelPrimitive.Root>

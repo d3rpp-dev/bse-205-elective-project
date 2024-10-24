@@ -12,7 +12,7 @@ describe("Sign Up Functionality", () => {
 		const test_function = async () =>
 			await db
 				.insert(passwordTable)
-				.values({ user_id: "test_user_id", password_hash: "aaaaaa" });
+				.values({ userId: "test_user_id", passwordHash: "aaaaaa" });
 
 		expect(test_function).toThrowError(SQLiteError);
 
@@ -38,8 +38,8 @@ describe("Sign Up Functionality", () => {
 				.returning();
 
 			await tx.insert(passwordTable).values({
-				user_id: user[0].id,
-				password_hash: TEST_PASSWORD_HASH,
+				userId: user[0].id,
+				passwordHash: TEST_PASSWORD_HASH,
 			});
 
 			return user[0].id;

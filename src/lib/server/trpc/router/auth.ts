@@ -14,9 +14,9 @@ const checkAvailability = async (username: string) => {
 		DB.select({ users: count(userTable.username) })
 			.from(userTable)
 			.where(eq(userTable.username, username)),
-		DB.select({ aliases: count(userAliasTable.alias_name) })
+		DB.select({ aliases: count(userAliasTable.aliasName) })
 			.from(userAliasTable)
-			.where(eq(userAliasTable.alias_name, username)),
+			.where(eq(userAliasTable.aliasName, username)),
 	]);
 
 	return user_query[0].users + alias_query[0].aliases == 0;
@@ -61,8 +61,8 @@ export const authRouter = trpcInstance.router({
 					.returning({ user_id: userTable.id });
 
 				await tx.insert(passwordTable).values({
-					user_id: user[0].user_id,
-					password_hash,
+					userId: user[0].user_id,
+					passwordHash: password_hash,
 				});
 
 				return user[0].user_id;
@@ -108,10 +108,10 @@ export const authRouter = trpcInstance.router({
 			const [existing_user] = existing_user_list;
 
 			const password_list = await DB.select({
-				password_hash: passwordTable.password_hash,
+				password_hash: passwordTable.passwordHash,
 			})
 				.from(passwordTable)
-				.where(eq(passwordTable.user_id, existing_user.id));
+				.where(eq(passwordTable.userId, existing_user.id));
 
 			if (password_list.length === 0) {
 				// user does exist but does not have a password

@@ -3,22 +3,16 @@
 
 	import type { Snippet } from "svelte";
 
-	import { ModeWatcher } from "mode-watcher";
+	import { ModeWatcher, mode } from "mode-watcher";
 	import { QueryClientProvider } from "@tanstack/svelte-query";
 	import { SvelteQueryDevtools } from "@tanstack/svelte-query-devtools";
 
 	import type { LayoutData } from "./$types";
-	import { setRuntimeClientContext } from "$lib/client";
 
 	import { Toaster } from "@/ui/sonner";
 
-	const {
-		queryClient,
-		runtimeClient,
-		children,
-	}: LayoutData & { children: Snippet } = $props();
-
-	setRuntimeClientContext(runtimeClient);
+	const { queryClient, children }: LayoutData & { children: Snippet } =
+		$props();
 </script>
 
 <svelte:head>
@@ -27,7 +21,7 @@
 
 <ModeWatcher defaultMode="system" />
 
-<Toaster position="bottom-center" />
+<Toaster position="bottom-center" theme={$mode ?? "system"} richColors />
 
 <QueryClientProvider client={queryClient}>
 	{@render children()}

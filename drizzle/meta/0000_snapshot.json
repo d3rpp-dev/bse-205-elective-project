@@ -1,7 +1,7 @@
 {
 	"version": "6",
 	"dialect": "sqlite",
-	"id": "86be13c9-c3e4-4d58-b449-58f12e9dfda3",
+	"id": "818c640b-29b0-4c20-8eb8-191759e45ae4",
 	"prevId": "00000000-0000-0000-0000-000000000000",
 	"tables": {
 		"email_addresses": {
@@ -52,6 +52,86 @@
 					"columnsFrom": ["user_id"],
 					"columnsTo": ["id"],
 					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"encrypted_blobs": {
+			"name": "encrypted_blobs",
+			"columns": {
+				"kid": {
+					"name": "kid",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"iv": {
+					"name": "iv",
+					"type": "blob",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"blob": {
+					"name": "blob",
+					"type": "blob",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"encrypted_blobs_kid_symmetric_keys_kid_fk": {
+					"name": "encrypted_blobs_kid_symmetric_keys_kid_fk",
+					"tableFrom": "encrypted_blobs",
+					"tableTo": "symmetric_keys",
+					"columnsFrom": ["kid"],
+					"columnsTo": ["kid"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"oauth_connections": {
+			"name": "oauth_connections",
+			"columns": {
+				"type": {
+					"name": "type",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"oauth_identifier": {
+					"name": "oauth_identifier",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"user_id": {
+					"name": "user_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"oauth_connections_user_id_users_id_fk": {
+					"name": "oauth_connections_user_id_users_id_fk",
+					"tableFrom": "oauth_connections",
+					"tableTo": "users",
+					"columnsFrom": ["user_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
 					"onUpdate": "no action"
 				}
 			},
@@ -118,6 +198,132 @@
 			},
 			"indexes": {},
 			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"public_keys": {
+			"name": "public_keys",
+			"columns": {
+				"kid": {
+					"name": "kid",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"key": {
+					"name": "key",
+					"type": "blob",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"key_owner": {
+					"name": "key_owner",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {
+				"public_keys_key_unique": {
+					"name": "public_keys_key_unique",
+					"columns": ["key"],
+					"isUnique": true
+				}
+			},
+			"foreignKeys": {
+				"public_keys_key_owner_users_id_fk": {
+					"name": "public_keys_key_owner_users_id_fk",
+					"tableFrom": "public_keys",
+					"tableTo": "users",
+					"columnsFrom": ["key_owner"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"sessions": {
+			"name": "sessions",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"user_id": {
+					"name": "user_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"expires_at": {
+					"name": "expires_at",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"sessions_user_id_users_id_fk": {
+					"name": "sessions_user_id_users_id_fk",
+					"tableFrom": "sessions",
+					"tableTo": "users",
+					"columnsFrom": ["user_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"symmetric_keys": {
+			"name": "symmetric_keys",
+			"columns": {
+				"kid": {
+					"name": "kid",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"public_key": {
+					"name": "public_key",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"key": {
+					"name": "key",
+					"type": "blob",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"symmetric_keys_public_key_public_keys_kid_fk": {
+					"name": "symmetric_keys_public_key_public_keys_kid_fk",
+					"tableFrom": "symmetric_keys",
+					"tableTo": "public_keys",
+					"columnsFrom": ["public_key"],
+					"columnsTo": ["kid"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
 			"compositePrimaryKeys": {},
 			"uniqueConstraints": {}
 		},

@@ -1,5 +1,5 @@
 export class InvalidKeyError extends Error {
-	constructor() {
-		super("Invalid Key");
+	constructor(error: string = "Invalid Key") {
+		super(error);
 	}
 }

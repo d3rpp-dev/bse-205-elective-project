@@ -70,14 +70,14 @@ const OAUTH_CALLBACK_HANDLERS = {
 			const githubUser: GitHubUser = await githubUserResponse.json();
 
 			const existing_user = await DB.select({
-				user_id: oauthConnectionTable.user_id,
+				user_id: oauthConnectionTable.userId,
 			})
 				.from(oauthConnectionTable)
 				.where(
 					and(
 						eq(oauthConnectionTable.type, "github"),
 						eq(
-							oauthConnectionTable.oauth_identifier,
+							oauthConnectionTable.oauthIdentifier,
 							githubUser.id.toString(),
 						),
 					),
@@ -105,15 +105,15 @@ const OAUTH_CALLBACK_HANDLERS = {
 						.insert(userTable)
 						.values({
 							username: githubUser.login,
-							display_name: githubUser.name,
-							profile_picture: avatar_asset_id,
+							displayName: githubUser.name,
+							profilePicture: avatar_asset_id,
 						})
 						.returning({ new_user_id: userTable.id });
 
 					await tx.insert(oauthConnectionTable).values({
 						type: "github",
-						user_id: new_user_id,
-						oauth_identifier: githubUser.id.toString(),
+						userId: new_user_id,
+						oauthIdentifier: githubUser.id.toString(),
 					});
 
 					return new_user_id;

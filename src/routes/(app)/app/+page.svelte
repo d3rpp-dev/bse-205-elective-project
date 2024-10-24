@@ -1,19 +1,23 @@
 <script>
 	import Main from "@/main.svelte";
 
-	import { Button } from "$lib/components/ui/button";
+	// import { page } from "$app/stores";
 
-    import { toast } from "svelte-sonner";
+	import { Button } from "$lib/components/ui/button";
+	// import { trpc } from "$lib/trpc/client";
+
+	import { toast } from "svelte-sonner";
+
+	// const rpc = trpc($page);
 
 	const aaaa = () => {
-        toast.promise(new Promise(res => setTimeout(res, 5_000)), {
-            loading: "Loading",
-            important: true,
-            finally: () => {
-                toast.success("Done.")
-            }
-        });
-
+		toast.promise(new Promise((res) => setTimeout(res, 5_000)), {
+			loading: "Loading",
+			important: true,
+			finally: () => {
+				toast.success("Done.");
+			},
+		});
 	};
 </script>
 

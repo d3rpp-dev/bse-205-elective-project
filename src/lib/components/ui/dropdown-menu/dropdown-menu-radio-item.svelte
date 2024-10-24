@@ -44,7 +44,5 @@
 			<Circle class="h-2 w-2 fill-current" />
 		</DropdownMenuPrimitive.RadioIndicator>
 	</span>
-	{#if children}
-		{@render children()}
-	{/if}
+	{@render children?.()}
 </DropdownMenuPrimitive.RadioItem>
