@@ -12,7 +12,10 @@ import { assert, type Equals } from "tsafe";
 const OAUTH_METHODS = {
 	github: async (event: RequestEvent) => {
 		const state = generateState();
-		const url = await github.createAuthorizationURL(state);
+		const url = github.createAuthorizationURL(state, [
+			"read:user",
+			"user:email",
+		]);
 
 		event.cookies.set("github_oauth_state", state, {
 			path: "/",

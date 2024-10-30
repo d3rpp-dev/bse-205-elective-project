@@ -7,7 +7,7 @@ export const load = (async (event) => {
 
 	return {
 		uploadedFileCount: await client.user.getUploadedFiles.createServerQuery(
-			undefined,
+			void 0,
 			{
 				ssr: false,
 			},

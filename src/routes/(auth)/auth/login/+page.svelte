@@ -6,7 +6,7 @@
 
 	import { Button } from "@/ui/button";
 	import * as Card from "@/ui/card";
-	import { Input, File as FileInput } from "@/ui/input";
+	import { Input } from "@/ui/input";
 	import { Label } from "@/ui/label";
 	import { Separator } from "@/ui/separator";
 
@@ -111,7 +111,8 @@
 								</span>
 							</Label>
 							<!-- TODO: make this required -->
-							<FileInput
+							<Input
+								type="file"
 								id="secret-key"
 								class="cursor-pointer"
 								required={false}

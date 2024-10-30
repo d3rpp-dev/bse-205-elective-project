@@ -1,20 +1,23 @@
 <script lang="ts">
-	import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
-	import { cn } from "$lib/utils";
+	import { cn } from "$lib/utils.js";
+	import { type WithElementRef } from "bits-ui";
+	import type { HTMLAttributes } from "svelte/elements";
 
-	import type { LabelProps } from ".";
-
-	const {
+	let {
+		ref = $bindable(null),
 		class: className,
-		inset = false,
+		inset,
 		children,
-		...rest
-	}: LabelProps = $props();
+		...restProps
+	}: WithElementRef<HTMLAttributes<HTMLDivElement>> & {
+		inset?: boolean;
+	} = $props();
 </script>
 
-<DropdownMenuPrimitive.Label
+<div
+	bind:this={ref}
 	class={cn("px-2 py-1.5 text-sm font-semibold", inset && "pl-8", className)}
-	{...rest}
+	{...restProps}
 >
 	{@render children?.()}
-</DropdownMenuPrimitive.Label>
+</div>

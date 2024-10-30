@@ -17,5 +17,5 @@ export const load = (async () => {
 	};
 }) satisfies LayoutLoad;
 
-export const ssr = false;
-export const csr = true;
+// export const ssr = false;
+// export const csr = true;

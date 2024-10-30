@@ -1,36 +1,19 @@
 <script lang="ts">
 	import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
-	import { cn, flyAndScale } from "$lib/utils";
+	import { cn } from "$lib/utils.js";
 
-	import type { SubContentProps } from ".";
-
-	const {
+	let {
+		ref = $bindable(null),
 		class: className,
-		transition = flyAndScale,
-		transitionConfig = { x: -10, y: 0 },
-
-		// Events
-		onkeydown,
-		onfocusout,
-		onpointermove,
-
-		// Children
-		children,
-		...rest
-	}: SubContentProps = $props();
+		...restProps
+	}: DropdownMenuPrimitive.SubContentProps = $props();
 </script>
 
 <DropdownMenuPrimitive.SubContent
-	{transition}
-	{transitionConfig}
+	bind:ref
 	class={cn(
 		"z-50 min-w-[8rem] rounded-md border bg-popover p-1 text-popover-foreground shadow-lg focus:outline-none",
 		className,
 	)}
-	{...rest}
-	{onkeydown}
-	{onfocusout}
-	{onpointermove}
->
-	{@render children?.()}
-</DropdownMenuPrimitive.SubContent>
+	{...restProps}
+/>

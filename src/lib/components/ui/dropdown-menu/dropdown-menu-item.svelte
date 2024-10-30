@@ -1,48 +1,23 @@
 <script lang="ts">
+	import { cn } from "$lib/utils.js";
 	import { DropdownMenu as DropdownMenuPrimitive } from "bits-ui";
-	import { cn } from "$lib/utils";
 
-	import type { ItemProps } from ".";
-
-	const {
+	let {
+		ref = $bindable(null),
 		class: className,
-		inset = false,
-		href,
-		variant = "default",
-
-		// Events
-		onclick,
-		onkeydown,
-		onfocusin,
-		onfocusout,
-		onpointerdown,
-		onpointerleave,
-		onpointermove,
-
-		// Children
-		children,
-		...rest
-	}: ItemProps = $props();
+		inset,
+		...restProps
+	}: DropdownMenuPrimitive.ItemProps & {
+		inset?: boolean;
+	} = $props();
 </script>
 
 <DropdownMenuPrimitive.Item
+	bind:ref
 	class={cn(
-		"relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:opacity-50",
+		"relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
 		inset && "pl-8",
 		className,
-		href !== undefined && "cursor-pointer",
-		variant === "destructive" &&
-			"data-[highlighted]:bg-destructive-foreground",
 	)}
-	{...rest}
-	{href}
-	{onclick}
-	{onkeydown}
-	{onfocusin}
-	{onfocusout}
-	{onpointerdown}
-	{onpointerleave}
-	{onpointermove}
->
-	{@render children?.()}
-</DropdownMenuPrimitive.Item>
+	{...restProps}
+/>

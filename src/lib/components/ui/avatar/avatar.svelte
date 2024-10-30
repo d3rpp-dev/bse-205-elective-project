@@ -1,23 +1,19 @@
 <script lang="ts">
 	import { Avatar as AvatarPrimitive } from "bits-ui";
-	import { cn } from "$lib/utils";
+	import { cn } from "$lib/utils.js";
 
-	const {
+	let {
+		ref = $bindable(null),
 		class: className,
-		delayMs,
-
-		children,
-		...rest
-	}: AvatarPrimitive.Props = $props();
+		...restProps
+	}: AvatarPrimitive.RootProps = $props();
 </script>
 
 <AvatarPrimitive.Root
-	{delayMs}
+	bind:ref
 	class={cn(
-		"relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
+		"relative flex size-10 shrink-0 overflow-hidden rounded-full",
 		className,
 	)}
-	{...rest}
->
-	{@render children?.()}
-</AvatarPrimitive.Root>
+	{...restProps}
+/>

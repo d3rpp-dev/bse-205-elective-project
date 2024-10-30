@@ -73,12 +73,12 @@ const config = {
 				],
 			},
 			minHeight: {
-				"landing-main": "calc(100vh - 6rem)",
-				"app-main": "calc(100vh - 3.5rem)",
+				"landing-main": "calc(100vh - 12rem - 2px)",
+				"app-main": "calc(100vh - 9.5rem - 2px)",
 			},
 			height: {
-				"landing-main": "calc(100vh - 6rem)",
-				"app-main": "calc(100vh - 3.5rem)",
+				"landing-main": "calc(100vh - 12rem - 2px)",
+				"app-main": "calc(100vh - 9.5rem - 2px)",
 			},
 		},
 	},

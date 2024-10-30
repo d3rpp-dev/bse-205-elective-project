@@ -1,4 +1,4 @@
-import type { RequestHandler, RequestEvent } from "./$types";
+import type { PageServerLoad } from "./$types";
 
 import { OAuth2RequestError } from "arctic";
 import { assert, type Equals } from "tsafe";
@@ -13,6 +13,7 @@ import {
 	oauthConnectionTable,
 	publicAssetTable,
 } from "$lib/drizzle";
+import { error, redirect, type RequestEvent } from "@sveltejs/kit";
 
 /**
  * Source: https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-the-authenticated-user
@@ -37,22 +38,14 @@ interface GitHubUser {
 }
 
 const OAUTH_CALLBACK_HANDLERS = {
-	github: async (event: RequestEvent) => {
+	github: async (event: RequestEvent): Promise<never> => {
 		const code = event.url.searchParams.get("code");
 		const state = event.url.searchParams.get("state");
 		const storedState = event.cookies.get("github_oauth_state");
 
 		if (!code || !state || !storedState || state !== storedState) {
-			console.error({
-				code,
-				state,
-				storedState,
-
-				state_is_eq: state === storedState,
-			});
-
-			return new Response(null, {
-				status: 400,
+			error(400, {
+				message: "Invalid OAuth2 Request",
 			});
 		}
 
@@ -62,7 +55,7 @@ const OAUTH_CALLBACK_HANDLERS = {
 				"https://api.github.com/user",
 				{
 					headers: {
-						Authorization: `Bearer ${tokens.accessToken}`,
+						Authorization: `Bearer ${tokens.accessToken()}`,
 					},
 					signal: event.request.signal,
 				},
@@ -132,12 +125,7 @@ const OAUTH_CALLBACK_HANDLERS = {
 					expires: new Date(),
 				});
 
-				return new Response(null, {
-					status: 302,
-					headers: {
-						Location: "/auth/sign-up/onboarding",
-					},
-				});
+				redirect(302, "/app/account");
 			} else {
 				// user found, log them in
 				const [{ user_id }] = existing_user;
@@ -154,37 +142,28 @@ const OAUTH_CALLBACK_HANDLERS = {
 					expires: new Date(0),
 				});
 
-				return new Response(null, {
-					status: 302,
-					headers: {
-						Location: "/app",
-					},
-				});
+				redirect(302, "/app");
 			}
 		} catch (e) {
 			console.error(e);
 
 			if (e instanceof OAuth2RequestError) {
-				return new Response(null, {
-					status: 400,
+				error(400, {
+					message: "Invalid OAuth2 Request",
 				});
 			}
 
-			return new Response(null, {
-				status: 500,
+			error(500, {
+				message: "Internal Server Error",
 			});
 		}
-
-		return new Response(null, {
-			status: 500,
-		});
 	},
 };
 
 assert<Equals<ValidOauthMethods, keyof typeof OAUTH_CALLBACK_HANDLERS>>();
 
-export const GET = (async (event) => {
+export const load = (async (event) => {
 	const oauth_method = event.params
 		.method as keyof typeof OAUTH_CALLBACK_HANDLERS;
 	return await OAUTH_CALLBACK_HANDLERS[oauth_method](event);
-}) satisfies RequestHandler;
+}) satisfies PageServerLoad;

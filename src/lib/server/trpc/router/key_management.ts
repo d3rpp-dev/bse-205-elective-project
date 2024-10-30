@@ -5,7 +5,7 @@ import { TRPCError } from "@trpc/server";
 
 import { DB } from "$lib/server/db";
 import { publicKeyTable } from "$lib/drizzle";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export const keyManagementRouter = trpcInstance.router({
 	// #region Download Public Key
@@ -65,6 +65,33 @@ export const keyManagementRouter = trpcInstance.router({
 			}
 		}),
 	// #endregion
+	// #region Get Keys for User
+	getUserPublicKeys: trpcInstance.procedure
+		.use((opts) => {
+			const user = opts.ctx.user;
+
+			if (!user) {
+				throw new TRPCError({
+					code: "UNAUTHORIZED",
+				});
+			} else {
+				return opts.next({
+					ctx: {
+						user,
+					},
+				});
+			}
+		})
+		.query(async (opts) => {
+			await new Promise((res) => setTimeout(res, 500));
+
+			return await DB.select({
+				kid: publicKeyTable.kid,
+			})
+				.from(publicKeyTable)
+				.where(eq(publicKeyTable.keyOwner, opts.ctx.user.id));
+		}),
+	// #endregion
 	// #region Upload Public Key
 	/**
 	 * Upload a public key to be used for allowing sharing
@@ -88,14 +115,15 @@ export const keyManagementRouter = trpcInstance.router({
 		.input(
 			z.object({
 				kid: z.string().ulid(),
+                name: z.string(),
 				key_b64: z.string().base64(),
 			}),
 		)
 		.mutation(async (opts) => {
-			const { kid, key_b64 } = opts.input;
+			const { kid, key_b64, name } = opts.input;
 			const decoded_key = Buffer.from(key_b64, "base64");
 
-			DB.transaction(async (tx) => {
+			return await DB.transaction(async (tx) => {
 				const duplication_check = await tx
 					.select({ kid: publicKeyTable.kid })
 					.from(publicKeyTable)
@@ -108,11 +136,17 @@ export const keyManagementRouter = trpcInstance.router({
 					});
 				}
 
-				await tx.insert(publicKeyTable).values({
-					kid: kid,
-					keyOwner: opts.ctx.user.id,
-					key: decoded_key,
-				});
+				return (
+					await tx
+						.insert(publicKeyTable)
+						.values({
+							kid: kid,
+                            name,
+							keyOwner: opts.ctx.user.id,
+							key: decoded_key,
+						})
+						.returning({ kid: publicKeyTable.kid })
+				)[0].kid;
 			});
 		}),
 	// #endregion
@@ -142,10 +176,36 @@ export const keyManagementRouter = trpcInstance.router({
 			}),
 		)
 		.mutation(async (opts) => {
-			console.log(" Delete pubic key".trim(), opts.input.kid);
+			const user_id = opts.ctx.user.id;
+			console.log("Delete pubic key", opts.input.kid);
 
-			throw new TRPCError({
-				code: "NOT_IMPLEMENTED",
+			return await DB.transaction(async (tx_db) => {
+				const suitable_keys = await tx_db
+					.select({
+						kid: publicKeyTable.kid,
+						owner: publicKeyTable.keyOwner,
+					})
+					.from(publicKeyTable)
+					.where(
+						and(
+							eq(publicKeyTable.kid, opts.input.kid),
+							eq(publicKeyTable.keyOwner, user_id),
+						),
+					);
+
+				if (suitable_keys.length == 0) {
+					throw new TRPCError({
+						code: "NOT_FOUND",
+						message: `Key with KID ${opts.input.kid} does not exist`,
+					});
+				} else {
+					return (
+						await tx_db
+							.delete(publicKeyTable)
+							.where(eq(publicKeyTable.kid, opts.input.kid))
+							.returning({ kid: publicKeyTable.kid })
+					)[0].kid;
+				}
 			});
 		}),
 	// #endregion

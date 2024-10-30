@@ -5,6 +5,7 @@
 	import * as DropdownMenu from "@/ui/dropdown-menu";
 
 	import type { User as UserType } from "lucia";
+	import { Button } from "@/ui/button";
 
 	interface Props {
 		user: UserType | null;
@@ -17,30 +18,76 @@
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		<Avatar.Root class={avatar_size == "smol" ? "h-8 w-8" : undefined}>
-			{#if user && user.profilePicture}
-				<Avatar.Image
-					src={`/api/public_assets/${user.profilePicture}`}
-					alt="Profile Photo"
-				/>
-			{/if}
-			<Avatar.Fallback><User /></Avatar.Fallback>
+			{#snippet children()}
+				{#if user && user.profilePicture}
+					<Avatar.Image
+						src={`/api/public_assets/${user.profilePicture}`}
+						alt="Profile Photo"
+					/>
+				{/if}
+				<Avatar.Fallback><User /></Avatar.Fallback>
+			{/snippet}
 		</Avatar.Root>
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content align="end" class="w-[350px]">
 		{#if user === null}
 			<!-- user is not logged in -->
-			<DropdownMenu.Item href="/auth/login">Login</DropdownMenu.Item>
-			<DropdownMenu.Item href="/auth/sign-up">Sign Up</DropdownMenu.Item>
+			<DropdownMenu.Item>
+				{#snippet child()}
+					<Button
+						variant="ghost"
+						size="dropdown-link"
+						href="/auth/login"
+					>
+						Login
+					</Button>
+				{/snippet}
+			</DropdownMenu.Item>
+			<DropdownMenu.Item>
+				{#snippet child()}
+					<Button
+						variant="ghost"
+						size="dropdown-link"
+						href="/auth/sign-up"
+					>
+						Sign Up
+					</Button>
+				{/snippet}
+			</DropdownMenu.Item>
 		{:else}
 			<DropdownMenu.Label>
 				{user.displayName || user.username}
 			</DropdownMenu.Label>
 			<DropdownMenu.Separator />
-			<DropdownMenu.Item href="/app">Dashboard</DropdownMenu.Item>
-			<DropdownMenu.Item href="/app/account">Account</DropdownMenu.Item>
+			<DropdownMenu.Item>
+				{#snippet child()}
+					<Button variant="ghost" size="dropdown-link" href="/app">
+						Dashboard
+					</Button>
+				{/snippet}
+			</DropdownMenu.Item>
+			<DropdownMenu.Item>
+				{#snippet child()}
+					<Button
+						variant="ghost"
+						size="dropdown-link"
+						href="/app/account"
+					>
+						Account
+					</Button>
+				{/snippet}
+			</DropdownMenu.Item>
 			<DropdownMenu.Separator />
-			<DropdownMenu.Item href="/auth/logout" variant="destructive">
-				Log Out
+			<DropdownMenu.Item>
+				{#snippet child()}
+					<Button
+						variant="ghost-destructive"
+						size="dropdown-link"
+						href="/auth/logout"
+					>
+						Log Out
+					</Button>
+				{/snippet}
 			</DropdownMenu.Item>
 		{/if}
 	</DropdownMenu.Content>

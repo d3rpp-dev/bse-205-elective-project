@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { cn } from "$lib/utils";
+	import { trpc } from "$lib/trpc/client";
+	import { page } from "$app/stores";
 
 	import Main from "@/main.svelte";
 
 	import * as Avatar from "@/ui/avatar";
 	import * as Card from "@/ui/card";
 	import { Separator } from "@/ui/separator";
+
+	import KeyManagermentSection from "./key_managerment_section.svelte";
+	import CreateKeyDialog from "./create_key_dialog.svelte";
 
 	import { AnimatedLoading } from "$lib/icons";
 
@@ -15,6 +20,8 @@
 	const { data } = $props();
 	const { user } = data;
 
+	const rpc = trpc($page);
+
 	const uploadedFileCount = data.uploadedFileCount();
 </script>
 
@@ -23,14 +30,16 @@
       -->
 	<div class="flex h-[240px] flex-col items-center justify-start md:flex-row">
 		<div class="grid aspect-square size-[240px] place-items-center">
-			<Avatar.Root class="h-[75%] w-auto">
+			<Avatar.Root class="aspect-square h-[75%] w-auto">
 				{#if user.profilePicture}
 					<Avatar.Image
 						src={`/api/public_assets/${user.profilePicture}`}
 						alt={`Profile Piture for ${user.displayName || user.username}`}
 					/>
 				{/if}
-				<Avatar.Fallback><User /></Avatar.Fallback>
+				<Avatar.Fallback class="h-full w-full">
+					<User />
+				</Avatar.Fallback>
 			</Avatar.Root>
 		</div>
 		<div class="flex h-[80%] flex-col items-start justify-center gap-2">
@@ -45,8 +54,8 @@
 
 		<div class="flex flex-col">
 			<Card.Root>
-				<Card.Header class="text-center">
-					<span class="text-md">Uploaded Files</span>
+				<Card.Content class="text-center">
+					<div class="text-md mb-2">Uploaded Files</div>
 
 					<span
 						class={cn(
@@ -75,11 +84,13 @@
 							{$uploadedFileCount.data.uploadedFiles}
 						{/if}
 					</span>
-				</Card.Header>
+				</Card.Content>
 			</Card.Root>
 		</div>
 	</div>
 	<!-- #endregion -->
 
-	<Separator orientation="horizontal" class="mx-auto my-4 w-[90%]" />
+	<!-- <Separator orientation="horizontal" class="mx-auto my-4 w-[90%]" /> -->
+
+	<KeyManagermentSection {rpc} />
 </Main>
