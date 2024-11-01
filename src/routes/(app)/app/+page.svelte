@@ -21,13 +21,19 @@
 	};
 </script>
 
-<Main class="min-h-app-main max-w-screen-lg">
-	<h1 class="text-3xl font-bold">Welcome to SvelteKit</h1>
+<!--Home Page Test-->
 
-	<p>
-		Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a>
-		to read the documentation
-	</p>
+<Main class="min-h-app-main max-w-screen-lg">
+	<div>
+		<h1 class="text-3xl font-bold">Folders</h1>
+		<div>
+			<!-- Div to store each folder / folder button in-->
+			<Button variant="folder">Work</Button>
+			<Button variant="destructive">Personal</Button>
+			<Button variant="destructive">Photos</Button>
+			<Button variant="destructive">Bills</Button>
+		</div>
+	</div>
 
 	<Button onclick={aaaa} variant="default">Button</Button>
 	<Button variant="destructive">AAAAAAAA</Button>
