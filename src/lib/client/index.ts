@@ -1,4 +1,3 @@
-import { ulid } from "ulid";
 import {
 	JailBirdExportedKeySchema,
 	type JailBirdExportedKey,
@@ -9,11 +8,14 @@ export * from "./errors";
 import { InvalidKeyError } from "./errors";
 import { getContext, setContext } from "svelte";
 
-const private_key_usages: KeyUsage[] = ["decrypt", "unwrapKey"];
+const asymmentric_public_usages: KeyUsage[] = ["encrypt", "wrapKey"];
 
-const public_key_usages: KeyUsage[] = ["wrapKey", "encrypt"];
+const asymmetric_private_usages: KeyUsage[] = ["decrypt", "unwrapKey"];
 
-const key_usages = [...private_key_usages, ...public_key_usages];
+const asymmetric_key_usages: KeyUsage[] = [
+	...asymmentric_public_usages,
+	...asymmetric_private_usages,
+];
 
 const runtime_client_context_key = "$$_theAmalgamation";
 
@@ -114,7 +116,7 @@ export class TheAmalgamation {
 	private encode_key_pair = async (
 		key: CryptoKeyPair,
 	): Promise<JailBirdExportedKey["key"]> => {
-		return {
+		const a = {
 			publicKey: await window.crypto.subtle.exportKey(
 				"jwk",
 				key.publicKey,
@@ -124,6 +126,10 @@ export class TheAmalgamation {
 				key.privateKey,
 			),
 		};
+
+		console.debug("encoded pair", a);
+
+		return a;
 	};
 
 	private decode_key_pair = async (
@@ -137,14 +143,14 @@ export class TheAmalgamation {
 					private_key,
 					{ name: "ECDSA", namedCurve: "P-521" },
 					true,
-					private_key_usages,
+					asymmetric_private_usages,
 				),
 				publicKey: await window.crypto.subtle.importKey(
 					"jwk",
 					public_key,
 					{ name: "ECDSA", namedCurve: "P-521" },
 					true,
-					public_key_usages,
+					asymmentric_public_usages,
 				),
 			};
 		} catch (e) {
@@ -165,13 +171,24 @@ export class TheAmalgamation {
 		const private_key = this.get_private_key(kid);
 		if (!public_key || !private_key) return undefined;
 
-		return JSON.stringify({
+		const key = {
 			kid,
-			key: this.encode_key_pair({
+			key: await this.encode_key_pair({
 				privateKey: private_key.key,
 				publicKey: public_key.key,
 			}),
-		});
+		};
+
+		console.log("export_key_string", key);
+
+		return JSON.stringify(key);
+	};
+
+	public export_public_key = async (kid: string) => {
+		const public_key = this.get_public_key(kid);
+		if (!public_key) return undefined;
+
+		return await window.crypto.subtle.exportKey("jwk", public_key.key);
 	};
 
 	/**
@@ -209,19 +226,31 @@ export class TheAmalgamation {
 		}
 	};
 
-	public generate_key_pair = async () => {
-		const new_key_id = ulid();
-		const key = await window.crypto.subtle.generateKey(
-			{
-				name: "ECDSA",
-				namedCurve: "P-251",
-			},
-			true,
-			key_usages,
+	/**
+	 *
+	 * @param kid the KID reserved from the server
+	 * @param params params to be passed to generate key
+	 * @returns the {@link kid}
+	 */
+	public generate_key_pair = async (
+		kid: string,
+		params: RsaHashedKeyGenParams,
+	) => {
+		console.info(
+			`generating key ${kid} with params`,
+			params,
+			`and usages`,
+			asymmetric_key_usages,
 		);
 
-		this.add_key_pair_to_client(new_key_id, key);
-		return new_key_id;
+		const key = await window.crypto.subtle.generateKey(
+			params,
+			true,
+			asymmetric_key_usages,
+		);
+
+		this.add_key_pair_to_client(kid, key);
+		return kid;
 	};
 
 	public get_private_key_count = () => {

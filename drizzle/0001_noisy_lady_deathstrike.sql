@@ -1,1 +1,0 @@
-ALTER TABLE `public_keys` ADD `name` text NOT NULL;

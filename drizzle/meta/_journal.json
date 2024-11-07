@@ -1,20 +1,13 @@
 {
-  "version": "7",
-  "dialect": "sqlite",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "6",
-      "when": 1729459339411,
-      "tag": "0000_quiet_iron_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1730326915116,
-      "tag": "0001_noisy_lady_deathstrike",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "sqlite",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "6",
+			"when": 1731012522719,
+			"tag": "0000_salty_red_shift",
+			"breakpoints": true
+		}
+	]
 }

@@ -4,8 +4,10 @@ import { trpcInstance } from "./init";
 import { TRPCError } from "@trpc/server";
 
 import { DB } from "$lib/server/db";
-import { publicKeyTable } from "$lib/drizzle";
+import { publicKeyTable, reservedKIDTable } from "$lib/drizzle";
 import { eq, and } from "drizzle-orm";
+import { authMiddleware } from "../middleware";
+import { monotonic_ulid } from "$lib/utils";
 
 export const keyManagementRouter = trpcInstance.router({
 	// #region Download Public Key
@@ -21,21 +23,7 @@ export const keyManagementRouter = trpcInstance.router({
 	 * usage.
 	 */
 	downloadPublicKey: trpcInstance.procedure
-		.use((opts) => {
-			const user = opts.ctx.user;
-
-			if (!user) {
-				throw new TRPCError({
-					code: "UNAUTHORIZED",
-				});
-			} else {
-				return opts.next({
-					ctx: {
-						user,
-					},
-				});
-			}
-		})
+		.use(authMiddleware)
 		.input(
 			z.object({
 				kid: z.string().ulid(),
@@ -67,26 +55,14 @@ export const keyManagementRouter = trpcInstance.router({
 	// #endregion
 	// #region Get Keys for User
 	getUserPublicKeys: trpcInstance.procedure
-		.use((opts) => {
-			const user = opts.ctx.user;
-
-			if (!user) {
-				throw new TRPCError({
-					code: "UNAUTHORIZED",
-				});
-			} else {
-				return opts.next({
-					ctx: {
-						user,
-					},
-				});
-			}
-		})
+		.use(authMiddleware)
 		.query(async (opts) => {
 			await new Promise((res) => setTimeout(res, 500));
 
 			return await DB.select({
+				name: publicKeyTable.name,
 				kid: publicKeyTable.kid,
+				key: publicKeyTable.key,
 			})
 				.from(publicKeyTable)
 				.where(eq(publicKeyTable.keyOwner, opts.ctx.user.id));
@@ -97,31 +73,16 @@ export const keyManagementRouter = trpcInstance.router({
 	 * Upload a public key to be used for allowing sharing
 	 */
 	uploadPublicKey: trpcInstance.procedure
-		.use((opts) => {
-			const user = opts.ctx.user;
-
-			if (!user) {
-				throw new TRPCError({
-					code: "UNAUTHORIZED",
-				});
-			} else {
-				return opts.next({
-					ctx: {
-						user,
-					},
-				});
-			}
-		})
+		.use(authMiddleware)
 		.input(
 			z.object({
 				kid: z.string().ulid(),
-                name: z.string(),
+				name: z.string(),
 				key_b64: z.string().base64(),
 			}),
 		)
 		.mutation(async (opts) => {
 			const { kid, key_b64, name } = opts.input;
-			const decoded_key = Buffer.from(key_b64, "base64");
 
 			return await DB.transaction(async (tx) => {
 				const duplication_check = await tx
@@ -136,14 +97,40 @@ export const keyManagementRouter = trpcInstance.router({
 					});
 				}
 
+				const reserved_key_check = (
+					await tx
+						.select({ kid: reservedKIDTable.kid })
+						.from(reservedKIDTable)
+						.where(eq(reservedKIDTable.user, opts.ctx.user.id))
+				).map((val) => val.kid);
+
+				if (!reserved_key_check.includes(kid)) {
+					throw new TRPCError({
+						code: "BAD_REQUEST",
+						message: `${kid} has not been reserved for this user.`,
+					});
+				}
+
+				const rows = await tx
+					.delete(reservedKIDTable)
+					.where(eq(reservedKIDTable.kid, kid))
+					.returning();
+
+				if (rows.length != 1) {
+					throw new TRPCError({
+						code: "INTERNAL_SERVER_ERROR",
+						message: `Expected Reserved KID Deletion to be 1, got ${rows}`,
+					});
+				}
+
 				return (
 					await tx
 						.insert(publicKeyTable)
 						.values({
 							kid: kid,
-                            name,
+							name,
 							keyOwner: opts.ctx.user.id,
-							key: decoded_key,
+							key: key_b64,
 						})
 						.returning({ kid: publicKeyTable.kid })
 				)[0].kid;
@@ -155,21 +142,7 @@ export const keyManagementRouter = trpcInstance.router({
 	 * Delete a public key, not likely to be used but here in case.
 	 */
 	deletePublicKey: trpcInstance.procedure
-		.use((opts) => {
-			const user = opts.ctx.user;
-
-			if (!user) {
-				throw new TRPCError({
-					code: "UNAUTHORIZED",
-				});
-			} else {
-				return opts.next({
-					ctx: {
-						user,
-					},
-				});
-			}
-		})
+		.use(authMiddleware)
 		.input(
 			z.object({
 				kid: z.string().ulid(),
@@ -205,6 +178,55 @@ export const keyManagementRouter = trpcInstance.router({
 							.where(eq(publicKeyTable.kid, opts.input.kid))
 							.returning({ kid: publicKeyTable.kid })
 					)[0].kid;
+				}
+			});
+		}),
+	// #endregion
+	// #region Reserve KID
+	/**
+	 * To be safe I'm adding a hard limit to how many key IDs a user can reserve,
+	 *
+	 * # this hard limit is **5**
+	 *
+	 * This function will always succeed, but it may sometimes return
+	 * an already reserved kid.
+	 */
+	reserveKID: trpcInstance.procedure
+		.use(authMiddleware)
+		.mutation(async (opts) => {
+			const user_id = opts.ctx.user.id;
+
+			return await DB.transaction(async (tx_db) => {
+				const reserved_keys_query = await tx_db
+					.select({ kid: reservedKIDTable.kid })
+					.from(reservedKIDTable)
+					.where(eq(reservedKIDTable.user, user_id));
+
+				const reserved_key_count = reserved_keys_query.length;
+				const MAXIMUM_RESERVED_KIDS = 5;
+
+				// if they have the maximum just return one of the previous ones.
+				if (reserved_key_count >= MAXIMUM_RESERVED_KIDS) {
+					const random_idx = Math.floor(
+						Math.random() * (reserved_key_count - 1),
+					);
+					const item = reserved_keys_query[random_idx];
+					return {
+						reused: true,
+						...item,
+					};
+				} else {
+					const kid = monotonic_ulid();
+
+					await tx_db.insert(reservedKIDTable).values({
+						kid,
+						user: user_id,
+					});
+
+					return {
+						reused: false,
+						kid,
+					};
 				}
 			});
 		}),

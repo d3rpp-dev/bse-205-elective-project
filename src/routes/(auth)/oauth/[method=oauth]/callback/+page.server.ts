@@ -13,7 +13,7 @@ import {
 	oauthConnectionTable,
 	publicAssetTable,
 } from "$lib/drizzle";
-import { error, redirect, type RequestEvent } from "@sveltejs/kit";
+import { error, redirect, type RequestEvent, isRedirect } from "@sveltejs/kit";
 
 /**
  * Source: https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-the-authenticated-user
@@ -107,6 +107,7 @@ const OAUTH_CALLBACK_HANDLERS = {
 						type: "github",
 						userId: new_user_id,
 						oauthIdentifier: githubUser.id.toString(),
+						connectionUserName: githubUser.login,
 					});
 
 					return new_user_id;
@@ -153,6 +154,10 @@ const OAUTH_CALLBACK_HANDLERS = {
 				});
 			}
 
+			if (isRedirect(e)) {
+				throw e;
+			}
+
 			error(500, {
 				message: "Internal Server Error",
 			});
@@ -163,7 +168,13 @@ const OAUTH_CALLBACK_HANDLERS = {
 assert<Equals<ValidOauthMethods, keyof typeof OAUTH_CALLBACK_HANDLERS>>();
 
 export const load = (async (event) => {
-	const oauth_method = event.params
-		.method as keyof typeof OAUTH_CALLBACK_HANDLERS;
-	return await OAUTH_CALLBACK_HANDLERS[oauth_method](event);
+	if (Object.keys(OAUTH_CALLBACK_HANDLERS).includes(event.params.method)) {
+		await OAUTH_CALLBACK_HANDLERS[
+			event.params.method as keyof typeof OAUTH_CALLBACK_HANDLERS
+		](event);
+	} else {
+		error(400, {
+			message: "Invalid OAuth2.0 Method",
+		});
+	}
 }) satisfies PageServerLoad;

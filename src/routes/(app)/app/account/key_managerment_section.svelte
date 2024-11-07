@@ -5,9 +5,13 @@
 	import AnimatedLoading from "$lib/icons/AnimatedLoading.svelte";
 	import ErrorX from "lucide-svelte/icons/x";
 
+	import md5 from "md5";
+
 	import CreateKeyDialog from "./create_key_dialog.svelte";
 
 	import * as Card from "@/ui/card";
+	import * as Table from "@/ui/table";
+	import InlineCodeblock from "@/inline-codeblock.svelte";
 
 	const {
 		rpc,
@@ -15,7 +19,12 @@
 		rpc: ReturnType<typeof trpc>;
 	} = $props();
 
+	// `void 0` is identical to `undefined`, I'm just funny
 	const pkquery = rpc.keyManagement.getUserPublicKeys.createQuery(void 0);
+
+	const create_md5_fingerprint = (key: Uint8Array): string => {
+		return md5(key).match(/..?/g)!.join(":");
+	};
 </script>
 
 <Card.Root class="mt-4">
@@ -28,7 +37,12 @@
 		</div>
 
 		<div>
-			<CreateKeyDialog {rpc} />
+			<CreateKeyDialog
+				{rpc}
+				reset_pk_query={() => {
+					$pkquery.refetch();
+				}}
+			/>
 		</div>
 	</Card.Header>
 
@@ -61,7 +75,33 @@
 				</span>
 			</div>
 		{:else}
-			{JSON.stringify($pkquery.data, null, 2)}
+			<Table.Root>
+				<Table.Header>
+					<Table.Row>
+						<Table.Head>Key Name</Table.Head>
+						<Table.Head>Key ID & Fingerprint</Table.Head>
+						<Table.Head>Actions</Table.Head>
+					</Table.Row>
+				</Table.Header>
+				<Table.Body>
+					{#each $pkquery.data as key (key.kid)}
+						<Table.Row>
+							<Table.Cell>{key.name}</Table.Cell>
+							<Table.Cell class="flex flex-col gap-2">
+								<span>Key ID: <InlineCodeblock>{key.kid}</InlineCodeblock></span>
+								<span>Fingerprint: <InlineCodeblock>{create_md5_fingerprint(key.key as Uint8Array)}</InlineCodeblock></span>
+							</Table.Cell>
+							<Table.Cell>Actions (todo)</Table.Cell>
+						</Table.Row>
+					{/each}
+				</Table.Body>
+                <Table.Footer>
+                    <Table.Row>
+                        <Table.Cell colspan={2}>Total Key Count</Table.Cell>
+                        <Table.Cell>{$pkquery.data.length}</Table.Cell>
+                    </Table.Row>
+                </Table.Footer>
+			</Table.Root>
 		{/if}
 	</Card.Content>
 </Card.Root>
