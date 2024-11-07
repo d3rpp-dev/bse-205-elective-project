@@ -4,7 +4,7 @@
 	import Gear from "svelte-radix/Gear.svelte";
 
 	import { resetMode, setMode } from "mode-watcher";
-	import { Button, buttonVariants } from "$lib/components/ui/button/index.js";
+	import { buttonVariants } from "$lib/components/ui/button/index.js";
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 </script>
 

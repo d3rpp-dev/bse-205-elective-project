@@ -58,6 +58,7 @@
 		key_pair_encoded_download_blob = window.URL.createObjectURL(blob);
 
 		tabs_value = "download";
+		reset_pk_query();
 	};
 
 	// button cannot be pressed without the values being valid
@@ -76,7 +77,7 @@
 				publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
 				// `+` like this just parses it to an integer
 				modulusLength: +modulus,
-			} satisfies RsaHashedKeyGenParams);
+			});
 
 			final_kid = confirmed_kid;
 
@@ -193,9 +194,10 @@
 						</Select.Content>
 					</Select.Root>
 					<span class="text-sm opacity-50">
-						If you don't know what this means, just use <InlineCodeblock>
+						If you don't know what this means, just use <InlineCodeblock
+						>
 							SHA-256
-                        </InlineCodeblock>
+						</InlineCodeblock>
 					</span>
 				</div>
 
@@ -230,7 +232,8 @@
 						</Select.Content>
 					</Select.Root>
 					<span class="text-sm opacity-50">
-						If you don't know what this means, just use <InlineCodeblock>
+						If you don't know what this means, just use <InlineCodeblock
+						>
 							4096
 						</InlineCodeblock>
 					</span>

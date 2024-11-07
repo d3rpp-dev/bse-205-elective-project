@@ -88,19 +88,29 @@
 						<Table.Row>
 							<Table.Cell>{key.name}</Table.Cell>
 							<Table.Cell class="flex flex-col gap-2">
-								<span>Key ID: <InlineCodeblock>{key.kid}</InlineCodeblock></span>
-								<span>Fingerprint: <InlineCodeblock>{create_md5_fingerprint(key.key as Uint8Array)}</InlineCodeblock></span>
+								<span>
+									Key ID: <InlineCodeblock>
+										{key.kid}
+									</InlineCodeblock>
+								</span>
+								<span>
+									Fingerprint: <InlineCodeblock>
+										{create_md5_fingerprint(
+											key.key as Uint8Array,
+										)}
+									</InlineCodeblock>
+								</span>
 							</Table.Cell>
 							<Table.Cell>Actions (todo)</Table.Cell>
 						</Table.Row>
 					{/each}
 				</Table.Body>
-                <Table.Footer>
-                    <Table.Row>
-                        <Table.Cell colspan={2}>Total Key Count</Table.Cell>
-                        <Table.Cell>{$pkquery.data.length}</Table.Cell>
-                    </Table.Row>
-                </Table.Footer>
+				<Table.Footer>
+					<Table.Row>
+						<Table.Cell colspan={2}>Total Key Count</Table.Cell>
+						<Table.Cell>{$pkquery.data.length}</Table.Cell>
+					</Table.Row>
+				</Table.Footer>
 			</Table.Root>
 		{/if}
 	</Card.Content>

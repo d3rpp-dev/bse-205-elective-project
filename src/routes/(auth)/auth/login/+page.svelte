@@ -1,28 +1,17 @@
 <script lang="ts">
 	import type { ValidOauthMethods } from "$lib/server/auth/oauth_methods";
 
-	import { trpc } from "$lib/trpc/client";
-	import { page } from "$app/stores";
-
 	import Main from "@/main.svelte";
 
 	import { Button } from "@/ui/button";
 	import * as Card from "@/ui/card";
-	import { Input } from "@/ui/input";
-	import { Label } from "@/ui/label";
-	import { Separator } from "@/ui/separator";
 
 	import { GithubLogo } from "svelte-radix";
 
 	import { PAGE_TRANSITION_TIME } from "$lib";
 
-	import { fade, slide } from "svelte/transition";
+	import { fade } from "svelte/transition";
 	import { goto } from "$app/navigation";
-
-	let username = $state("");
-	let password = $state("");
-
-	const rpc = trpc($page);
 
 	const oauthLoginGenerator =
 		(provider: ValidOauthMethods) => (ev: MouseEvent) => {
