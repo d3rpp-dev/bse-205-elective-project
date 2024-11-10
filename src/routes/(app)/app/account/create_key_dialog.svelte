@@ -11,9 +11,11 @@
 	import { Plus } from "lucide-svelte";
 	import AnimatedLoading from "$lib/icons/AnimatedLoading.svelte";
 
-	import { getRuntimeClientContext } from "$lib/client";
+	import { getRuntimeClientContext } from "$lib/client.old";
 	import { onMount } from "svelte";
 	import InlineCodeblock from "@/inline-codeblock.svelte";
+
+	const amalgamation = getRuntimeClientContext();
 
 	let tabs_value: "create" | "download" = $state("create");
 
@@ -101,7 +103,6 @@
 		}
 	};
 
-	const amalgamation = getRuntimeClientContext();
 	const uploadKeyMutation = rpc.keyManagement.uploadPublicKey.createMutation({
 		onSuccess: uploadKeySuccess,
 

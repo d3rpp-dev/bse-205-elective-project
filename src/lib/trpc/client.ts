@@ -8,10 +8,10 @@ import { createTRPCClient, type TRPCClientInit } from "trpc-sveltekit";
 import type { QueryClient } from "@tanstack/svelte-query";
 import { svelteQueryWrapper } from "trpc-svelte-query-adapter";
 
-import { uneval } from "devalue";
+import * as Devalue from "devalue";
 import superjson from "superjson";
 
-import { httpBatchLink } from "@trpc/client";
+import { httpLink } from "@trpc/client";
 
 import { browser } from "$app/environment";
 
@@ -22,8 +22,8 @@ export const TRPC_PATH = `/__trpc`;
 export const transformer = {
 	input: superjson,
 	output: {
-		serialize: (object: unknown) => uneval(object),
-		deserialize: (object: unknown) => eval(`(${object})`),
+		serialize: Devalue.stringify,
+		deserialize: Devalue.parse,
 	},
 	__default: true,
 };
@@ -40,9 +40,31 @@ export const trpc = (init?: TRPCClientInit, queryClient?: QueryClient) => {
 		client: createTRPCClient<Router>({
 			transformer,
 			links: [
-				httpBatchLink({
+				httpLink({
 					url: TRPC_PATH,
 					fetch: init?.fetch,
+					// headers: async ({ op }) => {
+					// 	const excluded_queries = ["health.ping"];
+
+					// 	if (excluded_queries.includes(op.path)) return {};
+
+					// 	const client = getRuntimeClientContext();
+
+					// 	console.log("Signing Action", op.path);
+
+					// 	try {
+					// 		const signature_header =
+					// 			await client.sign_operation(op.input);
+					// 		console.log({ signature_header });
+
+					// 		return {
+					// 			"X-Op-Signature": signature_header,
+					// 		};
+					// 	} catch (e: unknown) {
+					// 		console.log("Failed to sign", e);
+					// 		return {};
+					// 	}
+					// },
 				}),
 			],
 		}),

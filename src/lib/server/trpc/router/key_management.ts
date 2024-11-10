@@ -62,7 +62,6 @@ export const keyManagementRouter = trpcInstance.router({
 			return await DB.select({
 				name: publicKeyTable.name,
 				kid: publicKeyTable.kid,
-				key: publicKeyTable.key,
 			})
 				.from(publicKeyTable)
 				.where(eq(publicKeyTable.keyOwner, opts.ctx.user.id));
