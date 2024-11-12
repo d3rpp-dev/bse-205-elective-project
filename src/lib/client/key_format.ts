@@ -13,7 +13,7 @@ export const keyUsagesSchema = z.enum([
 ]);
 assert<Equals<z.infer<typeof keyUsagesSchema>, KeyUsage>>();
 
-// I would add an assert here, but it'd not complaining
+// I would add an assert here, but just complains
 export const keyAlgSchema = z.union([
 	z.object({
 		name: z.enum(["RSASSA-PKCS1-v1_5", "RSA-PSS", "RSA-OAEP"]),
@@ -51,13 +51,13 @@ export const keySchema = z
 		kid: z.string().ulid(),
 		usages: z.array(keyUsagesSchema),
 		alg: keyAlgSchema,
-		// i tried typing it last time,
+		// I tried typing it last time,
 		// didn't end well
 		key: z.any(),
 	})
 	.required();
 
-// the only difference between these is that key is either an imported cryptokey or a JWK
+// the only difference between there is that key is either an imported cryptokey or a JWK
 export type ImportedKey = Omit<z.infer<typeof keySchema>, "key"> & {
 	key: CryptoKey;
 };
@@ -65,7 +65,10 @@ export type ExportedKey = Omit<z.infer<typeof keySchema>, "key"> & {
 	key: JsonWebKey;
 };
 
-export type ImportedKeyPair = {
-	publicKey: ImportedKey;
-	privateKey: ImportedKey;
+type KeyPair<T> = {
+	publicKey: T;
+	privateKey: T;
 };
+
+export type ImportedKeyPair = KeyPair<ImportedKey>;
+export type ExportedKeyPair = KeyPair<ExportedKey>;

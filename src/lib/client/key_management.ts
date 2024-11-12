@@ -1,4 +1,9 @@
-import type { ExportedKey, ImportedKey, ImportedKeyPair } from "./key_format";
+import type {
+	ExportedKey,
+	ExportedKeyPair,
+	ImportedKey,
+	ImportedKeyPair,
+} from "./key_format";
 import { keySchema } from "./key_format";
 
 import * as devalue from "devalue";
@@ -18,7 +23,7 @@ export const list_kids_from_localstorage = (variant: KeyVariant): string[] => {
 	return new Array(window.localStorage.length)
 		.fill(0)
 		.map(sequence)
-		.map(window.localStorage.key)
+		.map((val) => window.localStorage.key(val))
 		.filter(is_not_null)
 		.filter(start_with_prefix)
 		.map(strip_prefix);
@@ -81,6 +86,40 @@ export const import_key_pair = async (
 		privateKey: await import_private_key(kid),
 	};
 };
+
+export const import_key_meta = (
+	variant: KeyVariant,
+	kid: string,
+): Omit<ImportedKey, "key" | "usages"> => {
+	const localstorage_key = `${variant}-key-${kid}`;
+	const key = window.localStorage.getItem(localstorage_key);
+
+	if (!key) {
+		throw new Error(`No ${variant} key with ID ${kid} found`);
+	} else {
+		const parsed = keySchema.safeParse(devalue.parse(key));
+
+		if (!parsed.success) {
+			throw new Error(`${variant} key with ID ${kid} is invalid`);
+		} else {
+			return {
+				alg: parsed.data.alg,
+				kid: parsed.data.kid,
+				name: parsed.data.name,
+			};
+		}
+	}
+};
+
+export const does_key_exist = (
+    variant: KeyVariant,
+    kid: string
+): boolean => {
+	const localstorage_key = `${variant}-key-${kid}`;
+	const key = window.localStorage.getItem(localstorage_key);
+
+    return key !== null;
+}
 // #endregion
 
 // #region Export Keys
@@ -100,6 +139,48 @@ export const export_single_key_string = async (
 	key: ImportedKey,
 ): Promise<string> => {
 	return devalue.stringify(await export_single_key(key));
+};
+
+export const export_key_pair = async (
+	kid: string,
+): Promise<ExportedKeyPair> => {
+	const { publicKey, privateKey } = await import_key_pair(kid);
+	const [publicKeyExported, privateKeyExported] = [
+		await export_single_key(publicKey),
+		await export_single_key(privateKey),
+	];
+
+	return {
+		publicKey: publicKeyExported,
+		privateKey: privateKeyExported,
+	};
+};
+
+export const export_key_pair_string = async (kid: string): Promise<string> => {
+	return devalue.stringify(await export_key_pair(kid));
+};
+
+/**
+ * Retrieves the exported JWK from localstorage.
+ *
+ * @param variant {KeyVariant} the variant of key, allows us to distinguish public and private
+ * @param kid {string} KID we're fetching the JWK for
+ */
+export const get_key_jwk = (variant: KeyVariant, kid: string): JsonWebKey => {
+	const localstorage_key = `${variant}-key-${kid}`;
+	const stored = window.localStorage.getItem(localstorage_key);
+
+	if (!stored) {
+		throw new Error(`${localstorage_key} does not exist`);
+	} else {
+		const parsed = keySchema.safeParse(devalue.parse(stored));
+
+		if (!parsed.success) {
+			throw new Error(`${localstorage_key} is not a valid key`);
+		} else {
+			return parsed.data.key as JsonWebKey;
+		}
+	}
 };
 // #endregion
 
@@ -165,7 +246,9 @@ export const generate_rsa_key_pair = async ({
 	modulusLength,
 	name,
 }: GenRsaKeypairParams): Promise<ImportedKeyPair> => {
-	const usages: KeyUsage[] = ["wrapKey", "unwrapKey", "encrypt", "decrypt"];
+	const publicKeyUsages: KeyUsage[] = ["wrapKey", "encrypt"];
+	const privateKeyUsages: KeyUsage[] = ["unwrapKey", "decrypt"];
+	const usages: KeyUsage[] = [...publicKeyUsages, ...privateKeyUsages];
 
 	const { publicKey, privateKey } = await window.crypto.subtle.generateKey(
 		{
@@ -186,7 +269,7 @@ export const generate_rsa_key_pair = async ({
 			},
 			kid,
 			name,
-			usages,
+			usages: publicKeyUsages,
 			key: publicKey,
 		},
 		privateKey: {
@@ -196,7 +279,7 @@ export const generate_rsa_key_pair = async ({
 			},
 			kid,
 			name,
-			usages,
+			usages: privateKeyUsages,
 			key: privateKey,
 		},
 	};

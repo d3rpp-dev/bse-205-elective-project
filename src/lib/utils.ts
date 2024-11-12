@@ -71,3 +71,5 @@ export function debounce<T>(cb: (v: T) => void, durationMs: number) {
 }
 
 export const monotonic_ulid = monotonicFactory();
+
+export type MaybePromise<T> = T | Promise<T>;

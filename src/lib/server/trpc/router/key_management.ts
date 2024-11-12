@@ -10,61 +10,96 @@ import { authMiddleware } from "../middleware";
 import { monotonic_ulid } from "$lib/utils";
 
 export const keyManagementRouter = trpcInstance.router({
-	// #region Download Public Key
-	/**
-	 * Download a public key
-	 *
-	 * Any user can download a public key of any other user
-	 * (hense the name *public* key), so we will not bother
-	 * checking who is downloading.
-	 *
-	 * HOWEVER, we do want to ensure only authenticated users
-	 * are doing the downloading, hense the {@link auth_middleware}
-	 * usage.
-	 */
-	downloadPublicKey: trpcInstance.procedure
-		.use(authMiddleware)
-		.input(
-			z.object({
-				kid: z.string().ulid(),
-			}),
-		)
-		.query(async (opts) => {
-			const kid = opts.input.kid;
-			console.log(`attempting to get public key - ${kid}`);
+    // #region Download Public Key
+    /**
+     * Download a public key
+     *
+     * Any user can download a public key of any other user
+     * (hense the name *public* key), so we will not bother
+     * checking who is downloading.
+     *
+     * HOWEVER, we do want to ensure only authenticated users
+     * are doing the downloading, hense the {@link auth_middleware}
+     * usage.
+     */
+    downloadPublicKey: trpcInstance.procedure
+        .use(authMiddleware)
+        .input(
+            z.object({
+                kid: z.string().ulid(),
+            }),
+        )
+        .query(async (opts) => {
+            const kid = opts.input.kid;
+            console.log(`attempting to get public key - ${kid}`);
 
-			const public_key_selection = await DB.select({
-				key: publicKeyTable.key,
-			})
-				.from(publicKeyTable)
-				.where(eq(publicKeyTable.kid, kid))
-				.limit(1);
+            const public_key_selection = await DB.select({
+                key: publicKeyTable.key,
+            })
+                .from(publicKeyTable)
+                .where(eq(publicKeyTable.kid, kid))
+                .limit(1);
 
-			if (public_key_selection.length === 0) {
-				throw new TRPCError({
-					code: "NOT_FOUND",
-				});
-			} else {
-				return {
-					key_b64: Buffer.from(
-						public_key_selection[0].key as Uint8Array,
-					).toString("base64"),
-				};
-			}
-		}),
-	// #endregion
-	// #region Get Keys for User
-	getUserPublicKeys: trpcInstance.procedure
-		.use(authMiddleware)
-		.query(async (opts) => {
-			await new Promise((res) => setTimeout(res, 500));
-
-			return await DB.select({
-				name: publicKeyTable.name,
-				kid: publicKeyTable.kid,
-			})
-				.from(publicKeyTable)
-				.where(eq(publicKeyTable.keyOwner, opts.ctx.user.id));
+            if (public_key_selection.length === 0) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                });
+            } else {
+                return {
+                    key_b64: Buffer.from(
+                        public_key_selection[0].key as Uint8Array,
+                    ).toString("base64"),
+                };
+            }
+        }),
+    // #endregion
+    // #region Get Keys for User
+    getUserPublicKeys: trpcInstance.procedure
+        .use(authMiddleware)
+        .query(async (opts) => {
+            return await DB.select({
+                name: publicKeyTable.name,
+                kid: publicKeyTable.kid,
+            })
+                .from(publicKeyTable)
+                .where(eq(publicKeyTable.keyOwner, opts.ctx.user.id));
+        }),
+    // #endregion
+    // #region Update Key Name
+    updateKeyName: trpcInstance.procedure
+        .use(authMiddleware)
+		.input(z.object({
+		    kid: z.string().ulid(),
+			new_name: z.string().min(4).max(50)
+		}))
+		.mutation(async (opts) => {
+		    return await DB.transaction(async (tx_db) => {
+                const rows_updated = await tx_db
+                    .update(publicKeyTable)
+                    .set({
+                        name: opts.input.new_name
+                    })
+                    .where(
+                        and(
+                            eq(publicKeyTable.kid, opts.input.kid),
+                            eq(publicKeyTable.keyOwner, opts.ctx.user.id)
+                        )
+                    ).returning();
+                
+                if (rows_updated.length == 0) {
+                    throw new TRPCError({
+                        code: "NOT_FOUND",
+                        message: `No Such Public Key`
+                    })
+                } else if (rows_updated.length > 1) {
+                    throw new TRPCError({
+                        code: "CONFLICT",
+                        message: `Operation would update more than one public key name`
+                    })
+                } else {
+                    return true;
+                }
+            });
 		}),
 	// #endregion
 	// #region Upload Public Key
@@ -96,31 +131,31 @@ export const keyManagementRouter = trpcInstance.router({
 					});
 				}
 
-				const reserved_key_check = (
-					await tx
-						.select({ kid: reservedKIDTable.kid })
-						.from(reservedKIDTable)
-						.where(eq(reservedKIDTable.user, opts.ctx.user.id))
-				).map((val) => val.kid);
+				// const reserved_key_check = (
+				// 	await tx
+				// 		.select({ kid: reservedKIDTable.kid })
+				// 		.from(reservedKIDTable)
+				// 		.where(eq(reservedKIDTable.user, opts.ctx.user.id))
+				// ).map((val) => val.kid);
 
-				if (!reserved_key_check.includes(kid)) {
-					throw new TRPCError({
-						code: "BAD_REQUEST",
-						message: `${kid} has not been reserved for this user.`,
-					});
-				}
+				// if (!reserved_key_check.includes(kid)) {
+				// 	throw new TRPCError({
+				// 		code: "BAD_REQUEST",
+				// 		message: `${kid} has not been reserved for this user.`,
+				// 	});
+				// }
 
-				const rows = await tx
-					.delete(reservedKIDTable)
-					.where(eq(reservedKIDTable.kid, kid))
-					.returning();
+				// const rows = await tx
+				// 	.delete(reservedKIDTable)
+				// 	.where(eq(reservedKIDTable.kid, kid))
+				// 	.returning();
 
-				if (rows.length != 1) {
-					throw new TRPCError({
-						code: "INTERNAL_SERVER_ERROR",
-						message: `Expected Reserved KID Deletion to be 1, got ${rows}`,
-					});
-				}
+				// if (rows.length != 1) {
+				// 	throw new TRPCError({
+				// 		code: "INTERNAL_SERVER_ERROR",
+				// 		message: `Expected Reserved KID Deletion to be 1, got ${rows}`,
+				// 	});
+				// }
 
 				return (
 					await tx

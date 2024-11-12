@@ -1,21 +1,31 @@
 <script lang="ts">
 	import type { trpc } from "$lib/trpc/client";
+	import { TRPCClientError } from "@trpc/client";
 
-	import * as Dialog from "@/ui/dialog";
+	import * as AlertDialog from "@/ui/alert-dialog";
 	import * as Tabs from "@/ui/tabs";
 	import { Label } from "@/ui/label";
 	import { Input } from "@/ui/input";
 	import * as Select from "@/ui/select";
 	import { Button, buttonVariants } from "@/ui/button";
+	import InlineCodeBlock from "@/inline-codeblock.svelte";
 
 	import { Plus } from "lucide-svelte";
 	import AnimatedLoading from "$lib/icons/AnimatedLoading.svelte";
 
-	import { getRuntimeClientContext } from "$lib/client.old";
-	import { onMount } from "svelte";
-	import InlineCodeblock from "@/inline-codeblock.svelte";
+	import {
+		generate_rsa_key_pair,
+		save_key_pair,
+		export_single_key_string,
+		export_key_pair_string,
+		delete_key,
+	} from "$lib/client/key_management";
 
-	const amalgamation = getRuntimeClientContext();
+    import {
+        toast
+    } from "svelte-sonner"
+
+	import { onMount } from "svelte";
 
 	let tabs_value: "create" | "download" = $state("create");
 
@@ -29,114 +39,125 @@
 	let modulus_error: string | null = $state(null);
 
 	let error: string | null = $state(null);
-	let final_kid: string | null = $state(null);
 
 	let open = $state(false);
 	// start on 1 for the key reservation
-	let isLoading = $state(1);
-	// should button be disable for some other reason
+	let isLoading = $state(0);
+	// should button be disabled for some other reason
 	let buttonDisabled = $state(false);
+
+	let final_kid: string | null = $state(null);
 
 	let key_pair_encoded_download_blob: string | null = $state(null);
 
 	let {
 		rpc,
 		reset_pk_query,
+		upload_pk,
 	}: {
 		rpc: ReturnType<typeof trpc>;
 		reset_pk_query: () => void;
+		upload_pk: (args: {
+			name: string;
+			kid: string;
+			key_b64: string;
+		}) => Promise<void>;
 	} = $props();
 
-	const uploadKeySuccess = async () => {
-		$reserveKeyMutatuion.reset();
+	const reservedKIDQuery = rpc.keyManagement.reserveKID.createMutation();
 
-		const exported_key = await amalgamation.export_key_string(final_kid!);
-		console.debug("Exported Key from upload success", { exported_key });
-		if (!exported_key) return;
+    const resetDialog = () => {
+        friendly_name = "";
+        hash = "SHA-256";
+        modulus = "2048";
+    }
 
-		console.log({ exported_key });
+	const generateKeyOnclick = async (kid: string) => {
+		isLoading++;
 
-		const blob = new Blob([exported_key], { type: "application/json" });
-		key_pair_encoded_download_blob = window.URL.createObjectURL(blob);
+		final_kid = kid;
+		const key_pair = await generate_rsa_key_pair({
+			hash,
+			kid,
+			modulusLength: +modulus,
+			name: friendly_name,
+		});
 
-		tabs_value = "download";
-		reset_pk_query();
-	};
-
-	// button cannot be pressed without the values being valid
-	//
-	// so I won't bother with validation here.
-	const onCreateKey = async () => {
-		isLoading += 1;
-
-		const kid = (await $reserveKeyMutatuion.mutateAsync(void 0)).kid;
+		await save_key_pair(key_pair);
+		const public_key = key_pair.publicKey;
+		const exported_public_key = await export_single_key_string(public_key);
 
 		try {
-			const confirmed_kid = await amalgamation.generate_key_pair(kid, {
-				name: "RSA-OAEP",
-				hash,
-				// it is recommende to just do this unless you have a VERY good reason not to.
-				publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-				// `+` like this just parses it to an integer
-				modulusLength: +modulus,
-			});
-
-			final_kid = confirmed_kid;
-
-			const exported_key =
-				await amalgamation.export_public_key(confirmed_kid);
-
-			console.log("Exported from Amalgamation", { exported_key });
-			console.log("b64", btoa(JSON.stringify(exported_key)));
-
-			$uploadKeyMutation.mutate({
+			await upload_pk({
 				name: friendly_name,
-				kid: confirmed_kid,
-				key_b64: btoa(JSON.stringify(exported_key)),
+				kid,
+				key_b64: btoa(exported_public_key),
 			});
+
+			reset_pk_query();
 		} catch (e: unknown) {
-			if (e instanceof DOMException) {
+
+            toast.error("Failed to upload key");
+            
+            // rolling back generated key
+            delete_key(kid);
+
+			if (e instanceof TRPCClientError) {
 				error = e.message;
 			} else {
-				console.error("error during keygen", e);
+				console.error(e);
 			}
+
+			return;
 		}
+
+		let key_pair_export;
+
+		try {
+			key_pair_export = await export_key_pair_string(kid);
+		} catch (e) {
+			console.error(e);
+            toast.error("An error occured");
+			return;
+		}
+
+		try {
+			const text_encoder = new TextEncoder();
+			const key_blob = new Blob([text_encoder.encode(key_pair_export)], {
+				type: "application/json",
+			});
+
+			key_pair_encoded_download_blob =
+				window.URL.createObjectURL(key_blob);
+		} catch (e: unknown) {
+			buttonDisabled = true;
+			isLoading--;
+
+			console.error(e);
+            toast.error("An error occured");
+			return;
+		}
+
+		tabs_value = "download";
+        resetDialog();
 	};
 
-	const uploadKeyMutation = rpc.keyManagement.uploadPublicKey.createMutation({
-		onSuccess: uploadKeySuccess,
-
-		onError: (err) => {
-			error = err.message;
-		},
-	});
-
-	const reserveKeyMutatuion = rpc.keyManagement.reserveKID.createMutation({
-		onSuccess: (data) => {
-			console.log({ data });
-			isLoading -= 1;
-		},
-
-		onError: (err) => {
-			buttonDisabled = true;
-			error = err.message;
-		},
-	});
-
-	onMount(() => {
-		$reserveKeyMutatuion.mutate();
+	onMount(async () => {
+		isLoading += 1;
+		$reservedKIDQuery.mutateAsync();
+		isLoading -= 1;
 	});
 </script>
 
-<Dialog.Root bind:open>
-	<Dialog.Trigger class={buttonVariants({ variant: "secondary" })}>
+<AlertDialog.Root bind:open>
+	<AlertDialog.Trigger class={buttonVariants({ variant: "secondary" })}>
 		<Plus class="mr-2" />
 		Create Key
-	</Dialog.Trigger>
-	<Dialog.Content>
-		<Dialog.Header>
-			<Dialog.Title>HEHEHEHA</Dialog.Title>
-		</Dialog.Header>
+	</AlertDialog.Trigger>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Create Key</AlertDialog.Title>
+		</AlertDialog.Header>
 		<Tabs.Root value={tabs_value}>
 			<Tabs.Content value="create">
 				<div class="flex flex-col">
@@ -195,10 +216,8 @@
 						</Select.Content>
 					</Select.Root>
 					<span class="text-sm opacity-50">
-						If you don't know what this means, just use <InlineCodeblock
-						>
-							SHA-256
-						</InlineCodeblock>
+						If you don't know what this means, just use
+						<InlineCodeBlock>SHA-256</InlineCodeBlock>
 					</span>
 				</div>
 
@@ -233,22 +252,24 @@
 						</Select.Content>
 					</Select.Root>
 					<span class="text-sm opacity-50">
-						If you don't know what this means, just use <InlineCodeblock
+						If you don't know what this means, just use <InlineCodeBlock
 						>
 							4096
-						</InlineCodeblock>
+						</InlineCodeBlock>
 					</span>
 				</div>
 
 				<Button
 					class="mt-4"
-					onclick={onCreateKey}
+					onclick={() =>
+						generateKeyOnclick($reservedKIDQuery.data!.kid)}
 					disabled={friendly_name_error != null ||
 						hash_error != null ||
 						modulus_error != null ||
-						friendly_name.trim().length == 0 ||
+						friendly_name.trim().length === 0 ||
 						isLoading > 0 ||
-						buttonDisabled}
+						buttonDisabled ||
+						!$reservedKIDQuery.isSuccess}
 				>
 					{#if isLoading}
 						<AnimatedLoading />
@@ -272,8 +293,14 @@
 					disabled={key_pair_encoded_download_blob == null}
 					href={key_pair_encoded_download_blob}
 					download={`${final_kid!}.json`}
+                    onclick={() => {
+                        open = false;
+                        tabs_value = "create";
+                        resetDialog();
+                    }}
 				>
 					{#if key_pair_encoded_download_blob == null}
+
 						<AnimatedLoading />
 					{:else}
 						Download Key
@@ -281,5 +308,5 @@
 				</Button>
 			</Tabs.Content>
 		</Tabs.Root>
-	</Dialog.Content>
-</Dialog.Root>
+	</AlertDialog.Content>
+</AlertDialog.Root>
