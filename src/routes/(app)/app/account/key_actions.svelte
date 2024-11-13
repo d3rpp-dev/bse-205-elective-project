@@ -20,30 +20,30 @@
 		renameKey: (kid: string) => void;
 	} = $props();
 
-    const downloadKey = async () => {
-        const exported_key_pair = await export_key_pair_string(kid);
-        const text_encoder = new TextEncoder();
-			const key_blob = new Blob([text_encoder.encode(exported_key_pair)], {
-				type: "application/json",
-			});
+	const downloadKey = async () => {
+		const exported_key_pair = await export_key_pair_string(kid);
+		const text_encoder = new TextEncoder();
+		const key_blob = new Blob([text_encoder.encode(exported_key_pair)], {
+			type: "application/json",
+		});
 
-        let element = window.document.createElement('a');
-        element.style.display = 'none';
-        element.href = window.URL.createObjectURL(key_blob)
-        element.download = `${kid}.json`;
+		let element = window.document.createElement("a");
+		element.style.display = "none";
+		element.href = window.URL.createObjectURL(key_blob);
+		element.download = `${kid}.json`;
 
-        toast.success(`Downloading Key...`);
+		toast.success(`Downloading Key...`);
 
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
-    }
+		document.body.appendChild(element);
+		element.click();
+		document.body.removeChild(element);
+	};
 </script>
 
 <Table.Cell>
 	<div class="flex justify-end gap-2">
 		<!-- #region Download -->
-        <Tooltip.Root>
+		<Tooltip.Root>
 			<Tooltip.Trigger
 				onmouseup={downloadKey}
 				class={buttonVariants({
@@ -115,7 +115,9 @@
 					<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
 					<AlertDialog.Action
 						onclick={() =>
-							deleteKey(kid).finally(() => (deleteConfirmationOpen = false))}
+							deleteKey(kid).finally(
+								() => (deleteConfirmationOpen = false),
+							)}
 					>
 						Continue
 					</AlertDialog.Action>

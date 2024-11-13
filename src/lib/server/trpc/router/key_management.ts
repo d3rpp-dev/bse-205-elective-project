@@ -190,19 +190,19 @@ export const keyManagementRouter = trpcInstance.router({
 			console.log("Delete pubic key", opts.input.kid);
 
 			return await DB.transaction(async (tx_db) => {
-                // this doesnt work
-                // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                //
-                // forign key constraints moment
+				// this doesnt work
+				// AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				//
+				// forign key constraints moment
 				const deletion_result = await tx_db
-                    .delete(publicKeyTable)
-                    .where(
-                        and(
-                            eq(publicKeyTable.kid, opts.input.kid),
-                            eq(publicKeyTable.keyOwner, user_id)
-                        )
-                    )
-                    .returning({ kid: publicKeyTable.kid });
+					.delete(publicKeyTable)
+					.where(
+						and(
+							eq(publicKeyTable.kid, opts.input.kid),
+							eq(publicKeyTable.keyOwner, user_id),
+						),
+					)
+					.returning({ kid: publicKeyTable.kid });
 
 				if (deletion_result.length == 0) {
 					throw new TRPCError({
@@ -274,34 +274,37 @@ export const keyManagementRouter = trpcInstance.router({
 			}),
 		)
 		.mutation(async (opts) => {
-            return await DB.transaction(async (tx_db) => {
-                const query_result = await tx_db
-                    .update(publicKeyTable)
-                    .set({
-                        name: opts.input.new_name
-                    })
-                    .where(and(
-                        eq(publicKeyTable.kid, opts.input.kid),
-                        eq(publicKeyTable.keyOwner, opts.ctx.user.id)
-                    ))
-                    .returning({
-                        new_name: publicKeyTable.name
-                    });
+			return await DB.transaction(async (tx_db) => {
+				const query_result = await tx_db
+					.update(publicKeyTable)
+					.set({
+						name: opts.input.new_name,
+					})
+					.where(
+						and(
+							eq(publicKeyTable.kid, opts.input.kid),
+							eq(publicKeyTable.keyOwner, opts.ctx.user.id),
+						),
+					)
+					.returning({
+						new_name: publicKeyTable.name,
+					});
 
-                if (query_result.length == 0) {
-                    throw new TRPCError({
-                        code: "NOT_FOUND",
-                        message: `Key with KID ${opts.input.kid} not found`
-                    });
-                } else if (query_result.length > 1) {
-                    throw new TRPCError({
-                        code: "CONFLICT",
-                        message: "multiple public keys would be renamed by this action, this cannot be done."
-                    });
-                } else {
-                    return query_result[0].new_name;
-                }
-            });
-        }),
+				if (query_result.length == 0) {
+					throw new TRPCError({
+						code: "NOT_FOUND",
+						message: `Key with KID ${opts.input.kid} not found`,
+					});
+				} else if (query_result.length > 1) {
+					throw new TRPCError({
+						code: "CONFLICT",
+						message:
+							"multiple public keys would be renamed by this action, this cannot be done.",
+					});
+				} else {
+					return query_result[0].new_name;
+				}
+			});
+		}),
 	// #endregion
 });

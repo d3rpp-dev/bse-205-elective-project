@@ -31,11 +31,11 @@
 			name = name_value;
 		} catch (e) {
 			name_value = name;
-            toast.error(`Failed to rename key. Check Console`);
-            console.error('Failed to rename key', e);
+			toast.error(`Failed to rename key. Check Console`);
+			console.error("Failed to rename key", e);
 		}
 
-        toast.success(`Renamed key to ${name_value}`);
+		toast.success(`Renamed key to ${name_value}`);
 		loading = false;
 	};
 </script>

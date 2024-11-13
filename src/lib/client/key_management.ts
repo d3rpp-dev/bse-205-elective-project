@@ -289,7 +289,10 @@ export const generate_rsa_key_pair = async ({
 // #endregion
 
 // #region Load Key
-export const load_key_pair_from_string = (key_string: string, expected_kid?: string): string => {
+export const load_key_pair_from_string = (
+	key_string: string,
+	expected_kid?: string,
+): string => {
 	const devalued_key = devalue.parse(key_string);
 	const schemad = keyPairSchema.safeParse(devalued_key);
 
@@ -299,9 +302,12 @@ export const load_key_pair_from_string = (key_string: string, expected_kid?: str
 
 	const key_object = schemad.data as ExportedKeyPair;
 
-    if (expected_kid !== undefined && key_object.publicKey.kid !== expected_kid) {
-        throw new Error(`Unexpeted KID, this is the wrong key`);
-    }
+	if (
+		expected_kid !== undefined &&
+		key_object.publicKey.kid !== expected_kid
+	) {
+		throw new Error(`Unexpeted KID, this is the wrong key`);
+	}
 
 	save_exported_key("public", key_object.publicKey);
 	save_exported_key("private", key_object.privateKey);
@@ -314,15 +320,15 @@ export const rename_key_pair = async (
 	kid: string,
 	new_name: string,
 ): Promise<string> => {
-    // in and of, 2 different things
+	// in and of, 2 different things
 	for (const variant of ["public", "private"]) {
 		try {
 			const key = await import_single_key(variant as KeyVariant, kid);
 
 			await save_single_key(variant as KeyVariant, {
-                ...key,
-                name: new_name
-            });
+				...key,
+				name: new_name,
+			});
 		} catch (_e) {
 			// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 			_e;

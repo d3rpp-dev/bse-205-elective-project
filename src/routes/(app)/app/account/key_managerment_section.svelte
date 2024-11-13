@@ -76,12 +76,12 @@
 				kid,
 			});
 
-            delete_key(kid);
-            key_list = list_public_keys();
+			delete_key(kid);
+			key_list = list_public_keys();
 		} catch (e: unknown) {
-            toast.error(`Failed to delete key`);
-            console.error(e);
-        }
+			toast.error(`Failed to delete key`);
+			console.error(e);
+		}
 
 		$pkquery.refetch();
 	};
@@ -95,11 +95,12 @@
 		kid: string,
 		new_name: string,
 	): Promise<string> => {
-        const confirmed_name = await $renameKeyMutation.mutateAsync({
-            kid, new_name
-        });
+		const confirmed_name = await $renameKeyMutation.mutateAsync({
+			kid,
+			new_name,
+		});
 
-        await rename_key_pair(kid, confirmed_name);
+		await rename_key_pair(kid, confirmed_name);
 
 		key_list = list_public_keys();
 
@@ -138,7 +139,7 @@
 				</Tooltip.Root>
 			{:else if keyNotStored === true}
 				<!--  todo: let user upload key -->
-                <UploadMissingKey expected_kid={kid} />
+				<UploadMissingKey expected_kid={kid} />
 			{:else if $pkquery.data!.find((val) => val.kid === kid) !== undefined}
 				<!-- #region Status / OK -->
 				<Tooltip.Root>
@@ -245,9 +246,11 @@
 					</Table.Header>
 					<Table.Body>
 						{#key key_list}
-                            {#each key_list as key (key)}
-                                {@render tableRow(import_key_meta("public", key))}
-                            {/each}
+							{#each key_list as key (key)}
+								{@render tableRow(
+									import_key_meta("public", key),
+								)}
+							{/each}
 							{#if $pkquery.isSuccess}
 								<!-- filter out ones uploaded to the server that we don't have the private key for -->
 								{#each $pkquery.data.filter(({ kid }) => !(key_list ?? []).includes(kid)) as { kid, name } (kid)}

@@ -30,14 +30,14 @@ export const kid_to_fingerprint = (
 	variant: KeyVariant,
 	kid: string,
 ): string => {
-    try {
-        const { n } = get_key_jwk(variant, kid);
+	try {
+		const { n } = get_key_jwk(variant, kid);
 
-        if (n == undefined) return "?";
+		if (n == undefined) return "?";
 
-        return md5(n).match(/..?/g)!.join(":");
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (_e) {
-        return '?';
-    }
+		return md5(n).match(/..?/g)!.join(":");
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	} catch (_e) {
+		return "?";
+	}
 };
