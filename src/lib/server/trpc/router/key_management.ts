@@ -10,96 +10,99 @@ import { authMiddleware } from "../middleware";
 import { monotonic_ulid } from "$lib/utils";
 
 export const keyManagementRouter = trpcInstance.router({
-    // #region Download Public Key
-    /**
-     * Download a public key
-     *
-     * Any user can download a public key of any other user
-     * (hense the name *public* key), so we will not bother
-     * checking who is downloading.
-     *
-     * HOWEVER, we do want to ensure only authenticated users
-     * are doing the downloading, hense the {@link auth_middleware}
-     * usage.
-     */
-    downloadPublicKey: trpcInstance.procedure
-        .use(authMiddleware)
-        .input(
-            z.object({
-                kid: z.string().ulid(),
-            }),
-        )
-        .query(async (opts) => {
-            const kid = opts.input.kid;
-            console.log(`attempting to get public key - ${kid}`);
+	// #region Download Public Key
+	/**
+	 * Download a public key
+	 *
+	 * Any user can download a public key of any other user
+	 * (hense the name *public* key), so we will not bother
+	 * checking who is downloading.
+	 *
+	 * HOWEVER, we do want to ensure only authenticated users
+	 * are doing the downloading, hense the {@link auth_middleware}
+	 * usage.
+	 */
+	downloadPublicKey: trpcInstance.procedure
+		.use(authMiddleware)
+		.input(
+			z.object({
+				kid: z.string().ulid(),
+			}),
+		)
+		.query(async (opts) => {
+			const kid = opts.input.kid;
+			console.log(`attempting to get public key - ${kid}`);
 
-            const public_key_selection = await DB.select({
-                key: publicKeyTable.key,
-            })
-                .from(publicKeyTable)
-                .where(eq(publicKeyTable.kid, kid))
-                .limit(1);
+			const public_key_selection = await DB.select({
+				key: publicKeyTable.key,
+			})
+				.from(publicKeyTable)
+				.where(eq(publicKeyTable.kid, kid))
+				.limit(1);
 
-            if (public_key_selection.length === 0) {
-                throw new TRPCError({
-                    code: "NOT_FOUND",
-                });
-            } else {
-                return {
-                    key_b64: Buffer.from(
-                        public_key_selection[0].key as Uint8Array,
-                    ).toString("base64"),
-                };
-            }
-        }),
-    // #endregion
-    // #region Get Keys for User
-    getUserPublicKeys: trpcInstance.procedure
-        .use(authMiddleware)
-        .query(async (opts) => {
-            return await DB.select({
-                name: publicKeyTable.name,
-                kid: publicKeyTable.kid,
-            })
-                .from(publicKeyTable)
-                .where(eq(publicKeyTable.keyOwner, opts.ctx.user.id));
-        }),
-    // #endregion
-    // #region Update Key Name
-    updateKeyName: trpcInstance.procedure
-        .use(authMiddleware)
-		.input(z.object({
-		    kid: z.string().ulid(),
-			new_name: z.string().min(4).max(50)
-		}))
+			if (public_key_selection.length === 0) {
+				throw new TRPCError({
+					code: "NOT_FOUND",
+				});
+			} else {
+				return {
+					key_b64: Buffer.from(
+						public_key_selection[0].key as Uint8Array,
+					).toString("base64"),
+				};
+			}
+		}),
+	// #endregion
+	// #region Get Keys for User
+	getUserPublicKeys: trpcInstance.procedure
+		.use(authMiddleware)
+		.query(async (opts) => {
+			return await DB.select({
+				name: publicKeyTable.name,
+				kid: publicKeyTable.kid,
+			})
+				.from(publicKeyTable)
+				.where(eq(publicKeyTable.keyOwner, opts.ctx.user.id));
+		}),
+	// #endregion
+	// #region Update Key Name
+	updateKeyName: trpcInstance.procedure
+		.use(authMiddleware)
+		.input(
+			z.object({
+				kid: z.string().ulid(),
+				new_name: z.string().min(4).max(50),
+			}),
+		)
 		.mutation(async (opts) => {
-		    return await DB.transaction(async (tx_db) => {
-                const rows_updated = await tx_db
-                    .update(publicKeyTable)
-                    .set({
-                        name: opts.input.new_name
-                    })
-                    .where(
-                        and(
-                            eq(publicKeyTable.kid, opts.input.kid),
-                            eq(publicKeyTable.keyOwner, opts.ctx.user.id)
-                        )
-                    ).returning();
-                
-                if (rows_updated.length == 0) {
-                    throw new TRPCError({
-                        code: "NOT_FOUND",
-                        message: `No Such Public Key`
-                    })
-                } else if (rows_updated.length > 1) {
-                    throw new TRPCError({
-                        code: "CONFLICT",
-                        message: `Operation would update more than one public key name`
-                    })
-                } else {
-                    return true;
-                }
-            });
+			return await DB.transaction(async (tx_db) => {
+				const rows_updated = await tx_db
+					.update(publicKeyTable)
+					.set({
+						name: opts.input.new_name,
+					})
+					.where(
+						and(
+							eq(publicKeyTable.kid, opts.input.kid),
+							eq(publicKeyTable.keyOwner, opts.ctx.user.id),
+						),
+					)
+					.returning();
+
+				if (rows_updated.length == 0) {
+					throw new TRPCError({
+						code: "NOT_FOUND",
+						message: `No Such Public Key`,
+					});
+				} else if (rows_updated.length > 1) {
+					throw new TRPCError({
+						code: "CONFLICT",
+						message: `Operation would update more than one public key name`,
+					});
+				} else {
+					return true;
+				}
+			});
 		}),
 	// #endregion
 	// #region Upload Public Key
@@ -187,31 +190,27 @@ export const keyManagementRouter = trpcInstance.router({
 			console.log("Delete pubic key", opts.input.kid);
 
 			return await DB.transaction(async (tx_db) => {
-				const suitable_keys = await tx_db
-					.select({
-						kid: publicKeyTable.kid,
-						owner: publicKeyTable.keyOwner,
-					})
-					.from(publicKeyTable)
-					.where(
-						and(
-							eq(publicKeyTable.kid, opts.input.kid),
-							eq(publicKeyTable.keyOwner, user_id),
-						),
-					);
+                // this doesnt work
+                // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                //
+                // forign key constraints moment
+				const deletion_result = await tx_db
+                    .delete(publicKeyTable)
+                    .where(
+                        and(
+                            eq(publicKeyTable.kid, opts.input.kid),
+                            eq(publicKeyTable.keyOwner, user_id)
+                        )
+                    )
+                    .returning({ kid: publicKeyTable.kid });
 
-				if (suitable_keys.length == 0) {
+				if (deletion_result.length == 0) {
 					throw new TRPCError({
 						code: "NOT_FOUND",
 						message: `Key with KID ${opts.input.kid} does not exist`,
 					});
 				} else {
-					return (
-						await tx_db
-							.delete(publicKeyTable)
-							.where(eq(publicKeyTable.kid, opts.input.kid))
-							.returning({ kid: publicKeyTable.kid })
-					)[0].kid;
+					return deletion_result[0].kid;
 				}
 			});
 		}),
@@ -264,5 +263,45 @@ export const keyManagementRouter = trpcInstance.router({
 				}
 			});
 		}),
+	// #endregion
+	// #region Rename Key
+	renameKey: trpcInstance.procedure
+		.use(authMiddleware)
+		.input(
+			z.object({
+				kid: z.string().ulid(),
+				new_name: z.string().max(40),
+			}),
+		)
+		.mutation(async (opts) => {
+            return await DB.transaction(async (tx_db) => {
+                const query_result = await tx_db
+                    .update(publicKeyTable)
+                    .set({
+                        name: opts.input.new_name
+                    })
+                    .where(and(
+                        eq(publicKeyTable.kid, opts.input.kid),
+                        eq(publicKeyTable.keyOwner, opts.ctx.user.id)
+                    ))
+                    .returning({
+                        new_name: publicKeyTable.name
+                    });
+
+                if (query_result.length == 0) {
+                    throw new TRPCError({
+                        code: "NOT_FOUND",
+                        message: `Key with KID ${opts.input.kid} not found`
+                    });
+                } else if (query_result.length > 1) {
+                    throw new TRPCError({
+                        code: "CONFLICT",
+                        message: "multiple public keys would be renamed by this action, this cannot be done."
+                    });
+                } else {
+                    return query_result[0].new_name;
+                }
+            });
+        }),
 	// #endregion
 });

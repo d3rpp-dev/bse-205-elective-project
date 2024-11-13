@@ -21,15 +21,23 @@ export const generate_fingerprint = async (
 };
 
 /**
+ * returns a fingerprint of an rsa key, otherwisre returns the string "?"
  *
  * @param variant {KeyVariant}
- * @param kid
+ * @param kid {string} the key to load
  */
 export const kid_to_fingerprint = (
 	variant: KeyVariant,
 	kid: string,
 ): string => {
-	const { n } = get_key_jwk(variant, kid);
+    try {
+        const { n } = get_key_jwk(variant, kid);
 
-	return md5(n!).match(/..?/g)!.join(":");
+        if (n == undefined) return "?";
+
+        return md5(n).match(/..?/g)!.join(":");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_e) {
+        return '?';
+    }
 };

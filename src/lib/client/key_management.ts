@@ -4,7 +4,7 @@ import type {
 	ImportedKey,
 	ImportedKeyPair,
 } from "./key_format";
-import { keySchema } from "./key_format";
+import { keyPairSchema, keySchema } from "./key_format";
 
 import * as devalue from "devalue";
 
@@ -111,15 +111,12 @@ export const import_key_meta = (
 	}
 };
 
-export const does_key_exist = (
-    variant: KeyVariant,
-    kid: string
-): boolean => {
+export const does_key_exist = (variant: KeyVariant, kid: string): boolean => {
 	const localstorage_key = `${variant}-key-${kid}`;
 	const key = window.localStorage.getItem(localstorage_key);
 
-    return key !== null;
-}
+	return key !== null;
+};
 // #endregion
 
 // #region Export Keys
@@ -204,6 +201,11 @@ export const save_key_pair = async ({
 };
 export const save_imported_key = (key: ImportedKey): Promise<void> =>
 	save_single_key("imported", key);
+
+export const save_exported_key = (variant: KeyVariant, key: ExportedKey) => {
+	const localstorage_key = `${variant}-${key.kid}`;
+	window.localStorage.setItem(localstorage_key, devalue.stringify(key));
+};
 // #endregion
 
 // #region Delete Keys
@@ -283,5 +285,50 @@ export const generate_rsa_key_pair = async ({
 			key: privateKey,
 		},
 	};
+};
+// #endregion
+
+// #region Load Key
+export const load_key_pair_from_string = (key_string: string, expected_kid?: string): string => {
+	const devalued_key = devalue.parse(key_string);
+	const schemad = keyPairSchema.safeParse(devalued_key);
+
+	if (!schemad.success) {
+		throw new Error(`Invalid Key`);
+	}
+
+	const key_object = schemad.data as ExportedKeyPair;
+
+    if (expected_kid !== undefined && key_object.publicKey.kid !== expected_kid) {
+        throw new Error(`Unexpeted KID, this is the wrong key`);
+    }
+
+	save_exported_key("public", key_object.publicKey);
+	save_exported_key("private", key_object.privateKey);
+
+	return key_object.publicKey.kid;
+};
+// #endregion
+// #region Rename Keys
+export const rename_key_pair = async (
+	kid: string,
+	new_name: string,
+): Promise<string> => {
+    // in and of, 2 different things
+	for (const variant of ["public", "private"]) {
+		try {
+			const key = await import_single_key(variant as KeyVariant, kid);
+
+			await save_single_key(variant as KeyVariant, {
+                ...key,
+                name: new_name
+            });
+		} catch (_e) {
+			// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+			_e;
+		}
+	}
+
+	return new_name;
 };
 // #endregion

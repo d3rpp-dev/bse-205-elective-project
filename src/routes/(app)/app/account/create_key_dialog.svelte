@@ -21,9 +21,7 @@
 		delete_key,
 	} from "$lib/client/key_management";
 
-    import {
-        toast
-    } from "svelte-sonner"
+	import { toast } from "svelte-sonner";
 
 	import { onMount } from "svelte";
 
@@ -66,11 +64,11 @@
 
 	const reservedKIDQuery = rpc.keyManagement.reserveKID.createMutation();
 
-    const resetDialog = () => {
-        friendly_name = "";
-        hash = "SHA-256";
-        modulus = "2048";
-    }
+	const resetDialog = () => {
+		friendly_name = "";
+		hash = "SHA-256";
+		modulus = "2048";
+	};
 
 	const generateKeyOnclick = async (kid: string) => {
 		isLoading++;
@@ -96,11 +94,10 @@
 
 			reset_pk_query();
 		} catch (e: unknown) {
+			toast.error("Failed to upload key");
 
-            toast.error("Failed to upload key");
-            
-            // rolling back generated key
-            delete_key(kid);
+			// rolling back generated key
+			delete_key(kid);
 
 			if (e instanceof TRPCClientError) {
 				error = e.message;
@@ -117,7 +114,7 @@
 			key_pair_export = await export_key_pair_string(kid);
 		} catch (e) {
 			console.error(e);
-            toast.error("An error occured");
+			toast.error("An error occured");
 			return;
 		}
 
@@ -134,12 +131,12 @@
 			isLoading--;
 
 			console.error(e);
-            toast.error("An error occured");
+			toast.error("An error occured");
 			return;
 		}
 
 		tabs_value = "download";
-        resetDialog();
+		resetDialog();
 	};
 
 	onMount(async () => {
@@ -171,8 +168,6 @@
 						bind:value={friendly_name}
 						placeholder="e.g. My Key"
 						onkeyup={() => {
-							console.log(friendly_name);
-
 							friendly_name_error =
 								friendly_name.trim().length === 0
 									? "Key Name must not be empty"
@@ -293,14 +288,13 @@
 					disabled={key_pair_encoded_download_blob == null}
 					href={key_pair_encoded_download_blob}
 					download={`${final_kid!}.json`}
-                    onclick={() => {
-                        open = false;
-                        tabs_value = "create";
-                        resetDialog();
-                    }}
+					onclick={() => {
+						open = false;
+						tabs_value = "create";
+						resetDialog();
+					}}
 				>
 					{#if key_pair_encoded_download_blob == null}
-
 						<AnimatedLoading />
 					{:else}
 						Download Key

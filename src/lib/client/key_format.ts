@@ -65,6 +65,11 @@ export type ExportedKey = Omit<z.infer<typeof keySchema>, "key"> & {
 	key: JsonWebKey;
 };
 
+export const keyPairSchema = z.object({
+	publicKey: keySchema,
+	privateKey: keySchema,
+});
+
 type KeyPair<T> = {
 	publicKey: T;
 	privateKey: T;
