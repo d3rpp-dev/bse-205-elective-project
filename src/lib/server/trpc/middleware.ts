@@ -1,10 +1,8 @@
-import { experimental_standaloneMiddleware, TRPCError } from "@trpc/server";
+import { TRPCError } from "@trpc/server";
 
-import type { Context } from "./context";
+import { trpcInstance } from "./router/init";
 
-export const authMiddleware = experimental_standaloneMiddleware<{
-	ctx: Context;
-}>().create(async (opts) => {
+export const authMiddleware = trpcInstance.middleware((opts) => {
 	const { user, session } = opts.ctx;
 
 	if (!user || !session) {

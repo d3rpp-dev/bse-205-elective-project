@@ -1,7 +1,7 @@
 {
 	"version": "6",
 	"dialect": "sqlite",
-	"id": "818c640b-29b0-4c20-8eb8-191759e45ae4",
+	"id": "50492699-bfc7-4f37-ac2f-b2bdb3cb7e8d",
 	"prevId": "00000000-0000-0000-0000-000000000000",
 	"tables": {
 		"email_addresses": {
@@ -56,7 +56,8 @@
 				}
 			},
 			"compositePrimaryKeys": {},
-			"uniqueConstraints": {}
+			"uniqueConstraints": {},
+			"checkConstraints": {}
 		},
 		"encrypted_blobs": {
 			"name": "encrypted_blobs",
@@ -96,7 +97,8 @@
 				}
 			},
 			"compositePrimaryKeys": {},
-			"uniqueConstraints": {}
+			"uniqueConstraints": {},
+			"checkConstraints": {}
 		},
 		"oauth_connections": {
 			"name": "oauth_connections",
@@ -121,6 +123,13 @@
 					"primaryKey": false,
 					"notNull": true,
 					"autoincrement": false
+				},
+				"connection_user_name": {
+					"name": "connection_user_name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
 				}
 			},
 			"indexes": {},
@@ -136,40 +145,8 @@
 				}
 			},
 			"compositePrimaryKeys": {},
-			"uniqueConstraints": {}
-		},
-		"passwords": {
-			"name": "passwords",
-			"columns": {
-				"user_id": {
-					"name": "user_id",
-					"type": "text",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"password_hash": {
-					"name": "password_hash",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				}
-			},
-			"indexes": {},
-			"foreignKeys": {
-				"passwords_user_id_users_id_fk": {
-					"name": "passwords_user_id_users_id_fk",
-					"tableFrom": "passwords",
-					"tableTo": "users",
-					"columnsFrom": ["user_id"],
-					"columnsTo": ["id"],
-					"onDelete": "cascade",
-					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {}
+			"uniqueConstraints": {},
+			"checkConstraints": {}
 		},
 		"public_assets": {
 			"name": "public_assets",
@@ -199,7 +176,8 @@
 			"indexes": {},
 			"foreignKeys": {},
 			"compositePrimaryKeys": {},
-			"uniqueConstraints": {}
+			"uniqueConstraints": {},
+			"checkConstraints": {}
 		},
 		"public_keys": {
 			"name": "public_keys",
@@ -208,6 +186,13 @@
 					"name": "kid",
 					"type": "text",
 					"primaryKey": true,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"name": {
+					"name": "name",
+					"type": "text",
+					"primaryKey": false,
 					"notNull": true,
 					"autoincrement": false
 				},
@@ -245,7 +230,42 @@
 				}
 			},
 			"compositePrimaryKeys": {},
-			"uniqueConstraints": {}
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		},
+		"reserved_kids": {
+			"name": "reserved_kids",
+			"columns": {
+				"kid": {
+					"name": "kid",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"user": {
+					"name": "user",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"reserved_kids_user_users_id_fk": {
+					"name": "reserved_kids_user_users_id_fk",
+					"tableFrom": "reserved_kids",
+					"tableTo": "users",
+					"columnsFrom": ["user"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
 		},
 		"sessions": {
 			"name": "sessions",
@@ -285,7 +305,8 @@
 				}
 			},
 			"compositePrimaryKeys": {},
-			"uniqueConstraints": {}
+			"uniqueConstraints": {},
+			"checkConstraints": {}
 		},
 		"symmetric_keys": {
 			"name": "symmetric_keys",
@@ -325,7 +346,8 @@
 				}
 			},
 			"compositePrimaryKeys": {},
-			"uniqueConstraints": {}
+			"uniqueConstraints": {},
+			"checkConstraints": {}
 		},
 		"user_aliases": {
 			"name": "user_aliases",
@@ -350,6 +372,13 @@
 					"primaryKey": false,
 					"notNull": true,
 					"autoincrement": false
+				},
+				"alias_timestamp": {
+					"name": "alias_timestamp",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
 				}
 			},
 			"indexes": {},
@@ -365,7 +394,8 @@
 				}
 			},
 			"compositePrimaryKeys": {},
-			"uniqueConstraints": {}
+			"uniqueConstraints": {},
+			"checkConstraints": {}
 		},
 		"users": {
 			"name": "users",
@@ -418,9 +448,11 @@
 				}
 			},
 			"compositePrimaryKeys": {},
-			"uniqueConstraints": {}
+			"uniqueConstraints": {},
+			"checkConstraints": {}
 		}
 	},
+	"views": {},
 	"enums": {},
 	"_meta": {
 		"schemas": {},

@@ -1,16 +1,16 @@
-import type { RequestHandler, RequestEvent } from "./$types";
+import type { PageServerLoad, PageServerLoadEvent } from "./$types";
 
 import { generateState } from "arctic";
 import { github, type ValidOauthMethods } from "$lib/server/auth/oauth_methods";
 
-import { redirect } from "@sveltejs/kit";
+import { error, redirect } from "@sveltejs/kit";
 import { assert, type Equals } from "tsafe";
 
 /**
  * a key for each oauth2 method, returns the URL to redirect the user to
  */
 const OAUTH_METHODS = {
-	github: async (event: RequestEvent) => {
+	github: async (event: PageServerLoadEvent) => {
 		const state = generateState();
 		const url = github.createAuthorizationURL(state, [
 			"read:user",
@@ -31,9 +31,17 @@ const OAUTH_METHODS = {
 
 assert<Equals<ValidOauthMethods, keyof typeof OAUTH_METHODS>>();
 
-export const GET = (async (event) => {
-	const method_key = event.params.method as keyof typeof OAUTH_METHODS;
-	const redirect_url = await OAUTH_METHODS[method_key](event);
-
-	redirect(302, redirect_url);
-}) satisfies RequestHandler;
+export const load = (async (event) => {
+	if (Object.keys(OAUTH_METHODS).includes(event.params.method)) {
+		redirect(
+			302,
+			await OAUTH_METHODS[
+				event.params.method as keyof typeof OAUTH_METHODS
+			](event),
+		);
+	} else {
+		error(400, {
+			message: "Invalid OAuth2.0 Method",
+		});
+	}
+}) satisfies PageServerLoad;

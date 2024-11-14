@@ -74,6 +74,13 @@ export const userAliasTable = sqliteTable("user_aliases", {
 	 * user's account is deleted.
 	 */
 	aliasName: text("alias_name", { mode: "text" }).notNull(),
+
+	/**
+	 * The timestamp this alias was created at, aliases will expire in 1 week.
+	 */
+	aliasTs: integer("alias_timestamp")
+		.notNull()
+		.$defaultFn(() => new Date().getTime()),
 });
 
 export type UserAliasSelectModel = InferSelectModel<typeof userAliasTable>;
@@ -118,26 +125,6 @@ export type EmailAddressesInsertModel = InferInsertModel<
 	typeof emailAddressesTable
 >;
 
-export const passwordTable = sqliteTable("passwords", {
-	/**
-	 * User id this password belongs to.
-	 *
-	 * References: {@link userTable.id}
-	 */
-	userId: text("user_id", { mode: "text" })
-		.primaryKey()
-		.references(() => userTable.id, { onDelete: "cascade" }),
-	/**
-	 * Password Hash
-	 *
-	 * Should be hashed with argon2id
-	 */
-	passwordHash: text("password_hash").notNull(),
-});
-
-export type PasswordSelectModel = InferSelectModel<typeof passwordTable>;
-export type PasswordInsertModel = InferInsertModel<typeof passwordTable>;
-
 export const sessionTable = sqliteTable("sessions", {
 	/**
 	 * the Session ID
@@ -179,6 +166,12 @@ export const oauthConnectionTable = sqliteTable("oauth_connections", {
 	userId: text("user_id", { mode: "text" })
 		.notNull()
 		.references(() => userTable.id),
+	/**
+	 * Username of this connection
+	 */
+	connectionUserName: text("connection_user_name", {
+		mode: "text",
+	}).notNull(),
 });
 
 /**
@@ -212,10 +205,10 @@ export const publicKeyTable = sqliteTable("public_keys", {
 	 * KID of this key, in the type of a ULID
 	 */
 	kid: text("kid").primaryKey().$defaultFn(monotonic_ulid),
-    /**
-     * Key name, used in the UI
-     */
-    name: text("name").notNull(),
+	/**
+	 * Key name, used in the UI
+	 */
+	name: text("name").notNull(),
 	/**
 	 * the key blob itself
 	 */
@@ -234,6 +227,24 @@ export const publicKeyTable = sqliteTable("public_keys", {
 
 export type PublicKeySelectModel = InferSelectModel<typeof publicKeyTable>;
 export type PublicKeyInsertModel = InferInsertModel<typeof publicKeyTable>;
+
+export const reservedKIDTable = sqliteTable("reserved_kids", {
+	/**
+	 * Key ID that is reserved
+	 */
+	kid: text("kid").primaryKey(),
+	/**
+	 * Who it's reserved by
+	 */
+	user: text("user")
+		.notNull()
+		.references(() => userTable.id, {
+			onDelete: "cascade",
+		}),
+});
+
+export type ReservedKIDSelectModel = InferSelectModel<typeof reservedKIDTable>;
+export type ReservedKIDInsertModel = InferInsertModel<typeof reservedKIDTable>;
 
 /**
  * This stores the symettrical keys used to encrypt the actual files
