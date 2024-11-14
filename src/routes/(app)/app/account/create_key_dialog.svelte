@@ -7,7 +7,7 @@
 	import { Label } from "@/ui/label";
 	import { Input } from "@/ui/input";
 	import * as Select from "@/ui/select";
-    import { Button } from "@/ui/button";
+	import { Button } from "@/ui/button";
 
 	import { Plus } from "lucide-svelte";
 
@@ -41,7 +41,7 @@
 					Download
 				</Tabs.Trigger>
 			</Tabs.List>
-			<Tabs.Content value="create" class="flex flex-col gap-4 pt-8 px-4">
+			<Tabs.Content value="create" class="flex flex-col gap-4 px-4 pt-8">
 				<div class="flex flex-col gap-2">
 					<Label for="friendly_name">Name</Label>
 					<Input
@@ -70,7 +70,7 @@
 					</Select.Root>
 				</div>
 
-                <Button class="mt-4"><Plus class="mr-2" />Create Key</Button>
+				<Button class="mt-4"><Plus class="mr-2" />Create Key</Button>
 			</Tabs.Content>
 			<Tabs.Content value="error">error</Tabs.Content>
 		</Tabs.Root>

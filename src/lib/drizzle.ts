@@ -212,10 +212,10 @@ export const publicKeyTable = sqliteTable("public_keys", {
 	 * KID of this key, in the type of a ULID
 	 */
 	kid: text("kid").primaryKey().$defaultFn(monotonic_ulid),
-    /**
-     * Key name, used in the UI
-     */
-    name: text("name").notNull(),
+	/**
+	 * Key name, used in the UI
+	 */
+	name: text("name").notNull(),
 	/**
 	 * the key blob itself
 	 */

@@ -115,7 +115,7 @@ export const keyManagementRouter = trpcInstance.router({
 		.input(
 			z.object({
 				kid: z.string().ulid(),
-                name: z.string(),
+				name: z.string(),
 				key_b64: z.string().base64(),
 			}),
 		)
@@ -141,7 +141,7 @@ export const keyManagementRouter = trpcInstance.router({
 						.insert(publicKeyTable)
 						.values({
 							kid: kid,
-                            name,
+							name,
 							keyOwner: opts.ctx.user.id,
 							key: decoded_key,
 						})
