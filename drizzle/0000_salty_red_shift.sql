@@ -6,6 +6,7 @@ CREATE TABLE `email_addresses` (
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
+CREATE UNIQUE INDEX `email_addresses_email_address_unique` ON `email_addresses` (`email_address`);--> statement-breakpoint
 CREATE TABLE `encrypted_blobs` (
 	`kid` text PRIMARY KEY NOT NULL,
 	`iv` blob NOT NULL,
@@ -17,13 +18,8 @@ CREATE TABLE `oauth_connections` (
 	`type` text NOT NULL,
 	`oauth_identifier` text NOT NULL,
 	`user_id` text NOT NULL,
+	`connection_user_name` text NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
-);
---> statement-breakpoint
-CREATE TABLE `passwords` (
-	`user_id` text PRIMARY KEY NOT NULL,
-	`password_hash` text NOT NULL,
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `public_assets` (
@@ -34,9 +30,17 @@ CREATE TABLE `public_assets` (
 --> statement-breakpoint
 CREATE TABLE `public_keys` (
 	`kid` text PRIMARY KEY NOT NULL,
+	`name` text NOT NULL,
 	`key` blob NOT NULL,
 	`key_owner` text NOT NULL,
 	FOREIGN KEY (`key_owner`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `public_keys_key_unique` ON `public_keys` (`key`);--> statement-breakpoint
+CREATE TABLE `reserved_kids` (
+	`kid` text PRIMARY KEY NOT NULL,
+	`user` text NOT NULL,
+	FOREIGN KEY (`user`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `sessions` (
@@ -57,6 +61,7 @@ CREATE TABLE `user_aliases` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`user_ref` text NOT NULL,
 	`alias_name` text NOT NULL,
+	`alias_timestamp` integer NOT NULL,
 	FOREIGN KEY (`user_ref`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
@@ -68,6 +73,4 @@ CREATE TABLE `users` (
 	FOREIGN KEY (`profile_picture`) REFERENCES `public_assets`(`file_name`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `email_addresses_email_address_unique` ON `email_addresses` (`email_address`);--> statement-breakpoint
-CREATE UNIQUE INDEX `public_keys_key_unique` ON `public_keys` (`key`);--> statement-breakpoint
 CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);

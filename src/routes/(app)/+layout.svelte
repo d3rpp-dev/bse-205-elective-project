@@ -4,7 +4,6 @@
 
 	import { page } from "$app/stores";
 
-	import { setRuntimeClientContext, TheAmalgamation } from "$lib/client";
 	import { trpc } from "$lib/trpc/client";
 
 	import { toast } from "svelte-sonner";
@@ -12,10 +11,8 @@
 	const { children } = $props();
 
 	const queryClient = trpc($page);
-	const amalgamation = new TheAmalgamation();
-	setRuntimeClientContext(amalgamation);
 
-	let online_state = $state(true);
+	let online_state = $state(false);
 	const online_store = toStore(() => online_state);
 	setContext("online_store", online_store);
 
@@ -28,7 +25,7 @@
 
 	let bad_connection_toast: string | number | null = $state(null);
 
-	onMount(() => {
+	onMount(async () => {
 		health_query.subscribe((state) => {
 			if (state.isError || state.isRefetchError) {
 				if (bad_connection_toast === null) {

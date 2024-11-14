@@ -7,11 +7,8 @@
 
 	import * as Avatar from "@/ui/avatar";
 	import * as Card from "@/ui/card";
-	import { Separator } from "@/ui/separator";
 
 	import KeyManagermentSection from "./key_managerment_section.svelte";
-	import CreateKeyDialog from "./create_key_dialog.svelte";
-
 	import { AnimatedLoading } from "$lib/icons";
 
 	import { CircleX, User } from "lucide-svelte";

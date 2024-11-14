@@ -41,7 +41,7 @@
 			<!-- Menu icons -->
 
 			<div>
-				<a href="" class="flex flex-col items-center">
+				<a href="/" class="flex flex-col items-center">
 					<img
 						src={$isHomePage
 							? "src/lib/menuIcons/homeGreen.svg"
@@ -56,7 +56,7 @@
 			</div>
 
 			<div>
-				<a href="" class="flex flex-col items-center">
+				<a href="/" class="flex flex-col items-center">
 					<img
 						src={$isUploadPage
 							? "src/lib/menuIcons/uploadGreen.svg"
@@ -71,7 +71,7 @@
 
 			<div>
 				<a
-					href="/src/routes/(app)/app/account"
+					href="/"
 					class="flex flex-col items-center"
 				>
 					<img
@@ -95,6 +95,7 @@
 	}
 
 	.active-text {
-		color: #6cff96;
+		color: #6CFF96;
 	}
+	
 </style>
