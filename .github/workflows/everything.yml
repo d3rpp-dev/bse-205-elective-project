@@ -30,7 +30,7 @@ jobs:
             - run: bun install
             - run: bun test
 
-    # Note: not dealing with this, not my fault the 
+    # Note: not dealing with this, not my fault the
     # ts compiler can't handle complex structs.
     # check:
     #     name: "Run svelte-check"
