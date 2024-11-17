@@ -12,7 +12,7 @@ const sqlite = new Database(Bun.env.DATABASE_FILE ?? "./database.db", {
 // enable WAL, which provides better performance, usually.
 sqlite.exec("PRAGMA journal_mode = WAL;");
 // enable foreign key restraints
-sqlite.exec("PRAGMA foreign_keys = on;");
+// sqlite.exec("PRAGMA foreign_keys = on;");
 
 export const DB = drizzle(sqlite, {
 	logger:
@@ -33,7 +33,7 @@ export const ephemeral_test_db = (): BunSQLiteDatabase => {
 	// enable WAL, for performance
 	db.exec("PRAGMA journal_mode = WAL;");
 	// enable foreign key restraints
-	db.exec("PRAGMA foreign_keys = on;");
+	// db.exec("PRAGMA foreign_keys = on;");
 
 	const drizzle_db = drizzle(db);
 

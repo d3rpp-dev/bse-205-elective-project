@@ -17,7 +17,13 @@
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
-		<Avatar.Root class={avatar_size == "smol" ? "h-8 w-8" : avatar_size === "custom"? "h-10 w-10" : undefined}>
+		<Avatar.Root
+			class={avatar_size == "smol"
+				? "h-8 w-8"
+				: avatar_size === "custom"
+					? "h-10 w-10"
+					: undefined}
+		>
 			{#snippet children()}
 				{#if user && user.profilePicture}
 					<Avatar.Image
