@@ -5,12 +5,7 @@ import { authMiddleware } from "../middleware";
 import { TRPCError } from "@trpc/server";
 
 import { DB } from "$lib/server/db";
-import {
-	encryptedBlobTable,
-	publicKeyTable,
-	reservedKIDTable,
-	symmetricKeyTable,
-} from "$lib/drizzle";
+import { publicKeyTable, reservedKIDTable } from "$lib/drizzle";
 import { eq, and } from "drizzle-orm";
 
 import { monotonic_ulid } from "$lib/utils";
@@ -283,65 +278,6 @@ export const keyManagementRouter = trpcInstance.router({
 					});
 				} else {
 					return query_result[0].new_name;
-				}
-			});
-		}),
-	// #endregion
-	// #region Symmetric Key Upload
-	uploadSymmetricKeyAndCreateEmptyBlob: trpcInstance.procedure
-		.use(authMiddleware)
-		.input(
-			z.object({
-				key_b64: z.string().base64(),
-				pubkey: z.string().ulid(),
-				file_name: z.string().min(3).max(100),
-				iv_b64: z.string().base64(),
-			}),
-		)
-		.mutation(async ({ ctx, input }) => {
-			return await DB.transaction(async (tx_db) => {
-				const keyCount = (
-					await tx_db
-						.selectDistinct({ kid: publicKeyTable.kid })
-						.from(publicKeyTable)
-						.where(
-							and(
-								eq(publicKeyTable.kid, input.pubkey),
-								eq(publicKeyTable.keyOwner, ctx.user.id),
-							),
-						)
-				).length;
-
-				if (keyCount == 0) {
-					throw new TRPCError({
-						code: "BAD_REQUEST",
-						message: "No public key uploaded",
-					});
-				} else if (keyCount > 1) {
-					throw new TRPCError({
-						code: "CONFLICT",
-						message:
-							"Multiple keys uploaded with KID, don't know what to do.",
-					});
-				} else {
-					const [{ kid }] = await tx_db
-						.insert(symmetricKeyTable)
-						.values({
-							key: input.key_b64,
-							publicKey: input.pubkey,
-							kid: monotonic_ulid(),
-						})
-						.returning();
-
-					await tx_db.insert(encryptedBlobTable).values({
-						kid: kid,
-						name: input.file_name,
-						state: "fresh",
-						owner: ctx.user.id,
-						iv: input.iv_b64,
-					});
-
-					return kid;
 				}
 			});
 		}),
