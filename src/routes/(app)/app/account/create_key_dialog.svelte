@@ -7,12 +7,9 @@
 	import { Label } from "@/ui/label";
 	import { Input } from "@/ui/input";
 	import * as Select from "@/ui/select";
-<<<<<<< HEAD
-	import { Button } from "@/ui/button";
-=======
+
 	import { Button, buttonVariants } from "@/ui/button";
 	import InlineCodeBlock from "@/inline-codeblock.svelte";
->>>>>>> cd6736bb39d0423671ae1834afa4f5a47e45f3a7
 
 	import { Plus } from "lucide-svelte";
 	import AnimatedLoading from "$lib/icons/AnimatedLoading.svelte";
@@ -160,26 +157,12 @@
 			<AlertDialog.Title>Create Key</AlertDialog.Title>
 		</AlertDialog.Header>
 		<Tabs.Root value={tabs_value}>
-<<<<<<< HEAD
-			<Tabs.List class="w-full">
-				<Tabs.Trigger class="w-full" value="create" disabled>
-					Create
-				</Tabs.Trigger>
-				<Tabs.Trigger class="w-full" value="download" disabled>
-					Download
-				</Tabs.Trigger>
-			</Tabs.List>
-			<Tabs.Content value="create" class="flex flex-col gap-4 px-4 pt-8">
-				<div class="flex flex-col gap-2">
-					<Label for="friendly_name">Name</Label>
-=======
 			<Tabs.Content value="create">
 				<div class="flex flex-col">
 					<Label class="mb-2" for="friendly_name">
 						Name
 						<span class="align-super text-destructive">*</span>
 					</Label>
->>>>>>> cd6736bb39d0423671ae1834afa4f5a47e45f3a7
 					<Input
 						id="friendly_name"
 						type="text"
@@ -234,9 +217,6 @@
 					</span>
 				</div>
 
-<<<<<<< HEAD
-				<Button class="mt-4"><Plus class="mr-2" />Create Key</Button>
-=======
 				<div class="flex flex-col gap-2">
 					<Label for="modulus">
 						Modulus
@@ -321,7 +301,6 @@
 						Download Key
 					{/if}
 				</Button>
->>>>>>> cd6736bb39d0423671ae1834afa4f5a47e45f3a7
 			</Tabs.Content>
 		</Tabs.Root>
 	</AlertDialog.Content>

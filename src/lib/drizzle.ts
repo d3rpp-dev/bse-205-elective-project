@@ -296,13 +296,34 @@ export const encryptedBlobTable = sqliteTable("encrypted_blobs", {
 			onDelete: "cascade",
 		}),
 	/**
+	 * The state of the file, can be
+	 *
+	 * - `fresh` no bytes uploaded due to currently being encrypted.
+	 * - `up` bytes stored, uploaded
+	 */
+	state: text("state")
+		.notNull()
+		.$default(() => "fresh"),
+	/**
+	 * name of the file
+	 */
+	name: text("name").notNull(),
+	/**
+	 * Owner of the file
+	 */
+	owner: text("owner")
+		.notNull()
+		.references(() => userTable.id, {
+			onDelete: "cascade",
+		}),
+	/**
 	 * Initialisation Vector
 	 */
-	iv: blob("iv").notNull(),
+	iv: blob("iv"),
 	/**
 	 * Encrypted BLOB data
 	 */
-	blob: blob("blob").notNull(),
+	blob: blob("blob"),
 });
 
 export type EncryptedBlobSelectModel = InferSelectModel<

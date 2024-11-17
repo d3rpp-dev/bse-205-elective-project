@@ -1,8 +1,8 @@
 {
 	"version": "6",
 	"dialect": "sqlite",
-	"id": "8471d8f4-154a-4347-ac12-fa7a223cfb38",
-	"prevId": "818c640b-29b0-4c20-8eb8-191759e45ae4",
+	"id": "a0792537-466a-438d-8edf-153ad1fd6489",
+	"prevId": "50492699-bfc7-4f37-ac2f-b2bdb3cb7e8d",
 	"tables": {
 		"email_addresses": {
 			"name": "email_addresses",
@@ -69,18 +69,39 @@
 					"notNull": true,
 					"autoincrement": false
 				},
+				"state": {
+					"name": "state",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"name": {
+					"name": "name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"owner": {
+					"name": "owner",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
 				"iv": {
 					"name": "iv",
 					"type": "blob",
 					"primaryKey": false,
-					"notNull": true,
+					"notNull": false,
 					"autoincrement": false
 				},
 				"blob": {
 					"name": "blob",
 					"type": "blob",
 					"primaryKey": false,
-					"notNull": true,
+					"notNull": false,
 					"autoincrement": false
 				}
 			},
@@ -92,6 +113,15 @@
 					"tableTo": "symmetric_keys",
 					"columnsFrom": ["kid"],
 					"columnsTo": ["kid"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				},
+				"encrypted_blobs_owner_users_id_fk": {
+					"name": "encrypted_blobs_owner_users_id_fk",
+					"tableFrom": "encrypted_blobs",
+					"tableTo": "users",
+					"columnsFrom": ["owner"],
+					"columnsTo": ["id"],
 					"onDelete": "cascade",
 					"onUpdate": "no action"
 				}
@@ -123,6 +153,13 @@
 					"primaryKey": false,
 					"notNull": true,
 					"autoincrement": false
+				},
+				"connection_user_name": {
+					"name": "connection_user_name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
 				}
 			},
 			"indexes": {},
@@ -134,40 +171,6 @@
 					"columnsFrom": ["user_id"],
 					"columnsTo": ["id"],
 					"onDelete": "no action",
-					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"checkConstraints": {}
-		},
-		"passwords": {
-			"name": "passwords",
-			"columns": {
-				"user_id": {
-					"name": "user_id",
-					"type": "text",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"password_hash": {
-					"name": "password_hash",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				}
-			},
-			"indexes": {},
-			"foreignKeys": {
-				"passwords_user_id_users_id_fk": {
-					"name": "passwords_user_id_users_id_fk",
-					"tableFrom": "passwords",
-					"tableTo": "users",
-					"columnsFrom": ["user_id"],
-					"columnsTo": ["id"],
-					"onDelete": "cascade",
 					"onUpdate": "no action"
 				}
 			},
@@ -251,6 +254,40 @@
 					"tableFrom": "public_keys",
 					"tableTo": "users",
 					"columnsFrom": ["key_owner"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		},
+		"reserved_kids": {
+			"name": "reserved_kids",
+			"columns": {
+				"kid": {
+					"name": "kid",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"user": {
+					"name": "user",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"reserved_kids_user_users_id_fk": {
+					"name": "reserved_kids_user_users_id_fk",
+					"tableFrom": "reserved_kids",
+					"tableTo": "users",
+					"columnsFrom": ["user"],
 					"columnsTo": ["id"],
 					"onDelete": "cascade",
 					"onUpdate": "no action"
@@ -362,6 +399,13 @@
 				"alias_name": {
 					"name": "alias_name",
 					"type": "text",
+					"primaryKey": false,
+					"notNull": true,
+					"autoincrement": false
+				},
+				"alias_timestamp": {
+					"name": "alias_timestamp",
+					"type": "integer",
 					"primaryKey": false,
 					"notNull": true,
 					"autoincrement": false
