@@ -16,6 +16,7 @@
 	import * as Select from "@/ui/select";
 
 	import { Upload, X } from "lucide-svelte";
+    import AnimatedLoading from "$lib/icons/AnimatedLoading.svelte";
 
 	import { trpc } from "$lib/trpc/client";
 	import { page } from "$app/stores";
@@ -24,6 +25,10 @@
 		generate_symmetrical_key,
 		wrap_symmetrical_key,
 	} from "$lib/client/encryption";
+	
+	import { toast } from "svelte-sonner";
+    import { filesize } from "filesize";
+
 
 	const rpc = trpc($page);
 
@@ -42,6 +47,7 @@
 		file = null;
 		if (file_element) file_element.value = "";
 		keyToUse = "";
+		isUploading = false;
 	};
 
 	const startEverythingMutation =
@@ -51,6 +57,8 @@
 
 	const generateAndUploadSymkey = async (): Promise<void> => {
 		if (file === null || keyToUse === "") return;
+
+		isUploading = true;
 
 		console.group("Uploading Blob");
 		console.log("generating key");
@@ -75,8 +83,9 @@
 
 		console.log("encrypting and uploading call");
 
-		await encryptAndUpload(iv, generated_key, file_id);
+		const encryped_size = await encryptAndUpload(iv, generated_key, file_id);
 
+        toast.success(`Uploaded file ${file.name} (${filesize(encryped_size)})`);
 		closeAndReset();
 	};
 
@@ -84,7 +93,7 @@
 		iv: Uint8Array,
 		key: CryptoKey,
 		id: string,
-	): Promise<void> => {
+	): Promise<number> => {
 		console.log("reading file");
 
 		const file_content: ArrayBuffer = await new Promise(async (res) => {
@@ -104,6 +113,7 @@
 		console.log("encrypting file");
 
 		const encrypted_blob = await encrypt_blob(key, iv, file_content);
+        const encrypted_size = encrypted_blob.length;
 
 		console.log("uploading file");
 
@@ -117,11 +127,14 @@
 
 		if (response.status != 204) {
 			console.info("upload failed");
+            toast.error('failed to upload file, check console.')
 		} else {
 			console.info("uploaded success");
 		}
 
 		console.groupEnd();
+
+        return encrypted_size;
 	};
 
 	onMount(() => {
@@ -217,14 +230,19 @@
 		</span>
 
 		<AlertDialog.Footer>
-			<AlertDialog.Cancel onmouseup={closeAndReset}>
+			<AlertDialog.Cancel class="w-24" onmouseup={closeAndReset}>
 				Cancel
 			</AlertDialog.Cancel>
 			<AlertDialog.Action
-				disabled={!inputsValid}
+				class="w-24"
+				disabled={!inputsValid || isUploading}
 				onmouseup={generateAndUploadSymkey}
 			>
-				Upload
+				{#if isUploading}
+					<AnimatedLoading />
+				{:else}
+					Upload
+				{/if}
 			</AlertDialog.Action>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>

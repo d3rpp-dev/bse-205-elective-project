@@ -37,7 +37,7 @@
 		"sveltekit-superforms": "^2.20.1",
 		"tailwindcss": "^3.4.15",
 		"typescript": "^5.6.3",
-		"typescript-eslint": "^8.14.0",
+		"typescript-eslint": "^8.14.1-alpha.6",
 		"vite": "^5.4.11"
 	},
 	"type": "module",
@@ -57,6 +57,7 @@
 		"clsx": "^2.1.1",
 		"devalue": "^5.1.1",
 		"drizzle-orm": "^0.36.3",
+		"filesize": "^10.1.6",
 		"lucia": "^3.2.2",
 		"lucide-svelte": "^0.456.0",
 		"md5": "^2.3.0",
