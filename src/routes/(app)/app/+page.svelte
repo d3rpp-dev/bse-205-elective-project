@@ -1,10 +1,7 @@
 <script lang="ts">
 	import Main from "@/main.svelte";
 
-	import { page } from "$app/stores";
-
 	import { Button } from "$lib/components/ui/button";
-	import { trpc } from "$lib/trpc/client";
 
 	import { toast } from "svelte-sonner";
 
@@ -21,9 +18,6 @@
 		list_public_keys,
 	} from "$lib/client/key_management";
 	import { arraysEqual } from "$lib/utils";
-
-	const rpc = trpc($page);
-	// const greeter = rpc.greeter.greeting.createQuery({name: "Jacksonplusten"});
 
 	const aaaa = () => {
 		toast.promise(new Promise((res) => setTimeout(res, 5_000)), {

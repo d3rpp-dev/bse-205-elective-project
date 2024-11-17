@@ -101,7 +101,7 @@
 	): Promise<number> => {
 		console.log("reading file");
 
-		const file_content: ArrayBuffer = await new Promise(async (res) => {
+		const file_content: ArrayBuffer = await new Promise((res) => {
 			const fr = new FileReader();
 
 			fr.onloadend = (ev) => {

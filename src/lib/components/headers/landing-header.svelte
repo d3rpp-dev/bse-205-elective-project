@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { User } from "lucia";
-	import { APPLICATION_NAME, APPLICATION_ICON } from ".";
 	import { AccountHeaderComponent } from "@/account";
 	import { page } from "$app/stores";
 	import { derived } from "svelte/store";
