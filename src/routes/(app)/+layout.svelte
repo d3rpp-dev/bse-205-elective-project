@@ -8,6 +8,12 @@
 
 	import { toast } from "svelte-sonner";
 
+	import { Provider as TooltipProvider } from "@/ui/tooltip";
+
+	import UploadFileFAB from "./uploadFileFAB.svelte";
+
+	import { uploadingCount } from "./uploading.svelte";
+
 	const { children } = $props();
 
 	const queryClient = trpc($page);
@@ -25,7 +31,17 @@
 
 	let bad_connection_toast: string | number | null = $state(null);
 
-	onMount(async () => {
+	const registerOnTabCloseEvent = () => {
+		window.onbeforeunload = () => {
+			if (uploadingCount > 0) {
+				return `${uploadingCount} file${uploadingCount > 1 ? "s" : ""} are being encrypted and uploaded, closing the tab will cancel this.`;
+			}
+		};
+	};
+
+	onMount(() => {
+		registerOnTabCloseEvent();
+
 		health_query.subscribe((state) => {
 			if (state.isError || state.isRefetchError) {
 				if (bad_connection_toast === null) {
@@ -51,4 +67,7 @@
 	});
 </script>
 
-{@render children()}
+<TooltipProvider>
+	{@render children()}
+	<UploadFileFAB />
+</TooltipProvider>

@@ -205,73 +205,70 @@
 {/snippet}
 
 <!-- #region Component -->
-<Tooltip.Provider>
-	<Card.Root class="mt-4">
-		<Card.Header class="flex-row justify-between">
-			<div class="flex flex-col space-y-1.5">
-				<Card.Title>Key Management</Card.Title>
-				<Card.Description>
-					Manage your keys, and how they're algused
-				</Card.Description>
-			</div>
 
-			<div>
-				<CreateKeyDialog
-					{rpc}
-					reset_pk_query={() => {
-						key_list = list_public_keys();
-						$pkquery.refetch();
-					}}
-					upload_pk={async (args) => {
-						await $uploadKeyMutation.mutateAsync(args);
-					}}
-				/>
-			</div>
-		</Card.Header>
+<Card.Root class="mt-4">
+	<Card.Header class="flex-row justify-between">
+		<div class="flex flex-col space-y-1.5">
+			<Card.Title>Key Management</Card.Title>
+			<Card.Description>
+				Manage your keys, and how they're algused
+			</Card.Description>
+		</div>
 
-		<Card.Content>
-			{#if key_list === null}
-				<div class="w-fill grid h-24 place-items-center">
-					<AnimatedLoading />
-				</div>
-			{:else}
-				<Table.Root>
-					<Table.Header>
-						<Table.Row>
-							<Table.Head>Status</Table.Head>
-							<Table.Head>Key Name</Table.Head>
-							<Table.Head>Key ID & Fingerprint</Table.Head>
-							<Table.Head>Actions</Table.Head>
-						</Table.Row>
-					</Table.Header>
-					<Table.Body>
-						{#key key_list}
-							{#each key_list as key (key)}
-								{@render tableRow(
-									import_key_meta("public", key),
-								)}
+		<div>
+			<CreateKeyDialog
+				{rpc}
+				reset_pk_query={() => {
+					key_list = list_public_keys();
+					$pkquery.refetch();
+				}}
+				upload_pk={async (args) => {
+					await $uploadKeyMutation.mutateAsync(args);
+				}}
+			/>
+		</div>
+	</Card.Header>
+
+	<Card.Content>
+		{#if key_list === null}
+			<div class="w-fill grid h-24 place-items-center">
+				<AnimatedLoading />
+			</div>
+		{:else}
+			<Table.Root>
+				<Table.Header>
+					<Table.Row>
+						<Table.Head>Status</Table.Head>
+						<Table.Head>Key Name</Table.Head>
+						<Table.Head>Key ID & Fingerprint</Table.Head>
+						<Table.Head>Actions</Table.Head>
+					</Table.Row>
+				</Table.Header>
+				<Table.Body>
+					{#key key_list}
+						{#each key_list as key (key)}
+							{@render tableRow(import_key_meta("public", key))}
+						{/each}
+						{#if $pkquery.isSuccess}
+							<!-- filter out ones uploaded to the server that we don't have the private key for -->
+							{#each $pkquery.data.filter(({ kid }) => !(key_list ?? []).includes(kid)) as { kid, name } (kid)}
+								{@render tableRow({
+									kid,
+									name,
+									keyNotStored: true,
+								})}
 							{/each}
-							{#if $pkquery.isSuccess}
-								<!-- filter out ones uploaded to the server that we don't have the private key for -->
-								{#each $pkquery.data.filter(({ kid }) => !(key_list ?? []).includes(kid)) as { kid, name } (kid)}
-									{@render tableRow({
-										kid,
-										name,
-										keyNotStored: true,
-									})}
-								{/each}
-							{/if}
-						{/key}
-					</Table.Body>
-					<Table.Footer>
-						<Table.Row>
-							<Table.Cell colspan={3}>Total Key Count</Table.Cell>
-							<Table.Cell>{key_list.length}</Table.Cell>
-						</Table.Row>
-					</Table.Footer>
-				</Table.Root>
-			{/if}
-		</Card.Content>
-	</Card.Root>
-</Tooltip.Provider>
+						{/if}
+					{/key}
+				</Table.Body>
+				<Table.Footer>
+					<Table.Row>
+						<Table.Cell colspan={3}>Total Key Count</Table.Cell>
+						<Table.Cell>{key_list.length}</Table.Cell>
+					</Table.Row>
+				</Table.Footer>
+			</Table.Root>
+		{/if}
+	</Card.Content>
+</Card.Root>
 <!-- #endregion -->
