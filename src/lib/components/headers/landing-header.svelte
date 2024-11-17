@@ -16,11 +16,7 @@
 	//need to add pathways for each page
 	const isHomePage = derived(page, ($page) => $page.url.pathname === "/");
 	const isUploadPage = derived(page, ($page) => $page.url.pathname === "/");
-	const isProfilePage = derived(
-		page,
-		($page) =>
-			$page.url.pathname === "/src/routes/(app)/app/account/page.svelte",
-	);
+	const isProfilePage = derived(page,($page) =>$page.url.pathname === "/src/routes/(app)/app/account/page.svelte",);
 </script>
 
 <header
@@ -97,5 +93,5 @@
 	.active-text {
 		color: #6CFF96;
 	}
-	
+
 </style>
