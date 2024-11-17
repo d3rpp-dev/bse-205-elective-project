@@ -44,8 +44,6 @@
 	{$greeter.data}
 	{/if} -->
 
-
-
 	<Button onclick={aaaa} variant="default">Button</Button>
 	<Button variant="destructive">AAAAAAAA</Button>
 </Main>
