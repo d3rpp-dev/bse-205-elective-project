@@ -16,11 +16,7 @@
 	//need to add pathways for each page
 	const isHomePage = derived(page, ($page) => $page.url.pathname === "/");
 	const isUploadPage = derived(page, ($page) => $page.url.pathname === "/");
-	const isProfilePage = derived(
-		page,
-		($page) =>
-			$page.url.pathname === "/src/routes/(app)/app/account/page.svelte",
-	);
+	const isProfilePage = derived(page,($page) =>$page.url.pathname === "/src/routes/(app)/app/account/page.svelte",);
 </script>
 
 <header
@@ -41,7 +37,7 @@
 			<!-- Menu icons -->
 
 			<div>
-				<a href="" class="flex flex-col items-center">
+				<a href="/" class="flex flex-col items-center">
 					<img
 						src={$isHomePage
 							? "src/lib/menuIcons/homeGreen.svg"
@@ -56,7 +52,7 @@
 			</div>
 
 			<div>
-				<a href="" class="flex flex-col items-center">
+				<a href="/" class="flex flex-col items-center">
 					<img
 						src={$isUploadPage
 							? "src/lib/menuIcons/uploadGreen.svg"
@@ -71,7 +67,7 @@
 
 			<div>
 				<a
-					href="/src/routes/(app)/app/account"
+					href="/"
 					class="flex flex-col items-center"
 				>
 					<img
@@ -97,4 +93,5 @@
 	.active-text {
 		color: #6cff96;
 	}
+
 </style>

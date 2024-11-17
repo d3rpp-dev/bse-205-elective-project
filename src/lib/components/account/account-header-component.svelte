@@ -9,7 +9,7 @@
 
 	interface Props {
 		user: UserType | null;
-		avatar_size?: "default" | "smol";
+		avatar_size?: "default" | "smol" | "custom";
 	}
 
 	const { user = null, avatar_size = "default" }: Props = $props();
@@ -17,7 +17,13 @@
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
-		<Avatar.Root class={avatar_size == "smol" ? "h-8 w-8" : undefined}>
+		<Avatar.Root
+			class={avatar_size == "smol"
+				? "h-8 w-8"
+				: avatar_size === "custom"
+					? "h-10 w-10"
+					: undefined}
+		>
 			{#snippet children()}
 				{#if user && user.profilePicture}
 					<Avatar.Image

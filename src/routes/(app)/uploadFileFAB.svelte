@@ -16,7 +16,7 @@
 	import * as Select from "@/ui/select";
 
 	import { Upload, X } from "lucide-svelte";
-    import AnimatedLoading from "$lib/icons/AnimatedLoading.svelte";
+	import AnimatedLoading from "$lib/icons/AnimatedLoading.svelte";
 
 	import { trpc } from "$lib/trpc/client";
 	import { page } from "$app/stores";
@@ -25,10 +25,9 @@
 		generate_symmetrical_key,
 		wrap_symmetrical_key,
 	} from "$lib/client/encryption";
-	
-	import { toast } from "svelte-sonner";
-    import { filesize } from "filesize";
 
+	import { toast } from "svelte-sonner";
+	import { filesize } from "filesize";
 
 	const rpc = trpc($page);
 
@@ -83,9 +82,15 @@
 
 		console.log("encrypting and uploading call");
 
-		const encryped_size = await encryptAndUpload(iv, generated_key, file_id);
+		const encryped_size = await encryptAndUpload(
+			iv,
+			generated_key,
+			file_id,
+		);
 
-        toast.success(`Uploaded file ${file.name} (${filesize(encryped_size)})`);
+		toast.success(
+			`Uploaded file ${file.name} (${filesize(encryped_size)})`,
+		);
 		closeAndReset();
 	};
 
@@ -113,7 +118,7 @@
 		console.log("encrypting file");
 
 		const encrypted_blob = await encrypt_blob(key, iv, file_content);
-        const encrypted_size = encrypted_blob.length;
+		const encrypted_size = encrypted_blob.length;
 
 		console.log("uploading file");
 
@@ -127,14 +132,14 @@
 
 		if (response.status != 204) {
 			console.info("upload failed");
-            toast.error('failed to upload file, check console.')
+			toast.error("failed to upload file, check console.");
 		} else {
 			console.info("uploaded success");
 		}
 
 		console.groupEnd();
 
-        return encrypted_size;
+		return encrypted_size;
 	};
 
 	onMount(() => {
