@@ -1,16 +1,5 @@
 <script lang="ts">
-	import type { User } from "lucia";
-	import { AccountHeaderComponent } from "@/account";
-	import { page } from "$app/stores";
-	import { derived } from "svelte/store";
-
 	import LogoGreen from "$lib//logos/Logo-GreenWithText.svg";
-
-	interface Props {
-		user: User | null;
-	}
-
-	const { user }: Props = $props();
 
 </script>
 

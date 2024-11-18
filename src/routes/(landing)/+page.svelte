@@ -1,17 +1,8 @@
 <script lang="ts">
-	import { page } from "$app/stores";
-	import { trpc } from "$lib/trpc/client";
-	import { debounce } from "$lib/utils";
-
 	import type { User } from "lucia";
 	import { AccountHeaderComponent } from "@/account";
 
 	import Main from "@/main.svelte";
-	import { Input } from "@/ui/input";
-	import { writable } from "svelte/store";
-
-	const rpc = trpc($page);
-	const utils = rpc.createUtils();
 
 	interface Props {
 		user: User | null;
