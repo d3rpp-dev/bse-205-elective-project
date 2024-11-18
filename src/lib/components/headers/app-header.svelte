@@ -21,7 +21,7 @@
 </script>
 
 <header
-	class="sticky top-0 z-50 w-full bg-[#202020]"
+	class="sticky top-0 z-50 w-full bg-gradient-to-b from-[#202020] to-[#020202]"
 >
 	<div
 		class="container mx-auto flex h-24 max-w-screen-2xl items-center px-4 2xl:px-0"
