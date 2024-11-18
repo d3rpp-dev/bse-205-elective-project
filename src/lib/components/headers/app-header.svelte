@@ -16,12 +16,12 @@
 	const isProfilePage = derived(
 		page,
 		($page) =>
-			$page.url.pathname === "/src/routes/(app)/app/account/page.svelte",
+			$page.url.pathname === "/app/account",
 	);
 </script>
 
 <header
-	class="sticky top-0 z-50 w-full border-b border-border/40 bg-[#373737] backdrop-blur supports-[backdrop-filter]:bg-[#373737]"
+	class="sticky top-0 z-50 w-full bg-[#202020]"
 >
 	<div
 		class="container mx-auto flex h-24 max-w-screen-2xl items-center px-4 2xl:px-0"
@@ -35,12 +35,12 @@
 					class="h-16"
 				/>
 
-				<h1
-					class="ml-4"
-					style="font-family: futura, sans-serif; font-weight: 600; font-style: normal; font-size: 3rem;"
-				>
-					JailBird
-				</h1>
+				<img 
+				src="src/lib/logos/JailBirdText.svg"
+				alt=""
+				class="h-16 pl-4"
+				/>
+
 			</div>
 		</a>
 
