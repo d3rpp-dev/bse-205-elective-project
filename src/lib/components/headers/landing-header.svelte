@@ -11,14 +11,13 @@
 </script>
 
 <header
-	class="sticky top-0 z-50 w-full shadow-lg h-28 bg-gradient-to-b from-[#202020] to-[#020202]"
+	class="sticky top-0 z-50 h-28 w-full bg-gradient-to-b from-[#202020] to-[#020202] shadow-lg"
 >
-	<div class="flex items-center justify-end px-20 py-4 h-full">
+	<div class="flex h-full items-center justify-end px-20 py-4">
 		<AccountHeaderComponent {user} avatar_size="custom" />
 	</div>
 
 	<div class="absolute inset-0 flex items-center justify-center">
 		<img src={LogoGreen} alt="JailBird Green" class="h-20" />
 	</div>
-
 </header>

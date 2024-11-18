@@ -15,8 +15,7 @@
 	const isUploadPage = derived(page, ($page) => $page.url.pathname === "/");
 	const isProfilePage = derived(
 		page,
-		($page) =>
-			$page.url.pathname === "/app/account",
+		($page) => $page.url.pathname === "/app/account",
 	);
 </script>
 
@@ -35,12 +34,11 @@
 					class="h-16"
 				/>
 
-				<img 
-				src="src/lib/logos/JailBirdText.svg"
-				alt=""
-				class="h-16 pl-4"
+				<img
+					src="src/lib/logos/JailBirdText.svg"
+					alt=""
+					class="h-16 pl-4"
 				/>
-
 			</div>
 		</a>
 
