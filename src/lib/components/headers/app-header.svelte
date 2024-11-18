@@ -15,14 +15,11 @@
 	const isUploadPage = derived(page, ($page) => $page.url.pathname === "/");
 	const isProfilePage = derived(
 		page,
-		($page) =>
-			$page.url.pathname === "/app/account",
+		($page) => $page.url.pathname === "/app/account",
 	);
 </script>
 
-<header
-	class="sticky top-0 z-50 w-full bg-[#202020]"
->
+<header class="sticky top-0 z-50 w-full bg-[#202020]">
 	<div
 		class="container mx-auto flex h-24 max-w-screen-2xl items-center px-4 2xl:px-0"
 	>
@@ -35,12 +32,11 @@
 					class="h-16"
 				/>
 
-				<img 
-				src="src/lib/logos/JailBirdText.svg"
-				alt=""
-				class="h-16 pl-4"
+				<img
+					src="src/lib/logos/JailBirdText.svg"
+					alt=""
+					class="h-16 pl-4"
 				/>
-
 			</div>
 		</a>
 

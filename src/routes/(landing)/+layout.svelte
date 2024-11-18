@@ -9,7 +9,10 @@
 
 <LandingHeader {user} />
 
-<div class="bg-cover bg-center h-full" style="background-image: url('/src/lib/backgroundsAndAssets/landerDecoBackgroundV2.svg'), linear-gradient(to right, #000000 30%, #6CFF96 100%); background-position: right center; background-repeat: no-repeat; background-size: 40%;">
+<div
+	class="h-full bg-cover bg-center"
+	style="background-image: url('/src/lib/backgroundsAndAssets/landerDecoBackgroundV2.svg'), linear-gradient(to right, #000000 30%, #6CFF96 100%); background-position: right center; background-repeat: no-repeat; background-size: 40%;"
+>
 	<Main class="h-landing-main">
 		{@render children()}
 	</Main>

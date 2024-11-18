@@ -1,13 +1,8 @@
 {
 	"version": "6",
 	"dialect": "sqlite",
-<<<<<<< HEAD
-	"id": "8471d8f4-154a-4347-ac12-fa7a223cfb38",
-	"prevId": "818c640b-29b0-4c20-8eb8-191759e45ae4",
-=======
 	"id": "a0792537-466a-438d-8edf-153ad1fd6489",
 	"prevId": "50492699-bfc7-4f37-ac2f-b2bdb3cb7e8d",
->>>>>>> 46ed1164eb2a5d4f64630e0c44a5619ba80e742b
 	"tables": {
 		"email_addresses": {
 			"name": "email_addresses",
@@ -74,8 +69,6 @@
 					"notNull": true,
 					"autoincrement": false
 				},
-<<<<<<< HEAD
-=======
 				"state": {
 					"name": "state",
 					"type": "text",
@@ -97,27 +90,18 @@
 					"notNull": true,
 					"autoincrement": false
 				},
->>>>>>> 46ed1164eb2a5d4f64630e0c44a5619ba80e742b
 				"iv": {
 					"name": "iv",
 					"type": "blob",
 					"primaryKey": false,
-<<<<<<< HEAD
-					"notNull": true,
-=======
 					"notNull": false,
->>>>>>> 46ed1164eb2a5d4f64630e0c44a5619ba80e742b
 					"autoincrement": false
 				},
 				"blob": {
 					"name": "blob",
 					"type": "blob",
 					"primaryKey": false,
-<<<<<<< HEAD
-					"notNull": true,
-=======
 					"notNull": false,
->>>>>>> 46ed1164eb2a5d4f64630e0c44a5619ba80e742b
 					"autoincrement": false
 				}
 			},
@@ -131,8 +115,6 @@
 					"columnsTo": ["kid"],
 					"onDelete": "cascade",
 					"onUpdate": "no action"
-<<<<<<< HEAD
-=======
 				},
 				"encrypted_blobs_owner_users_id_fk": {
 					"name": "encrypted_blobs_owner_users_id_fk",
@@ -142,7 +124,6 @@
 					"columnsTo": ["id"],
 					"onDelete": "cascade",
 					"onUpdate": "no action"
->>>>>>> 46ed1164eb2a5d4f64630e0c44a5619ba80e742b
 				}
 			},
 			"compositePrimaryKeys": {},
@@ -172,8 +153,6 @@
 					"primaryKey": false,
 					"notNull": true,
 					"autoincrement": false
-<<<<<<< HEAD
-=======
 				},
 				"connection_user_name": {
 					"name": "connection_user_name",
@@ -181,7 +160,6 @@
 					"primaryKey": false,
 					"notNull": true,
 					"autoincrement": false
->>>>>>> 46ed1164eb2a5d4f64630e0c44a5619ba80e742b
 				}
 			},
 			"indexes": {},
@@ -200,43 +178,6 @@
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
-<<<<<<< HEAD
-		"passwords": {
-			"name": "passwords",
-			"columns": {
-				"user_id": {
-					"name": "user_id",
-					"type": "text",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"password_hash": {
-					"name": "password_hash",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				}
-			},
-			"indexes": {},
-			"foreignKeys": {
-				"passwords_user_id_users_id_fk": {
-					"name": "passwords_user_id_users_id_fk",
-					"tableFrom": "passwords",
-					"tableTo": "users",
-					"columnsFrom": ["user_id"],
-					"columnsTo": ["id"],
-					"onDelete": "cascade",
-					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"checkConstraints": {}
-		},
-=======
->>>>>>> 46ed1164eb2a5d4f64630e0c44a5619ba80e742b
 		"public_assets": {
 			"name": "public_assets",
 			"columns": {
@@ -322,8 +263,6 @@
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
-<<<<<<< HEAD
-=======
 		"reserved_kids": {
 			"name": "reserved_kids",
 			"columns": {
@@ -358,7 +297,6 @@
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
->>>>>>> 46ed1164eb2a5d4f64630e0c44a5619ba80e742b
 		"sessions": {
 			"name": "sessions",
 			"columns": {
@@ -464,8 +402,6 @@
 					"primaryKey": false,
 					"notNull": true,
 					"autoincrement": false
-<<<<<<< HEAD
-=======
 				},
 				"alias_timestamp": {
 					"name": "alias_timestamp",
@@ -473,7 +409,6 @@
 					"primaryKey": false,
 					"notNull": true,
 					"autoincrement": false
->>>>>>> 46ed1164eb2a5d4f64630e0c44a5619ba80e742b
 				}
 			},
 			"indexes": {},
