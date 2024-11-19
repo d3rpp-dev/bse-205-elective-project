@@ -30,6 +30,7 @@
 	import { filesize } from "filesize";
 
 	const rpc = trpc($page);
+	const utils = rpc.createUtils();
 
 	let dialogOpen = $state(false);
 
@@ -47,10 +48,12 @@
 		if (file_element) file_element.value = "";
 		keyToUse = "";
 		isUploading = false;
+
+		utils.user.fetchUploadedFileMetadata.refetch();
 	};
 
 	const startEverythingMutation =
-		rpc.keyManagement.uploadSymmetricKeyAndCreateEmptyBlob.createMutation();
+		rpc.blobManagement.uploadSymmetricKeyAndCreateEmptyBlob.createMutation();
 
 	let keyList: ReturnType<typeof import_key_meta>[] = $state([]);
 
@@ -59,39 +62,48 @@
 
 		isUploading = true;
 
-		console.group("Uploading Blob");
-		console.log("generating key");
+		try {
+			console.group("Uploading Blob");
+			console.log("generating key");
 
-		const generated_key = await generate_symmetrical_key();
-		const wrapping_key = await import_public_key(keyToUse);
+			const generated_key = await generate_symmetrical_key();
+			const wrapping_key = await import_public_key(keyToUse);
 
-		const wrapped_key = await wrap_symmetrical_key(
-			wrapping_key,
-			generated_key,
-		);
-		const iv = window.crypto.getRandomValues(new Uint8Array(96));
+			const wrapped_key = await wrap_symmetrical_key(
+				wrapping_key,
+				generated_key,
+			);
+			const iv = window.crypto.getRandomValues(new Uint8Array(96));
 
-		console.log("uploading sym key");
+			console.log("uploading sym key");
 
-		const file_id = await $startEverythingMutation.mutateAsync({
-			file_name: file.name,
-			key_b64: btoa(String.fromCharCode(...new Uint8Array(wrapped_key))),
-			iv_b64: btoa(String.fromCharCode(...new Uint8Array(iv))),
-			pubkey: keyToUse,
-		});
+			const file_id = await $startEverythingMutation.mutateAsync({
+				file_name: file.name,
+				key_b64: btoa(
+					String.fromCharCode(...new Uint8Array(wrapped_key)),
+				),
+				iv_b64: btoa(String.fromCharCode(...new Uint8Array(iv))),
+				pubkey: keyToUse,
+			});
 
-		console.log("encrypting and uploading call");
+			console.log("encrypting and uploading call");
 
-		const encryped_size = await encryptAndUpload(
-			iv,
-			generated_key,
-			file_id,
-		);
+			const encryped_size = await encryptAndUpload(
+				iv,
+				generated_key,
+				file_id,
+			);
 
-		toast.success(
-			`Uploaded file ${file.name} (${filesize(encryped_size)})`,
-		);
-		closeAndReset();
+			toast.success(
+				`Uploaded file ${file.name} (${filesize(encryped_size)})`,
+			);
+			closeAndReset();
+		} catch (e) {
+			console.error(e);
+			toast.error("failed to upload file");
+		}
+
+		console.groupEnd();
 	};
 
 	const encryptAndUpload = async (
@@ -136,8 +148,6 @@
 		} else {
 			console.info("uploaded success");
 		}
-
-		console.groupEnd();
 
 		return encrypted_size;
 	};
