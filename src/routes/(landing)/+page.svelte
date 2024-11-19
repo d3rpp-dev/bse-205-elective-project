@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { User } from "lucia";
+	import type { PageServerData } from "./$types";
 	import type { ValidOauthMethods } from "$lib/server/auth/oauth_methods";
 
 	import { goto } from "$app/navigation";
@@ -10,11 +10,9 @@
 	import { ArrowRight } from "lucide-svelte";
 	import { GithubLogo } from "svelte-radix";
 
-	interface Props {
-		user: User | null;
-	}
+	const { data }: { data: PageServerData } = $props();
 
-	const { user }: Props = $props();
+	const { is_signed_in } = data;
 
 	const oauthLoginGenerator =
 		(provider: ValidOauthMethods) => (ev: MouseEvent) => {
@@ -49,7 +47,7 @@
 		</h1>
 
 		<div class="flex flex-1 items-center justify-center">
-			{#if user != null}
+			{#if is_signed_in}
 				<Button
 					class="flex w-36 flex-row justify-start gap-4"
 					variant="default"
