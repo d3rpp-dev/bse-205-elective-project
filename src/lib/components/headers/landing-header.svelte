@@ -17,11 +17,11 @@
 		<!-- empty -->
 	</div>
 
-	<div class="grid w-28 place-items-center">
+	<div class="grid place-items-center">
 		<img src={LogoGreen} alt="JailBird Green" class="h-20" />
 	</div>
 
-	<div class="flex h-full items-center justify-end px-20 py-4">
+	<div class="grid w-28 place-items-center">
 		<AccountHeaderComponent {user} avatar_size="custom" />
 	</div>
 </header>
