@@ -9,8 +9,14 @@
 
 <LandingHeader {user} />
 
-<Main class="h-landing-main">
-	{@render children()}
-</Main>
+<!-- div to add background to pages solely affected by the landing layout -->
 
+<div
+	class="h-full bg-cover bg-center"
+	style="background-image: url('/backgroundsAndAssets/newLandingBackground.jpg');background-attachment: fixed; background-size: cover; background-position: center;"
+>
+	<Main class="h-landing-main">
+		{@render children()}
+	</Main>
+</div>
 <LandingFooter />

@@ -1,96 +1,23 @@
 <script lang="ts">
 	import type { User } from "lucia";
+	import LogoGreen from "$lib/logos/birdAndTextPink.svg";
 	import { AccountHeaderComponent } from "@/account";
-	import { page } from "$app/stores";
-	import { derived } from "svelte/store";
-
-	import LogoGreen from "$lib//logos/Logo-Green.svg";
 
 	interface Props {
 		user: User | null;
 	}
 
 	const { user }: Props = $props();
-
-	//need to add pathways for each page
-	const isHomePage = derived(page, ($page) => $page.url.pathname === "/");
-	const isUploadPage = derived(page, ($page) => $page.url.pathname === "/");
-	const isProfilePage = derived(
-		page,
-		($page) =>
-			$page.url.pathname === "/src/routes/(app)/app/account/page.svelte",
-	);
 </script>
 
 <header
-	class="sticky top-0 z-50 w-full border-b border-border/40 bg-[#373737] backdrop-blur supports-[backdrop-filter]:bg-[#373737]"
+	class="sticky top-0 z-50 h-28 w-full bg-gradient-to-b from-[#000013] to-[#000000] shadow-lg"
 >
-	<div class="container mx-auto flex h-24 max-w-screen-2xl items-center px-4">
-		<div class="flex items-center md:mr-4">
-			<img src={LogoGreen} alt="JailBird Green" class="h-20" />
+	<div class="flex h-full items-center justify-end px-20 py-4">
+		<AccountHeaderComponent {user} avatar_size="custom" />
+	</div>
 
-			<h1 class="">JailBird</h1>
-		</div>
-
-		<div
-			class="hidden flex-1 items-center justify-between space-x-40 md:flex md:justify-end"
-		>
-			<AccountHeaderComponent {user} />
-
-			<!-- Menu icons -->
-
-			<div>
-				<a href="/" class="flex flex-col items-center">
-					<img
-						src={$isHomePage
-							? "src/lib/menuIcons/homeGreen.svg"
-							: "src/lib/menuIcons/homeWhite.svg"}
-						alt="Home Icon"
-						style="height: 40px;"
-						class:active-icon={$isHomePage}
-					/>
-
-					<p class:active-text={$isHomePage}>Home</p>
-				</a>
-			</div>
-
-			<div>
-				<a href="/" class="flex flex-col items-center">
-					<img
-						src={$isUploadPage
-							? "src/lib/menuIcons/uploadGreen.svg"
-							: "src/lib/menuIcons/uploadWhite.svg"}
-						alt="Upload File Icon"
-						style="height: 40px;"
-					/>
-
-					<p class:active-text={$isUploadPage}>Upload Files</p>
-				</a>
-			</div>
-
-			<div>
-				<a href="/" class="flex flex-col items-center">
-					<img
-						src={$isProfilePage
-							? "src/lib/menuIcons/accountGreen.svg"
-							: "src/lib/menuIcons/accountWhite.svg"}
-						alt="Account Icon"
-						style="height: 40px;"
-					/>
-
-					<p class:active-text={$isProfilePage}>Profile</p>
-				</a>
-			</div>
-		</div>
+	<div class="absolute inset-0 flex items-center justify-center">
+		<img src={LogoGreen} alt="JailBird Green" class="h-20" />
 	</div>
 </header>
-
-<style>
-	p {
-		color: white;
-	}
-
-	.active-text {
-		color: #6cff96;
-	}
-</style>

@@ -77,7 +77,7 @@ const config = {
 				"app-main": "calc(100vh - 9.5rem - 2px)",
 			},
 			height: {
-				"landing-main": "calc(100vh - 12rem - 2px)",
+				"landing-main": "calc(100vh - 7rem - 2px)",
 				"app-main": "calc(100vh - 9.5rem - 2px)",
 			},
 		},

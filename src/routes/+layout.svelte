@@ -24,6 +24,8 @@
 <Toaster position="bottom-center" theme={$mode ?? "system"} richColors />
 
 <QueryClientProvider client={queryClient}>
-	{@render children()}
+	<div style="min-height: 100vh;">
+		{@render children()}
+	</div>
 	<SvelteQueryDevtools />
 </QueryClientProvider>

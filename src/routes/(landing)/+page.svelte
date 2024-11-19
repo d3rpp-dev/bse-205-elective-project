@@ -1,41 +1,34 @@
 <script lang="ts">
-	import { page } from "$app/stores";
-	import { trpc } from "$lib/trpc/client";
-	import { debounce } from "$lib/utils";
+	import type { User } from "lucia";
+	import { AccountHeaderComponent } from "@/account";
 
 	import Main from "@/main.svelte";
-	import { Input } from "@/ui/input";
-	import { writable } from "svelte/store";
 
-	const rpc = trpc($page);
-	const utils = rpc.createUtils();
+	interface Props {
+		user: User | null;
+	}
 
-	const query_params = writable({ num: 0 });
-
-	const query = rpc.greeter.oddOrEven.createQuery(query_params);
+	const { user }: Props = $props();
 </script>
 
 <Main>
-	<div class="flex flex-col items-start justify-start">
-		<h1 class="text-hero">Jail Bird</h1>
+	<div class="flex w-full items-center justify-between gap-x-24 pt-32">
+		<h1
+			class="flex-1 text-left"
+			style="font-family: futura, sans-serif; font-weight: 400; font-style: normal; font-size: 4.75rem; text-align: left; color: white; text-shadow: -4px 5px 7px rgba(0, 0, 0, 0.2);"
+		>
+			<span style="font-weight: 600; color: #993467;">Newest</span>
+			and Most
+			<br />
+			<span style="font-weight: 600; color: #993467;">Secure</span>
+			File
+			<br />
+			<span style="font-weight: 600; color: #993467;">Storage</span>
+			Application.
+		</h1>
 
-		<Input
-			type="number"
-			value={0}
-			onchange={debounce((ev) => {
-				ev.preventDefault();
-				if (!(ev.target instanceof HTMLInputElement)) return;
-				query_params.set({ num: +ev.target.value });
-				utils.greeter.oddOrEven.invalidate();
-			}, 500)}
-		/>
-
-		{#if $query.isLoading}
-			<pre>Checking...</pre>
-		{:else if $query.isError}
-			<pre>{JSON.stringify($query.error, null, 2)}</pre>
-		{:else}
-			<pre>{JSON.stringify($query.data, null, 2)}</pre>
-		{/if}
+		<div class="flex flex-1 items-center justify-end">
+			<AccountHeaderComponent {user} avatar_size="custom" />
+		</div>
 	</div>
 </Main>
