@@ -24,15 +24,13 @@
 					? "h-10 w-10"
 					: undefined}
 		>
-			{#snippet children()}
-				{#if user && user.profilePicture}
-					<Avatar.Image
-						src={`/api/public_assets/${user.profilePicture}`}
-						alt="Profile Photo"
-					/>
-				{/if}
-				<Avatar.Fallback><User /></Avatar.Fallback>
-			{/snippet}
+			{#if user && user.profilePicture}
+				<Avatar.Image
+					src={`/api/public_assets/${user.profilePicture}`}
+					alt="Profile Photo"
+				/>
+			{/if}
+			<Avatar.Fallback><User /></Avatar.Fallback>
 		</Avatar.Root>
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content align="end" class="w-[350px]">

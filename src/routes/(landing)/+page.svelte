@@ -1,14 +1,35 @@
 <script lang="ts">
 	import type { User } from "lucia";
-	import { AccountHeaderComponent } from "@/account";
+	import type { ValidOauthMethods } from "$lib/server/auth/oauth_methods";
+
+	import { goto } from "$app/navigation";
 
 	import Main from "@/main.svelte";
+	import { Button } from "@/ui/button";
+
+	import { ArrowRight } from "lucide-svelte";
+	import { GithubLogo } from "svelte-radix";
 
 	interface Props {
 		user: User | null;
 	}
 
 	const { user }: Props = $props();
+
+	const oauthLoginGenerator =
+		(provider: ValidOauthMethods) => (ev: MouseEvent) => {
+			ev.stopPropagation();
+			ev.preventDefault();
+
+			goto(`/oauth/${provider}`);
+		};
+
+	const gotoApp = (ev: MouseEvent) => {
+		ev.stopPropagation();
+		ev.preventDefault();
+
+		goto(`/app`);
+	};
 </script>
 
 <Main>
@@ -27,8 +48,26 @@
 			Application.
 		</h1>
 
-		<div class="flex flex-1 items-center justify-end">
-			<AccountHeaderComponent {user} avatar_size="custom" />
+		<div class="flex flex-1 items-center justify-center">
+			{#if user != null}
+				<Button
+					class="flex w-36 flex-row justify-start gap-4"
+					variant="default"
+					onclick={gotoApp}
+				>
+					<span>Go to App</span>
+					<ArrowRight />
+				</Button>
+			{:else}
+				<Button
+					class="flex w-72 flex-row justify-start gap-4 hover:bg-white hover:text-[#1f2328]"
+					variant="outline"
+					onclick={oauthLoginGenerator("github")}
+				>
+					<GithubLogo />
+					<span>Log In with GitHub</span>
+				</Button>
+			{/if}
 		</div>
 	</div>
 </Main>
