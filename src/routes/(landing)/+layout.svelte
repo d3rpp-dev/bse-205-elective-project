@@ -13,7 +13,7 @@
 
 <div
 	class="h-full bg-cover bg-center"
-	style="background-image: url('/backgroundsAndAssets/landerDecoBackgroundV2.svg'), linear-gradient(to right, #0A0A0A 30%, #6CFF96 100%); background-position: right center; background-repeat: no-repeat; background-size: 40%;"
+	style="background-image: url('/backgroundsAndAssets/newLandingBackground.jpg');background-attachment: fixed; background-size: cover; background-position: center;"
 >
 	<Main class="h-landing-main">
 		{@render children()}
