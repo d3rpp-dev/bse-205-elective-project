@@ -111,4 +111,93 @@ export const blobManagementRouter = trpcInstance.router({
 			}
 		}),
 	// #endregion
+	// #region Rename Blob
+	renameBlob: trpcInstance.procedure
+		.use(authMiddleware)
+		.input(
+			z.object({
+				blob_id: z.string().ulid(),
+				new_name: z.string().min(3).max(100),
+			}),
+		)
+		.mutation(async (opts) => {
+			return await DB.transaction(async (tx_db) => {
+				const affected_rows = await tx_db
+					.update(encryptedBlobTable)
+					.set({
+						name: opts.input.new_name,
+					})
+					.where(
+						and(
+							eq(encryptedBlobTable.kid, opts.input.blob_id),
+							eq(encryptedBlobTable.owner, opts.ctx.user.id),
+						),
+					)
+					.returning({
+						id: encryptedBlobTable.kid,
+					});
+
+				if (affected_rows.length != 1) {
+					if (affected_rows.length === 0) {
+						throw new TRPCError({
+							code: "NOT_FOUND",
+						});
+					}
+
+					console.log("UNEXPECTED CONFLICT", {
+						actual: affected_rows,
+						expected: [{ id: opts.input.blob_id }],
+					});
+
+					throw new TRPCError({
+						code: "INTERNAL_SERVER_ERROR",
+					});
+				} else {
+					return opts.input.new_name;
+				}
+			});
+		}),
+	// #endregion
+	// #region Delete Blob
+	deleteBlob: trpcInstance.procedure
+		.use(authMiddleware)
+		.input(
+			z.object({
+				blob_id: z.string().ulid(),
+			}),
+		)
+		.mutation(async (opts) => {
+			return await DB.transaction(async (tx_db) => {
+				const affected_rows = await tx_db
+					.delete(encryptedBlobTable)
+					.where(
+						and(
+							eq(encryptedBlobTable.kid, opts.input.blob_id),
+							eq(encryptedBlobTable.owner, opts.ctx.user.id),
+						),
+					)
+					.returning({ id: encryptedBlobTable.kid });
+
+				if (affected_rows.length != 1) {
+					if (affected_rows.length === 0) {
+						throw new TRPCError({
+							code: "NOT_FOUND",
+						});
+					}
+
+					console.log("UNEXPECTED CONFLICT", { affected_rows });
+
+					throw new TRPCError({
+						code: "INTERNAL_SERVER_ERROR",
+					});
+				}
+
+				await tx_db
+					.delete(symmetricKeyTable)
+					.where(eq(symmetricKeyTable.kid, opts.input.blob_id));
+
+				return true;
+			});
+		}),
+	// #endregion
 });
