@@ -62,7 +62,7 @@
 
 	let renameAlertOpen = $state(false);
 	let deleteAlertOpen = $state(false);
-  
+
 	const decodeB64Blob = (b64: string): Uint8Array => {
 		const binaryString = atob(b64);
 		let bytes = new Uint8Array(binaryString.length);
