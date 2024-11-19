@@ -78,7 +78,7 @@
 								class="h-4 w-4 text-destructive-foreground"
 							/>
 						{:else}
-							{$uploadedFileCount.data.uploadedFiles}
+							{$uploadedFileCount.data}
 						{/if}
 					</span>
 				</Card.Content>

@@ -15,11 +15,13 @@ export const userRouter = trpcInstance.router({
 	getUploadedFiles: trpcInstance.procedure
 		.use(authMiddleware)
 		.query(async (opts) => {
-			DB.select({
-				kid: encryptedBlobTable.name,
-			})
-				.from(encryptedBlobTable)
-				.where(eq(encryptedBlobTable.owner, opts.ctx.user.id));
+			return (
+				await DB.select({
+					kid: encryptedBlobTable.name,
+				})
+					.from(encryptedBlobTable)
+					.where(eq(encryptedBlobTable.owner, opts.ctx.user.id))
+			).length;
 		}),
 
 	fetchUploadedFileMetadata: trpcInstance.procedure
