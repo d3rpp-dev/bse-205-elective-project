@@ -72,7 +72,15 @@
 				this request.
 			</p>
 
-            <p>If you would like to go through with account deletion please email us at <a href="mailto:jailbird@d3rpp.dev" class="hover:underline opacity-80">jailbird@d3rpp.dev</a></p>
+			<p>
+				If you would like to go through with account deletion please
+				email us at <a
+					href="mailto:jailbird@d3rpp.dev"
+					class="opacity-80 hover:underline"
+				>
+					jailbird@d3rpp.dev
+				</a>
+			</p>
 		</Card.Content>
 	</Card.Root>
 </Main>

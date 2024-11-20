@@ -11,9 +11,9 @@
 <!-- div to add background to pages solely affected by the landing layout -->
 
 <div
-	class="min-h-landing-main h-auto bg-cover bg-center"
+	class="h-auto min-h-landing-main bg-cover bg-center"
 	style="background-image: url('/backgroundsAndAssets/newLandingBackground.jpg');background-attachment: fixed; background-size: cover; background-position: center;"
 >
-    {@render children()}
+	{@render children()}
 </div>
 <LandingFooter />
