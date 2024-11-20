@@ -10,7 +10,7 @@
 	import { Button, buttonVariants } from "@/ui/button";
 	import InlineCodeBlock from "@/inline-codeblock.svelte";
 
-	import { Plus } from "lucide-svelte";
+	import { Plus, X } from "lucide-svelte";
 	import AnimatedLoading from "$lib/icons/AnimatedLoading.svelte";
 
 	import {
@@ -153,7 +153,22 @@
 	</AlertDialog.Trigger>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
-			<AlertDialog.Title>Create Key</AlertDialog.Title>
+			<AlertDialog.Title
+				class="flex w-full flex-row items-center justify-between"
+			>
+				Create Key
+				<Button
+					variant="ghost"
+					size="icon"
+					class="rounded-full"
+					onmouseup={() => {
+						open = false;
+						resetDialog();
+					}}
+				>
+					<X />
+				</Button>
+			</AlertDialog.Title>
 		</AlertDialog.Header>
 		<Tabs.Root value={tabs_value}>
 			<Tabs.Content value="create">
