@@ -76,3 +76,40 @@ export const POST = (async ({ params, locals, request }: RequestEvent) => {
 		});
 	}
 }) satisfies RequestHandler;
+
+/**
+ * Since the blobs are encrypted, we don't really care about trying to protect them
+ *
+ * So we'll just make sure the user is logged in
+ */
+export const GET = (async ({ params, locals }: RequestEvent) => {
+	const { blob_id } = params;
+
+	if (!ULID_SCHEMA.safeParse(blob_id).success) {
+		return new Response(null, {
+			status: 400,
+		});
+	}
+
+	if (!(locals.session && locals.user)) {
+		return new Response(null, {
+			status: 401,
+		});
+	}
+
+	const result = await DB.select({
+		blob: encryptedBlobTable.blob,
+	})
+		.from(encryptedBlobTable)
+		.where(eq(encryptedBlobTable.kid, blob_id));
+
+	if (result.length === 1) {
+		return new Response(result[0].blob as Blob, {
+			status: 200,
+		});
+	} else {
+		return new Response(null, {
+			status: 404,
+		});
+	}
+}) satisfies RequestHandler;
