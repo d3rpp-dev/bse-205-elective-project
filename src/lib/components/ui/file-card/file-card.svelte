@@ -177,33 +177,39 @@
 		<Tooltip.Root>
 			<Tooltip.Trigger>
 				{#snippet child({ props })}
-                    <Card.Title level={3} class="overflow-hidden text-ellipsis" {...props}>
-                        {file.name}
-                    </Card.Title>
+					<Card.Title
+						level={3}
+						class="overflow-hidden text-ellipsis"
+						{...props}
+					>
+						{file.name}
+					</Card.Title>
 				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-                <p>{file.name}</p>
+				<p>{file.name}</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 	</Card.Header>
 	<Card.Footer class="flex flex-row justify-end gap-1">
-        <Tooltip.Root>
-            <Tooltip.Trigger class="w-full inline-flex flex-row items-center text-sm opacity-75">
-                <FileKey2 class="size-4 mr-2" />
-                {filesize(file.size)}
-            </Tooltip.Trigger>
-            <Tooltip.Content side="bottom">
-                <p>Encrypted File Size: {filesize(file.size)}</p>
-            </Tooltip.Content>
-        </Tooltip.Root>
+		<Tooltip.Root>
+			<Tooltip.Trigger
+				class="inline-flex w-full flex-row items-center text-sm opacity-75"
+			>
+				<FileKey2 class="mr-2 size-4" />
+				{filesize(file.size)}
+			</Tooltip.Trigger>
+			<Tooltip.Content side="bottom">
+				<p>Encrypted File Size: {filesize(file.size)}</p>
+			</Tooltip.Content>
+		</Tooltip.Root>
 
 		<Button
 			size="icon"
 			variant="ghost"
 			disabled={isLoading}
 			onmouseup={downloadFile}
-            class="aspect-square"
+			class="aspect-square"
 		>
 			{#if isLoading}
 				<AnimatedLoading />
@@ -220,7 +226,7 @@
 						disabled={isLoading}
 						size="icon"
 						variant="ghost"
-                        class="aspect-square"
+						class="aspect-square"
 						{...props}
 					>
 						<PenBoxIcon />
@@ -271,7 +277,7 @@
 						disabled={isLoading}
 						size="icon"
 						variant="ghost-destructive"
-                        class="aspect-square"
+						class="aspect-square"
 						{...props}
 					>
 						<Trash2 />
