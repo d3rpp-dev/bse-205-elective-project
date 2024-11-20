@@ -8,7 +8,7 @@
 	import { Input } from "@/ui/input";
 
 	import { AnimatedLoading } from "$lib/icons";
-	import { Download, X, Trash2, PenBoxIcon } from "lucide-svelte";
+	import { Download, X, Trash2, PenBoxIcon, FileKey2 } from "lucide-svelte";
 
 	import { import_private_key } from "$lib/client/key_management";
 	import {
@@ -173,32 +173,37 @@
 </script>
 
 <Card.Root class="w-72">
-	<Card.Header>
+	<Card.Header class="mb-6">
 		<Tooltip.Root>
 			<Tooltip.Trigger>
 				{#snippet child({ props })}
-					<div
-						class="overflow-hidden text-ellipsis text-nowrap"
-						{...props}
-					>
-						{file.name}
-					</div>
+                    <Card.Title level={3} class="overflow-hidden text-ellipsis" {...props}>
+                        {file.name}
+                    </Card.Title>
 				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				<p>{file.name}</p>
+                <p>{file.name}</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 	</Card.Header>
-	<Card.Content>
-		{filesize(file.size)}
-	</Card.Content>
-	<Card.Footer class="flex flex-row justify-end">
+	<Card.Footer class="flex flex-row justify-end gap-1">
+        <Tooltip.Root>
+            <Tooltip.Trigger class="w-full inline-flex flex-row items-center text-sm opacity-75">
+                <FileKey2 class="size-4 mr-2" />
+                {filesize(file.size)}
+            </Tooltip.Trigger>
+            <Tooltip.Content side="bottom">
+                <p>Encrypted File Size: {filesize(file.size)}</p>
+            </Tooltip.Content>
+        </Tooltip.Root>
+
 		<Button
 			size="icon"
 			variant="ghost"
 			disabled={isLoading}
 			onmouseup={downloadFile}
+            class="aspect-square"
 		>
 			{#if isLoading}
 				<AnimatedLoading />
@@ -215,6 +220,7 @@
 						disabled={isLoading}
 						size="icon"
 						variant="ghost"
+                        class="aspect-square"
 						{...props}
 					>
 						<PenBoxIcon />
@@ -265,6 +271,7 @@
 						disabled={isLoading}
 						size="icon"
 						variant="ghost-destructive"
+                        class="aspect-square"
 						{...props}
 					>
 						<Trash2 />
